@@ -52,6 +52,18 @@ h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-backgro
 .codebox pre{margin:0;font:13px/1.7 ui-monospace,Menlo,Consolas,monospace;color:#d6d3f0;white-space:pre-wrap;word-break:break-all}
 .codebox i{color:var(--k);font-style:normal}.codebox u{color:var(--n);text-decoration:none}.codebox em{color:var(--s);font-style:normal}
 .tab svg,.btn svg{width:17px;height:17px;vertical-align:-4px;margin-inline-end:7px}.chip svg{width:14px;height:14px}
+#aib{position:fixed;z-index:15;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));padding:12px 18px;border-radius:99px}
+.ai{position:fixed;z-index:20;top:0;bottom:0;right:0;width:min(420px,100vw);padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:12px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border-left:1px solid var(--line);transform:translateX(105%);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.ai.on{transform:none}
+.ah{display:flex;justify-content:space-between;align-items:center;font-size:17px}.ah .btn{padding:6px 9px}.ah svg{margin:0!important}
+.ai textarea{width:100%;resize:vertical;background:var(--code);color:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;font:13px/1.5 Heebo;min-height:80px}
+#aio{overflow:auto;flex:1;font-size:13px;line-height:1.7;display:flex;flex-direction:column;gap:10px}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}.sw button{height:66px;border:1px solid var(--line);border-radius:12px;cursor:pointer;color:#fff;font:600 10px ui-monospace,monospace;text-shadow:0 1px 3px #000a;display:flex;align-items:end;justify-content:center;padding:4px}
+.gc{border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}.gp{height:44px;width:100%;border-radius:10px}
+.ai pre{margin:0;width:100%;direction:ltr;text-align:left;background:var(--code);color:#d6d3f0;border-radius:12px;padding:12px;font:12px/1.6 ui-monospace,monospace;white-space:pre-wrap;word-break:break-all}
+.sc{font:800 44px Heebo;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.is{border-inline-start:3px solid var(--acc);padding:6px 10px;background:var(--panel);border-radius:8px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+@media(max-width:860px){.ai{top:auto;height:62vh;width:100%;border-radius:20px 20px 0 0;transform:translateY(105%)}}
 .toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,80px);background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:600;padding:10px 20px;border-radius:99px;transition:.35s;z-index:9}
 .toast.on{transform:translate(-50%,0)}
 </style>
@@ -79,6 +91,8 @@ h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-backgro
  </main>
 </div>
 </div>
+<button class="btn p" id="aib" style="display:none"></button>
+<aside class="ai" id="ai"><div class="ah"><b>עוזר AI</b><button class="btn" id="aix"></button></div><div class="bar" id="aim"></div><textarea id="ait" rows="4"></textarea><button class="btn p" id="air"></button><div id="aio"></div></aside>
 <div class="toast" id="toast">הועתק ללוח ✓</div>
 <script>
 const $=s=>document.querySelector(s);
@@ -164,7 +178,7 @@ border:{n:'מסגרת / ניאון',
  css:g=>{const x={gradient:[`border: ${g.w}px solid transparent`,`background: linear-gradient(${g.bg}, ${g.bg}) padding-box, linear-gradient(${g.a}deg, ${g.c1}, ${g.c2}) border-box`],neon:['background: '+g.bg,`border: ${g.w}px solid ${g.c1}`,`box-shadow: 0 0 ${g.gl}px ${g.c1}, inset 0 0 ${g.gl}px ${hx(g.c1,.5)}`],dashed:['background: '+g.bg,`border: ${g.w}px dashed ${g.c1}`],double:['background: '+g.bg,`border: ${g.w*2}px double ${g.c1}`]}[g.s];return [...x,`border-radius: ${g.r}px`]}}
 };
 
-const IC={gradient:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',shadow:'<rect x="3" y="3" width="13" height="13" rx="3"/><path d="M8 20h10a3 3 0 0 0 3-3V8"/>',glass:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 16l6-8M12 17l5-7"/>',radius:'<path d="M12 3c5 0 9 3 9 8 0 6-5 10-10 10S3 17 3 12c0-5 4-9 9-9z"/>',neu:'<circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/>',text:'<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',filter:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',transform:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',button:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M8 12h8"/>',header:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/>',footer:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15h18"/>',card:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 12h16M8 16h5"/>',clip:'<path d="M12 3l9 17H3z"/>',anim:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor"/>',flex:'<rect x="3" y="5" width="5" height="14" rx="1.5"/><rect x="10" y="5" width="5" height="9" rx="1.5"/><rect x="17" y="5" width="4" height="12" rx="1.5"/>',border:'<rect x="3" y="3" width="18" height="18" rx="5" stroke-dasharray="3 3"/><rect x="8" y="8" width="8" height="8" rx="2"/>',copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',theme:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',plus:'<path d="M12 5v14M5 12h14"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
+const IC={spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16v4M17 18h4"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',gradient:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',shadow:'<rect x="3" y="3" width="13" height="13" rx="3"/><path d="M8 20h10a3 3 0 0 0 3-3V8"/>',glass:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 16l6-8M12 17l5-7"/>',radius:'<path d="M12 3c5 0 9 3 9 8 0 6-5 10-10 10S3 17 3 12c0-5 4-9 9-9z"/>',neu:'<circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/>',text:'<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',filter:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',transform:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',button:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M8 12h8"/>',header:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/>',footer:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15h18"/>',card:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 12h16M8 16h5"/>',clip:'<path d="M12 3l9 17H3z"/>',anim:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor"/>',flex:'<rect x="3" y="5" width="5" height="14" rx="1.5"/><rect x="10" y="5" width="5" height="9" rx="1.5"/><rect x="17" y="5" width="4" height="12" rx="1.5"/>',border:'<rect x="3" y="3" width="18" height="18" rx="5" stroke-dasharray="3 3"/><rect x="8" y="8" width="8" height="8" rx="2"/>',copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',theme:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',plus:'<path d="M12 5v14M5 12h14"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
 const ico=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
 document.head.append(Object.assign(document.createElement('style'),{id:'kf'}));
 const S={};let cur='gradient';
@@ -209,7 +223,7 @@ function update(){
  $('#code').innerHTML=hl((kf?kf+'\n\n':'')+`.element {\n  ${lines.join(';\n  ')};\n}`);
  if(t.L&&cur!='x'){const dots=document.querySelectorAll('#bar .dot');s.L.forEach((l,i)=>dots[i]&&(dots[i].style.background=l.c))}
 }
-function toast(){const t=$('#toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)}
+function toast(m){const t=$('#toast');t.textContent=typeof m=='string'?m:'הועתק ללוח ✓';t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)}
 $('#copy').onclick=()=>{const txt=$('#code').textContent;
  const fb=()=>{const a=document.createElement('textarea');a.value=txt;document.body.append(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();toast()};
  try{navigator.clipboard.writeText(txt).then(toast,fb)}catch(e){fb()}};
@@ -221,6 +235,40 @@ document.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{$('#stage').dat
 $('#theme').onclick=()=>{const r=document.documentElement,l=getComputedStyle(r).getPropertyValue('--bg').trim()=='#f3f2fb';r.dataset.theme=l?'dark':'light'};
 $('#tabs').append(...Object.keys(TOOLS).map(k=>{const b=document.createElement('button');b.className='tab'+(k==cur?' on':'');b.innerHTML=ico(k)+TOOLS[k].n;
  b.onclick=()=>{cur=k;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x==b));build()};return b}));
+
+let sample=null,mode='build';
+(async()=>{try{sample=await window.claude?.use('sample')}catch(e){}if(sample)$('#aib').style.display=''})();
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const btn=(l,f)=>{const b=el('button','btn',l);b.onclick=f;return b};
+const hexOk=h=>/^#[0-9a-f]{6}$/i.test(h);
+const cp=t=>{const fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();toast()};try{navigator.clipboard.writeText(t).then(()=>toast(),fb)}catch(e){fb()}};
+const codeBlock=t=>{const d=el('div');d.style.cssText='display:flex;flex-direction:column;gap:6px;align-items:flex-start';d.append(el('pre','',t||''),btn('העתק',()=>cp(t||'')));return d};
+function fix(c,v,d){if(v==null)return d;if(c.t=='c')return hexOk(v)?v:d;if(c.t=='s')return c.o.includes(String(v))?String(v):d;if(c.t=='k')return !!v;if(c.t=='t')return String(v).slice(0,40);v=+v;return isNaN(v)?d:Math.min(c.max,Math.max(c.min,v))}
+function go(k){cur=k;const ks=Object.keys(TOOLS);document.querySelectorAll('.tab').forEach((x,i)=>x.classList.toggle('on',ks[i]==k));build()}
+function applyCfg(c){const t=c&&TOOLS[c.tool];if(!t)return false;const s=S[c.tool];t.g.forEach(x=>s.g[x.k]=fix(x,c.g&&c.g[x.k],s.g[x.k]));if(t.L&&Array.isArray(c.layers)&&c.layers.length){s.L=c.layers.slice(0,8).map(l=>Object.fromEntries(t.L.map(x=>[x.k,fix(x,l[x.k],x.v)])));s.i=0}go(c.tool);return true}
+const SYS='You are a CSS design assistant inside CodeForge CSS Lab. Reply with valid JSON only, no markdown. All user-visible text fields must be in Hebrew.';
+const cfg=()=>'Config shape: {"tool":"<tool key>","g":{<values by key>},"layers":[{<values by key>}] or null}. Hex colors as #rrggbb. Tools:\n'+Object.entries(TOOLS).map(([k,t])=>{const d=c=>c.k+(c.t=='c'?':#hex':c.t=='s'?':'+c.o.join('|'):c.t=='k'?':bool':c.t=='t'?':text':':'+c.min+'..'+c.max);return k+'{'+t.g.map(d).join(', ')+'}'+(t.L?' layers['+t.L.map(d).join(', ')+']':'')}).join('\n');
+const close=()=>$('#ai').classList.remove('on');
+const MODES={
+build:{l:'בנה מתיאור',ph:'תאר מה לבנות, למשל: כפתור ניאון סגול בסגנון סייברפאנק',in:1,go:'בנה',p:t=>`${SYS}\nRequest: ${t}\nPick the single best tool and fill its values to match. Return {"tool","g","layers","note"}; note = one short Hebrew sentence.\n${cfg()}`,
+ r:(r,o)=>{o.append(el('div','',applyCfg(r)?(r.note||'הכלי עודכן')+' — נפתח הכלי: '+TOOLS[r.tool].n:'לא הצלחתי לבנות את זה, נסה לנסח אחרת'));if(TOOLS[r.tool])o.append(btn('הצג תוצאה',close))}},
+palette:{l:'פלטה ומיתוג',ph:'תאר את המותג, למשל: אפליקציית מדיטציה רגועה ויוקרתית',in:1,go:'צור פלטה',p:t=>`${SYS}\nCreate a brand palette and gradients for: ${t}\nReturn {"palette":[{"name":"short Hebrew name","hex":"#rrggbb"}] (5 items),"gradients":[{"name":"Hebrew","stops":["#rrggbb","#rrggbb"],"angle":135}] (3 items, 2-3 stops)}`,
+ r:(r,o)=>{const sw=el('div','sw');(r.palette||[]).filter(x=>hexOk(x.hex)).forEach(x=>{const b=el('button','',(x.name||'')+'\n'+x.hex);b.style.background=x.hex;b.style.whiteSpace='pre-line';b.onclick=()=>cp(x.hex);sw.append(b)});o.append(sw);
+  (r.gradients||[]).forEach(g=>{const st=(g.stops||[]).filter(hexOk);if(st.length<2)return;const a=+g.angle||135,c=el('div','gc');c.append(el('b','',g.name||''));const p=el('div','gp');p.style.background=`linear-gradient(${a}deg,${st.join(',')})`;c.append(p,btn('פתח בכלי הגרדיאנט',()=>{applyCfg({tool:'gradient',g:{type:'linear',a},layers:st.map((x,i)=>({c:x,p:Math.round(i*100/(st.length-1))}))});close()}));o.append(c)})}},
+explain:{l:'הסבר CSS',ph:'הדבק כאן קוד CSS מאתר אחר...',in:1,go:'הסבר',p:t=>`${SYS}\nExplain this CSS in simple Hebrew (concise, per property), then give a clean modern version. If it maps to one tool give config, else null.\nCSS:\n${t}\nReturn {"explanation","clean","config"}\n${cfg()}`,
+ r:(r,o)=>{const e=el('div','',r.explanation);e.style.whiteSpace='pre-wrap';o.append(e,codeBlock(r.clean));if(r.config&&TOOLS[r.config.tool])o.append(btn('טען לכלים לעריכה חזותית',()=>{applyCfg(r.config);close()}))}},
+critique:{l:'ביקורת עיצוב',in:0,go:'נתח את העיצוב הנוכחי',p:()=>`${SYS}\nCritique this design (contrast, accessibility, modern taste, performance). Tool: ${cur}\nValues: ${JSON.stringify(S[cur].g)} layers: ${JSON.stringify(S[cur].L)}\nCSS:\n${$('#code').textContent}\nReturn {"score":0-100,"summary":"Hebrew","issues":[{"text":"Hebrew","fix":null or {"tool":"${cur}","g":{only changed keys}}}]} (max 4 issues)\n${cfg()}`,
+ r:(r,o)=>{o.append(el('div','sc',String(Math.round(+r.score||0))),el('div','',r.summary));(r.issues||[]).forEach(i=>{const d=el('div','is',i.text);if(i.fix)d.append(btn('החל תיקון',()=>{applyCfg({...i.fix,tool:TOOLS[i.fix.tool]?i.fix.tool:cur});toast('התיקון הוחל ✓')}));o.append(d)})}},
+improve:{l:'שיפור CSS',ph:'הדבק CSS לשיפור...',in:1,go:'שפר',p:t=>`${SYS}\nImprove this CSS: shorter, modern (custom properties, logical properties, clamp), accessible, same visual result.\nCSS:\n${t}\nReturn {"improved":"css","changes":["short Hebrew bullet"]}`,
+ r:(r,o)=>{o.append(codeBlock(r.improved));const u=el('ul');u.style.margin=0;(r.changes||[]).forEach(c=>u.append(el('li','',c)));o.append(u)}}
+};
+function setMode(k){mode=k;const m=MODES[k];$('#ait').style.display=m.in?'':'none';$('#ait').placeholder=m.ph||'';$('#air').textContent=m.go;$('#aio').textContent='';[...$('#aim').children].forEach(c=>c.classList.toggle('on',c.dataset.m==k))}
+async function run(){const m=MODES[mode],t=$('#ait').value.trim(),o=$('#aio');if(!sample||(m.in&&!t))return;o.textContent='חושב…';$('#air').disabled=true;
+ try{const r=await sample.json(m.p(t),{modelTier:'default',cache:false});o.textContent='';m.r(r,o)}catch(e){o.textContent=e&&e.code=='not_granted'?'לא ניתנה הרשאה להשתמש ב-AI.':e&&e.code=='rate_limited'?'יותר מדי בקשות, נסה שוב בעוד רגע.':'משהו השתבש, נסה שוב.'}
+ $('#air').disabled=false}
+$('#aim').append(...Object.keys(MODES).map(k=>{const c=el('button','chip',MODES[k].l);c.dataset.m=k;c.onclick=()=>setMode(k);return c}));
+$('#air').onclick=run;$('#aib').onclick=()=>$('#ai').classList.add('on');$('#aix').onclick=close;
+$('#aib').innerHTML=ico('spark')+'עוזר AI';$('#aix').innerHTML=ico('x');setMode('build');
 [['#copy','copy','העתק CSS'],['#rnd','dice','אקראי'],['#rst','reset','איפוס'],['#theme','theme','ערכת נושא']].forEach(([q,i,t])=>$(q).innerHTML=ico(i)+t);
 build();
 </script>
