@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CodeForge css — סטודיו ליצירת CSS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#07070d;--panel:rgba(255,255,255,.045);--line:rgba(255,255,255,.1);--tx:#eceaf7;--mut:#8b88a6;--acc:#8b5cf6;--acc2:#22d3ee;--code:#0b0b14;--k:#c4b5fd;--n:#fbbf24;--s:#34d399}
+:root:not([data-theme="dark"]):not([data-theme="light"]){}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f3f2fb;--panel:rgba(255,255,255,.7);--line:rgba(30,20,80,.12);--tx:#1b1838;--mut:#6b6890;--code:#14122b;}}
+:root[data-theme="light"]{--bg:#f3f2fb;--panel:rgba(255,255,255,.7);--line:rgba(30,20,80,.12);--tx:#1b1838;--mut:#6b6890;--code:#14122b}
+:root[data-theme="dark"]{--bg:#07070d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Heebo,system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+.orb{position:fixed;width:46vmax;height:46vmax;border-radius:50%;filter:blur(90px);opacity:.28;z-index:0;pointer-events:none;animation:fl 18s ease-in-out infinite alternate}
+.o1{background:var(--acc);top:-15vmax;right:-10vmax}.o2{background:var(--acc2);bottom:-20vmax;left:-12vmax;animation-delay:-9s}
+@keyframes fl{to{transform:translate(6vmax,5vmax) scale(1.15)}}
+.wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding:22px 18px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.5px}
+h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);font-size:13px;margin-top:2px}
+.btn{font:600 13px Heebo,sans-serif;color:var(--tx);background:var(--panel);border:1px solid var(--line);padding:9px 14px;border-radius:12px;cursor:pointer;backdrop-filter:blur(12px);transition:.2s}
+.btn:hover{border-color:var(--acc);transform:translateY(-1px)}
+.btn.p{background:linear-gradient(135deg,var(--acc),#6366f1);border-color:transparent;color:#fff;box-shadow:0 6px 24px -6px var(--acc)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px;scrollbar-width:none}
+.tab{white-space:nowrap;font:600 14px Heebo,sans-serif;color:var(--mut);background:var(--panel);border:1px solid var(--line);padding:10px 16px;border-radius:14px;cursor:pointer;transition:.25s}
+.tab.on{color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;box-shadow:0 8px 26px -8px var(--acc)}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:16px}
+.row{display:grid;grid-template-columns:78px 1fr 46px;align-items:center;gap:8px;margin:0 0 12px;font-size:13px;color:var(--mut)}
+.row b{font:500 11px ui-monospace,Menlo,monospace;color:var(--tx);text-align:left;direction:ltr}
+.row input[type=range]{width:100%;accent-color:var(--acc)}
+.row input[type=color]{width:100%;height:30px;border:1px solid var(--line);border-radius:8px;background:none;padding:2px;grid-column:2/4}
+.row select,.row input[type=text]{grid-column:2/4;background:var(--code);color:#fff;border:1px solid var(--line);border-radius:8px;padding:7px;font:13px Heebo}
+.row input[type=checkbox]{justify-self:start;width:18px;height:18px;accent-color:var(--acc)}
+.bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.chip{display:flex;align-items:center;gap:6px;font:600 12px Heebo;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;cursor:pointer}
+.chip.on{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid var(--line)}
+.stage{position:relative;height:340px;border-radius:20px;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;transition:background .3s}
+.stage[data-bg=mesh]{background:radial-gradient(at 20% 25%,#7c3aed 0,transparent 45%),radial-gradient(at 80% 20%,#06b6d4 0,transparent 45%),radial-gradient(at 60% 85%,#f43f5e 0,transparent 45%),#0f0c29}
+.stage[data-bg=grid]{background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/28px 28px,var(--code)}
+.stage[data-bg=light]{background:#f4f4f8}.stage[data-bg=dark]{background:#111118}
+.box{width:min(260px,70%);aspect-ratio:1.2;display:grid;place-items:center;background:linear-gradient(135deg,#8b5cf6,#22d3ee);border-radius:20px;color:#fff;font:800 38px Heebo;transition:all .12s}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.codebox{position:relative;background:var(--code);border:1px solid var(--line);border-radius:18px;padding:16px 18px;direction:ltr;text-align:left}
+.codebox pre{margin:0;font:13px/1.7 ui-monospace,Menlo,Consolas,monospace;color:#d6d3f0;white-space:pre-wrap;word-break:break-all}
+.codebox i{color:var(--k);font-style:normal}.codebox u{color:var(--n);text-decoration:none}.codebox em{color:var(--s);font-style:normal}
+.tab svg,.btn svg{width:17px;height:17px;vertical-align:-4px;margin-inline-end:7px}.chip svg{width:14px;height:14px}
+.toast{position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,80px);background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;font-weight:600;padding:10px 20px;border-radius:99px;transition:.35s;z-index:9}
+.toast.on{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<div class="wrap">
+<header>
+ <div><h1><span>CodeForge</span> css Lab</h1><div class="sub">סטודיו ויזואלי ליצירת קוד CSS מקצועי — שחק, העתק, שלח לפרודקשן</div></div>
+ <button class="btn" id="theme">◐ ערכת נושא</button>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="grid">
+ <aside class="card"><div class="bar" id="bar"></div><div id="ctrls"></div></aside>
+ <main>
+  <div class="stage" id="stage" data-bg="mesh"><div class="box" id="box"></div></div>
+  <div class="tools">
+   <button class="btn p" id="copy">⧉ העתק CSS</button>
+   <button class="btn" id="rnd">🎲 אקראי</button>
+   <button class="btn" id="rst">↺ איפוס</button>
+   <span style="flex:1"></span>
+   <button class="btn" data-bg="mesh">Mesh</button><button class="btn" data-bg="grid">Grid</button><button class="btn" data-bg="dark">כהה</button><button class="btn" data-bg="light">בהיר</button>
+  </div>
+  <div class="codebox"><pre id="code"></pre></div>
+ </main>
+</div>
+</div>
+<div class="toast" id="toast">הועתק ללוח ✓</div>
+<script>
+const $=s=>document.querySelector(s);
+const hx=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${+a.toFixed(2)})`};
+const th=n=>'#'+[16,8,0].map(s=>Math.round(Math.max(0,Math.min(255,n>>s&255))).toString(16).padStart(2,'0')).join('');
+const shade=(h,p)=>{const n=parseInt(h.slice(1),16);return th(((([16,8,0].map(s=>{const c=n>>s&255;return p>0?c+(255-c)*p/100:c*(1+p/100)})).reduce((a,c)=>a*256+Math.round(c),0))))};
+const rc=()=>'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0');
+const R=(k,l,min,max,v,u='',step=1)=>({k,l,min,max,v,u,step});
+const C=(k,l,v)=>({k,l,t:'c',v}),K=(k,l,v)=>({k,l,t:'k',v}),S_=(k,l,o,v)=>({k,l,t:'s',o,v});
+
+const CP={triangle:'polygon(50% 0%, 0% 100%, 100% 100%)',trapezoid:'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)',rhombus:'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',pentagon:'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',hexagon:'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',star:'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',arrow:'polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%, 60% 100%, 60% 80%, 0% 80%)',message:'polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%)',cross:'polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%)',circle:'circle(50% at 50% 50%)',ellipse:'ellipse(50% 35% at 50% 50%)',frame:'inset(8% round 24px)'};
+const TOOLS={
+gradient:{n:'גרדיאנט',
+ g:[S_('type','סוג',['linear','radial','conic'],'linear'),R('a','זווית',0,360,135,'°'),R('x','מרכז X',0,100,50,'%'),R('y','מרכז Y',0,100,50,'%')],
+ L:[C('c','צבע','#8b5cf6'),R('p','מיקום',0,100,0,'%')],seed:[{c:'#8b5cf6',p:0},{c:'#22d3ee',p:100}],
+ css:(g,L)=>{const st=[...L].sort((a,b)=>a.p-b.p).map(s=>`${s.c} ${s.p}%`).join(', ');
+  return ['background: '+(g.type=='linear'?`linear-gradient(${g.a}deg, ${st})`:g.type=='radial'?`radial-gradient(circle at ${g.x}% ${g.y}%, ${st})`:`conic-gradient(from ${g.a}deg at ${g.x}% ${g.y}%, ${st})`)]}},
+shadow:{n:'צללים',
+ g:[C('box','צבע קופסה','#ffffff'),R('r','עיגול',0,100,24,'px')],
+ L:[R('x','הסט X',-80,80,0,'px'),R('y','הסט Y',-80,80,20,'px'),R('b','טשטוש',0,120,40,'px'),R('s','פיזור',-50,50,0,'px'),C('c','צבע','#000000'),R('o','שקיפות',0,100,35,'%'),K('i','פנימי',false)],
+ seed:[{y:10,b:30,o:30},{y:30,b:60,o:30,c:'#8b5cf6'}],
+ css:(g,L)=>['background: '+g.box,'border-radius: '+g.r+'px','box-shadow: '+L.map(l=>`${l.i?'inset ':''}${l.x}px ${l.y}px ${l.b}px ${l.s}px ${hx(l.c,l.o/100)}`).join(',\n    ')]},
+glass:{n:'Glassmorphism',
+ g:[C('c','צבע זכוכית','#ffffff'),R('bl','טשטוש',0,40,16,'px'),R('op','שקיפות',0,100,18,'%'),R('sa','רוויה',100,250,160,'%'),R('bo','שקיפות מסגרת',0,100,30,'%'),R('r','עיגול',0,80,24,'px')],
+ css:g=>['background: '+hx(g.c,g.op/100),`backdrop-filter: blur(${g.bl}px) saturate(${g.sa}%)`,`-webkit-backdrop-filter: blur(${g.bl}px) saturate(${g.sa}%)`,'border: 1px solid '+hx(g.c,g.bo/100),'border-radius: '+g.r+'px','box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25)']},
+radius:{n:'בלוב / רדיוס',
+ g:[R('a','↖ אופקי',0,100,30,'%'),R('b','↗ אופקי',0,100,70,'%'),R('c','↘ אופקי',0,100,70,'%'),R('d','↙ אופקי',0,100,30,'%'),R('e','↖ אנכי',0,100,30,'%'),R('f','↗ אנכי',0,100,30,'%'),R('g','↘ אנכי',0,100,70,'%'),R('h','↙ אנכי',0,100,70,'%')],
+ css:g=>['background: linear-gradient(135deg, #8b5cf6, #22d3ee)',`border-radius: ${g.a}% ${g.b}% ${g.c}% ${g.d}% / ${g.e}% ${g.f}% ${g.g}% ${g.h}%`]},
+neu:{n:'Neumorphism',
+ g:[C('c','צבע בסיס','#e0e5ec'),S_('s','צורה',['flat','concave','convex','pressed'],'flat'),R('d','מרחק',1,50,12,'px'),R('b','טשטוש',0,100,24,'px'),R('i','עוצמה',1,30,12,'%'),R('r','עיגול',0,100,28,'px')],
+ stage:g=>g.c,
+ css:g=>{const l=shade(g.c,g.i),d=shade(g.c,-g.i),sh=`${g.d}px ${g.d}px ${g.b}px ${d}, -${g.d}px -${g.d}px ${g.b}px ${l}`;
+  const bg=g.s=='concave'?`linear-gradient(145deg, ${shade(g.c,-g.i/2)}, ${shade(g.c,g.i/2)})`:g.s=='convex'?`linear-gradient(145deg, ${shade(g.c,g.i/2)}, ${shade(g.c,-g.i/2)})`:g.c;
+  return ['background: '+bg,'border-radius: '+g.r+'px','box-shadow: '+(g.s=='pressed'?'inset ':'')+sh.replace(', -',g.s=='pressed'?', inset -':', -')]}},
+text:{n:'טקסט',
+ g:[{k:'t',l:'טקסט',t:'t',v:'CSS LAB'},R('z','גודל',20,140,64,'px'),R('w','משקל',100,900,800,'',100),R('ls','ריווח',-5,20,0,'px'),C('c1','צבע א','#8b5cf6'),C('c2','צבע ב','#22d3ee'),R('a','זווית',0,360,90,'°'),R('gl','זוהר',0,60,0,'px')],
+ txt:g=>g.t,pv:'width:auto;aspect-ratio:auto;border-radius:0;',
+ css:g=>[`font-size: ${g.z}px`,'font-weight: '+g.w,`letter-spacing: ${g.ls}px`,`background: linear-gradient(${g.a}deg, ${g.c1}, ${g.c2})`,'-webkit-background-clip: text','background-clip: text','color: transparent',...(g.gl?[`filter: drop-shadow(0 0 ${g.gl}px ${hx(g.c1,.8)})`]:[])]},
+filter:{n:'פילטרים',
+ g:[R('bl','טשטוש',0,20,0,'px'),R('br','בהירות',0,200,100,'%'),R('co','ניגודיות',0,200,100,'%'),R('sa','רוויה',0,300,100,'%'),R('hu','גוון',0,360,0,'°'),R('gr','גווני אפור',0,100,0,'%'),R('se','ספיה',0,100,0,'%'),R('in','היפוך',0,100,0,'%')],
+ txt:()=>'Aa',
+ css:g=>{const m={bl:['blur','px',0],br:['brightness','%',100],co:['contrast','%',100],sa:['saturate','%',100],hu:['hue-rotate','deg',0],gr:['grayscale','%',0],se:['sepia','%',0],in:['invert','%',0]};
+  const f=Object.keys(m).filter(k=>g[k]!=m[k][2]).map(k=>`${m[k][0]}(${g[k]}${m[k][1]})`);return ['filter: '+(f.join(' ')||'none')]}},
+transform:{n:'Transform',
+ g:[R('rx','סיבוב X',-80,80,0,'°'),R('ry','סיבוב Y',-80,80,0,'°'),R('rz','סיבוב Z',-180,180,0,'°'),R('sc','קנה מידה',.1,2,1,'',.05),R('kx','הטיה X',-60,60,0,'°'),R('ky','הטיה Y',-60,60,0,'°'),R('tx','הזזה X',-150,150,0,'px'),R('ty','הזזה Y',-150,150,0,'px')],
+ txt:()=>'Aa',
+ css:g=>{const p=[];if(g.rx||g.ry)p.push('perspective(800px)');g.rx&&p.push(`rotateX(${g.rx}deg)`);g.ry&&p.push(`rotateY(${g.ry}deg)`);g.rz&&p.push(`rotate(${g.rz}deg)`);g.sc!=1&&p.push(`scale(${g.sc})`);(g.kx||g.ky)&&p.push(`skew(${g.kx}deg, ${g.ky}deg)`);(g.tx||g.ty)&&p.push(`translate(${g.tx}px, ${g.ty}px)`);
+  return ['transform: '+(p.join(' ')||'none')]}},
+button:{n:'כפתור',
+ g:[{k:'t',l:'טקסט',t:'t',v:'התחל עכשיו'},S_('st','סגנון',['gradient','solid','outline'],'gradient'),C('c1','צבע א','#8b5cf6'),C('c2','צבע ב','#22d3ee'),C('tc','צבע טקסט','#ffffff'),R('r','עיגול',0,60,14,'px'),R('px','ריפוד X',8,70,28,'px'),R('py','ריפוד Y',4,30,13,'px'),R('z','גודל',12,28,16,'px'),R('gl','זוהר',0,60,24,'px')],
+ txt:g=>g.t,pv:'width:auto;aspect-ratio:auto;display:inline-block;',
+ css:g=>{const o=g.st=='outline';return [`background: ${g.st=='gradient'?`linear-gradient(135deg, ${g.c1}, ${g.c2})`:o?'transparent':g.c1}`,`color: ${o?g.c1:g.tc}`,`padding: ${g.py}px ${g.px}px`,`border-radius: ${g.r}px`,`font-size: ${g.z}px`,'font-weight: 600',`border: ${o?'2px solid '+g.c1:'none'}`,`box-shadow: 0 8px ${g.gl}px ${hx(g.c1,.5)}`,'cursor: pointer']}},
+header:{n:'הדר / ניווט',
+ g:[C('bg','רקע','#14122b'),R('op','שקיפות',0,100,70,'%'),R('bl','טשטוש',0,30,14,'px'),R('h','גובה',40,120,64,'px'),R('px','ריפוד צד',8,80,28,'px'),R('bo','מסגרת',0,60,12,'%'),C('tc','צבע טקסט','#eceaf7'),C('ac','הדגשה','#8b5cf6'),K('sh','צל',true),K('st','Sticky',true)],
+ html:g=>`<b style="font-size:19px"><i style="display:inline-block;width:14px;height:14px;border-radius:4px;background:${g.ac};margin-inline-end:8px;vertical-align:-1px"></i>Brand</b><span style="display:flex;gap:20px;font:400 14px Heebo"><span>Home</span><span>Work</span><span>Blog</span></span><span style="padding:7px 16px;border-radius:99px;background:${g.ac};color:#fff;font:600 13px Heebo">Sign in</span>`,
+ pv:'width:94%;aspect-ratio:auto;border-radius:14px;position:relative;direction:ltr;',
+ css:g=>['background: '+hx(g.bg,g.op/100),`backdrop-filter: blur(${g.bl}px)`,'color: '+g.tc,`height: ${g.h}px`,`padding: 0 ${g.px}px`,'display: flex','align-items: center','justify-content: space-between',`border-bottom: 1px solid ${hx(g.tc,g.bo/100)}`,...(g.sh?['box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25)']:[]),...(g.st?['position: sticky','top: 0','z-index: 50']:[])]},
+footer:{n:'פוטר',
+ g:[C('bg','רקע','#0f0d22'),C('tc','צבע טקסט','#a9a6c9'),C('ac','הדגשה','#8b5cf6'),R('n','עמודות',1,4,3),R('p','ריפוד',16,80,36,'px'),R('gp','רווח',8,60,28,'px'),K('ln','קו עליון',true)],
+ html:g=>Array.from({length:g.n},(_,i)=>`<div><b style="color:#fff;display:block;margin-bottom:8px">${['Product','Company','Legal','Social'][i]}</b>Link one<br>Link two<br>Link three</div>`).join('')+'<div style="grid-column:1/-1;opacity:.6;margin-top:6px">© 2026 Brand. All rights reserved.</div>',
+ pv:'width:94%;aspect-ratio:auto;border-radius:14px;place-items:start;direction:ltr;font:400 13px/1.7 Heebo;',
+ css:g=>['background: '+g.bg,'color: '+g.tc,`padding: ${g.p}px`,'display: grid',`grid-template-columns: repeat(${g.n}, 1fr)`,`gap: ${g.gp}px`,g.ln?`border-top: 2px solid ${g.ac}`:'border-top: none']},
+card:{n:'כרטיס',
+ g:[C('bg','רקע','#ffffff'),C('tc','צבע טקסט','#1b1838'),C('c1','תמונה א','#8b5cf6'),C('c2','תמונה ב','#22d3ee'),R('r','עיגול',0,48,22,'px'),R('p','ריפוד',0,40,18,'px'),R('sh','צל',0,80,40,'px'),R('bo','מסגרת',0,40,8,'%'),R('ih','גובה תמונה',40,160,90,'px')],
+ html:g=>`<div style="height:${g.ih}px;margin:-${g.p}px -${g.p}px 14px;background:linear-gradient(135deg,${g.c1},${g.c2})"></div><b style="font-size:17px">Card title</b><p style="margin:6px 0 0;font:400 13px/1.5 Heebo;opacity:.7">A short description of the card goes right here.</p>`,
+ pv:'width:240px;aspect-ratio:auto;display:block;direction:ltr;text-align:left;font:600 16px Heebo;',
+ css:g=>['background: '+g.bg,'color: '+g.tc,`border-radius: ${g.r}px`,`padding: ${g.p}px`,`border: 1px solid ${hx('#000000',g.bo/100)}`,`box-shadow: 0 12px ${g.sh}px rgba(0, 0, 0, 0.25)`,'overflow: hidden']},
+clip:{n:'Clip-path',
+ g:[S_('s','צורה',Object.keys(CP),'triangle')],
+ css:g=>['clip-path: '+CP[g.s]]},
+anim:{n:'אנימציה',
+ g:[S_('t','סוג',['bounce','pulse','spin','float','shake','flip','glow'],'bounce'),R('d','משך',0.2,6,1.6,'s',.1),R('de','השהיה',0,3,0,'s',.1),S_('e','תאוצה',['ease','ease-in-out','linear','cubic-bezier(.34,1.56,.64,1)'],'ease-in-out'),S_('n','חזרות',['infinite','1','3'],'infinite'),R('a','עוצמה',5,100,30)],
+ kf:g=>{const m={bounce:`translateY(-${g.a}px)`,pulse:`scale(${1+g.a/100})`,spin:'rotate(360deg)',float:`translateY(-${g.a/2}px) rotate(${g.a/10}deg)`,shake:`translateX(${g.a/2}px)`,flip:'rotateY(180deg)'},k=/spin|flip/.test(g.t)?'100%':'50%';
+  return g.t=='glow'?`@keyframes glow {\n  50% { box-shadow: 0 0 ${g.a}px #8b5cf6; }\n}`:`@keyframes ${g.t} {\n  ${k} { transform: ${m[g.t]}; }\n}`},
+ css:g=>[`animation: ${g.t} ${g.d}s ${g.e} ${g.de}s ${g.n}`]},
+flex:{n:'Flexbox',
+ g:[S_('d','כיוון',['row','row-reverse','column','column-reverse'],'row'),S_('j','יישור ראשי',['flex-start','center','flex-end','space-between','space-around','space-evenly'],'center'),S_('a','יישור משני',['stretch','flex-start','center','flex-end','baseline'],'center'),S_('w','גלישה',['nowrap','wrap'],'nowrap'),R('gp','רווח',0,50,12,'px'),R('n','פריטים',1,9,4)],
+ html:g=>Array.from({length:g.n},(_,i)=>`<div style="min-width:46px;height:${36+(i*17)%34}px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#22d3ee);display:grid;place-items:center;font:700 14px Heebo">${i+1}</div>`).join(''),
+ pv:'width:92%;height:250px;aspect-ratio:auto;direction:ltr;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.3);border-radius:14px;padding:10px;',
+ css:g=>['display: flex','flex-direction: '+g.d,'justify-content: '+g.j,'align-items: '+g.a,'flex-wrap: '+g.w,`gap: ${g.gp}px`]},
+border:{n:'מסגרת / ניאון',
+ g:[S_('s','סגנון',['gradient','neon','dashed','double'],'gradient'),C('c1','צבע א','#8b5cf6'),C('c2','צבע ב','#22d3ee'),C('bg','רקע פנימי','#0f0d22'),R('w','עובי',1,12,3,'px'),R('r','עיגול',0,60,22,'px'),R('a','זווית',0,360,135,'°'),R('gl','זוהר',0,60,22,'px')],
+ css:g=>{const x={gradient:[`border: ${g.w}px solid transparent`,`background: linear-gradient(${g.bg}, ${g.bg}) padding-box, linear-gradient(${g.a}deg, ${g.c1}, ${g.c2}) border-box`],neon:['background: '+g.bg,`border: ${g.w}px solid ${g.c1}`,`box-shadow: 0 0 ${g.gl}px ${g.c1}, inset 0 0 ${g.gl}px ${hx(g.c1,.5)}`],dashed:['background: '+g.bg,`border: ${g.w}px dashed ${g.c1}`],double:['background: '+g.bg,`border: ${g.w*2}px double ${g.c1}`]}[g.s];return [...x,`border-radius: ${g.r}px`]}}
+};
+
+const IC={gradient:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/>',shadow:'<rect x="3" y="3" width="13" height="13" rx="3"/><path d="M8 20h10a3 3 0 0 0 3-3V8"/>',glass:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M7 16l6-8M12 17l5-7"/>',radius:'<path d="M12 3c5 0 9 3 9 8 0 6-5 10-10 10S3 17 3 12c0-5 4-9 9-9z"/>',neu:'<circle cx="9" cy="9" r="5"/><circle cx="15" cy="15" r="5"/>',text:'<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',filter:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',transform:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/>',button:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M8 12h8"/>',header:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/>',footer:'<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 15h18"/>',card:'<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M4 12h16M8 16h5"/>',clip:'<path d="M12 3l9 17H3z"/>',anim:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor"/>',flex:'<rect x="3" y="5" width="5" height="14" rx="1.5"/><rect x="10" y="5" width="5" height="9" rx="1.5"/><rect x="17" y="5" width="4" height="12" rx="1.5"/>',border:'<rect x="3" y="3" width="18" height="18" rx="5" stroke-dasharray="3 3"/><rect x="8" y="8" width="8" height="8" rx="2"/>',copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/>',reset:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',theme:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>',plus:'<path d="M12 5v14M5 12h14"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
+const ico=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg>`;
+document.head.append(Object.assign(document.createElement('style'),{id:'kf'}));
+const S={};let cur='gradient';
+const mk=k=>{const t=TOOLS[k],o=(arr)=>Object.fromEntries(arr.map(c=>[c.k,c.v]));
+ return{g:o(t.g),L:t.L?(t.seed||[{}]).map(s=>({...o(t.L),...s})):[],i:0}};
+Object.keys(TOOLS).forEach(k=>S[k]=mk(k));
+
+function ctl(c,o){
+ const d=document.createElement('label');d.className='row';
+ d.innerHTML=`<span>${c.l}</span>`+(c.t=='s'?`<select>${c.o.map(x=>`<option>${x}</option>`).join('')}</select>`:c.t=='k'?'<input type=checkbox>':c.t=='c'?'<input type=color>':c.t=='t'?'<input type=text>':`<input type=range min=${c.min} max=${c.max} step=${c.step}><b></b>`);
+ const i=d.querySelector('input,select'),b=d.querySelector('b');
+ const show=()=>{if(b)b.textContent=o[c.k]+c.u};
+ if(c.t=='k')i.checked=o[c.k];else i.value=o[c.k];show();
+ i.addEventListener('input',()=>{o[c.k]=c.t=='k'?i.checked:(c.t||c.t=='s')&&c.t!=undefined?i.value:+i.value;show();update()});
+ return d;
+}
+function build(){
+ const t=TOOLS[cur],s=S[cur],el=$('#ctrls');el.innerHTML='';
+ t.g.forEach(c=>el.append(ctl(c,s.g)));
+ if(t.L){const w=document.createElement('div');w.id='lw';el.append(w);
+  w.append(...t.L.map(c=>ctl(c,s.L[s.i])));}
+ bar();update();
+}
+function bar(){
+ const t=TOOLS[cur],s=S[cur],b=$('#bar');b.innerHTML='';b.style.display=t.L?'flex':'none';
+ if(!t.L)return;
+ s.L.forEach((l,i)=>{const c=document.createElement('button');c.className='chip'+(i==s.i?' on':'');
+  c.innerHTML=`<span class=dot style="background:${l.c}"></span>${cur=='gradient'?'עצירה':'שכבה'} ${i+1}`;
+  c.onclick=()=>{s.i=i;build()};b.append(c)});
+ const a=document.createElement('button');a.className='chip';a.innerHTML=ico('plus');a.onclick=()=>{if(s.L.length<8){s.L.push({...s.L[s.i],c:rc()});s.i=s.L.length-1;build()}};b.append(a);
+ if(s.L.length>1){const r=document.createElement('button');r.className='chip';r.innerHTML=ico('trash');r.onclick=()=>{s.L.splice(s.i,1);s.i=0;build()};b.append(r)}
+}
+function hl(txt){
+ const v=x=>x.replace(/(#[0-9a-f]{3,8})|(-?\d+\.?\d*)/gi,(m,h,n)=>h?`<em>${m}</em>`:`<u>${m}</u>`);
+ return txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').split('\n').map(l=>{const m=l.match(/^(\s{2}[\w-]+)(:)(.*)$/);return m?`<i>${m[1]}</i>:${v(m[3])}`:v(l)}).join('\n');
+}
+function update(){
+ const t=TOOLS[cur],s=S[cur],lines=t.css(s.g,s.L),box=$('#box');
+ box.style.cssText=lines.join(';').replace(/\n\s*/g,' ')+';'+(t.pv||'');
+ if(t.html)box.innerHTML=t.html(s.g);else box.textContent=t.txt?t.txt(s.g):'';const kf=t.kf?t.kf(s.g):'';$('#kf').textContent=kf;
+ $('#stage').style.background=t.stage?t.stage(s.g):'';
+ $('#code').innerHTML=hl((kf?kf+'\n\n':'')+`.element {\n  ${lines.join(';\n  ')};\n}`);
+ if(t.L&&cur!='x'){const dots=document.querySelectorAll('#bar .dot');s.L.forEach((l,i)=>dots[i]&&(dots[i].style.background=l.c))}
+}
+function toast(){const t=$('#toast');t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1600)}
+$('#copy').onclick=()=>{const txt=$('#code').textContent;
+ const fb=()=>{const a=document.createElement('textarea');a.value=txt;document.body.append(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();toast()};
+ try{navigator.clipboard.writeText(txt).then(toast,fb)}catch(e){fb()}};
+$('#rst').onclick=()=>{S[cur]=mk(cur);build()};
+$('#rnd').onclick=()=>{const t=TOOLS[cur],s=S[cur];
+ const f=(cs,o)=>cs.forEach(c=>{o[c.k]=c.t=='c'?rc():c.t=='k'?Math.random()>.7:c.t=='s'?c.o[Math.random()*c.o.length|0]:c.t=='t'?o[c.k]:+(Math.round((c.min+Math.random()*(c.max-c.min))/c.step)*c.step).toFixed(2)});
+ f(t.g,s.g);s.L.forEach(l=>f(t.L,l));build()};
+document.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{$('#stage').dataset.bg=b.dataset.bg});
+$('#theme').onclick=()=>{const r=document.documentElement,l=getComputedStyle(r).getPropertyValue('--bg').trim()=='#f3f2fb';r.dataset.theme=l?'dark':'light'};
+$('#tabs').append(...Object.keys(TOOLS).map(k=>{const b=document.createElement('button');b.className='tab'+(k==cur?' on':'');b.innerHTML=ico(k)+TOOLS[k].n;
+ b.onclick=()=>{cur=k;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x==b));build()};return b}));
+[['#copy','copy','העתק CSS'],['#rnd','dice','אקראי'],['#rst','reset','איפוס'],['#theme','theme','ערכת נושא']].forEach(([q,i,t])=>$(q).innerHTML=ico(i)+t);
+build();
+</script>
+</body>
+</html>
+
+<!-- Injection By NetFree -->
+<script src="//netfree.link/injection-script/go-payment.js" type="text/javascript" async ></script>
+<script src="//netfree.link/injection-script/popup-card-init.js" type="text/javascript" async ></script>
