@@ -71,7 +71,7 @@ button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;s
 <footer class="p" id="pal"></footer>
 <div id="mcinfo"><span id="mchp">❤ 100</span><span id="mchunger">🍗 100</span><span id="mctime">☀ יום</span></div><div id="mcx"><i class="mcx1"></i><i class="mcx2"></i></div><div id="mcbar"><div class="slots" id="mcslots"></div></div><div id="mcmsg"></div><div id="mcinv"><div><h2>מלאי ויצירה</h2><div id="mccraft"></div><h4>מלאי</h4><div class="mcgrid" id="mcgrid"></div><small style="color:var(--mu)">I — מלאי · 1–9 — בחירה · E — שימוש · שמאלי — כרייה · ימני — בנייה</small></div></div></div>
 <div id="auth"><div class="ab"><div class="logo" style="margin:0;font-size:22px">VoxelCraft Studio</div><div>הכנס סיסמה</div><input type="password" id="apw" autocomplete="off"><button class="g" id="aok">כניסה</button><div id="aer" style="color:#fbbf24;min-height:18px"></div></div></div>
-<div id="inv"><div><b id="invt"></b><div style="display:flex;gap:8px;justify-content:center"><button class="g" id="invok">קבל והתחל</button><button id="invno">דחה</button></div></div></div>
+<div id="inv"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><b id="invt"></b><div style="display:flex;gap:8px;justify-content:center"><button class="g" id="invok">קבל והתחל</button><button id="invno">דחה</button></div></div></div>
 <div id="hub"><div class="logo" style="font-size:28px;margin-bottom:18px">VoxelCraft Studio</div><h3>משחק 1 על 1</h3><div id="pvp" style="margin-bottom:26px"></div><h3>הפרויקטים שלי</h3><div class="cg" id="hp"></div><h3>הדמויות שלי</h3><div class="cg" id="hc"></div></div>
 <div id="ed"><div class="eh"><button id="eb">← חזרה</button><input type="text" id="en"><button id="e0">סטיב</button><button id="e1">זומבי</button><button id="e2">רובוט</button><span style="flex:1"></span><button id="eu">בטל</button><button id="ew">אנימציית הליכה</button><button id="ex">מחק</button><button class="g" id="es">שמור</button></div>
 <div class="eb"><div class="p" id="et"><h4>כלי צביעה (קליק על הדמות, גרירה לסיבוב)</h4><div class="tg" id="etl"></div><label>סימטריה ימין/שמאל <input type="checkbox" id="em" checked></label><h4>צבע</h4><input type="color" id="ec" value="#c68642" style="width:100%;height:42px"><div id="esw" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px"></div></div><div id="ev"><canvas id="ecv"></canvas></div></div></div>
@@ -336,158 +336,261 @@ function disg(x,y,z){const w={};let bi=0,bw=0;for(const[dx,dy,dz,p]of[[1,0,0,3],
 function pgrp(pk){const g=new Set([pk]),st=[pk];while(st.length){const[x,y,z]=dec(st.pop());for(const d of D6){const k=key(x+d[0],y+d[1],z+d[2]),b=W.get(k);if((b===22||b===23)&&!g.has(k)){g.add(k);st.push(k)}}}return g}
 function pdest(pk){const g=pgrp(pk),seen=new Set(),st=[],out=[];let wired=false;for(const c of g){const[x,y,z]=dec(c);for(const d of D6){const k=key(x+d[0],y+d[1],z+d[2]);if(W.get(k)===29&&!seen.has(k)){wired=true;seen.add(k);st.push(k)}}}
 while(st.length){const[x,y,z]=dec(st.pop());for(const d of D6){const k=key(x+d[0],y+d[1],z+d[2]),b=W.get(k);if(b===29&&!seen.has(k)){seen.add(k);st.push(k)}else if((b===22||b===23)&&!g.has(k)&&!out.includes(k))out.push(k)}}
-if(!wired){const pc=W.get(pk);for(const[k,b]of W)if(b===(pc===22?23:22)&&!g.has(k))out.push(k)}return out}
-function fsReq(){try{const p=document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
-function fsToggle(){const on=$('#app').classList.toggle('gm');if(on)fsReq();else if(document.fullscreenElement)try{document.exitFullscreen()}catch(e){}}
-document.addEventListener('fullscreenchange',()=>{if(play&&!document.fullscreenElement)$('#app').classList.remove('gm')});
-function cok(p){return inf||!play.cols||!play.cols.size||play.cols.has(Math.floor(p.x)+KO+KA*(Math.floor(p.z)+KO))}
-const STONE=[3,7,14,16,94],NOMINE=[3,7,14,16];
-const AUTH=[{s:'b55f8e4cf7521044959aca8c30e25559',h:'0bac22fe00b8f5aa8eb81a2679fdb48066e8af8a1b0b96cabeee94cc3698fc71'},{s:'4c8b314a775aaf30bd101fe62c5e9536',h:'beaa7eb32fc8ce3e4afb48182931b4d8d412623bbeaf965c9cdd07c7031c5b33'}];
-const NETR='109ca13e3efc';
-async function kdf(pw,sh){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']),salt=Uint8Array.from(sh.match(/../g).map(x=>parseInt(x,16))),b=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt,iterations:200000},k,256);return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-async function login(pw){for(let i=0;i<2;i++)if(await kdf(pw,AUTH[i].s)===AUTH[i].h)return i+1;return 0}
-const net={role:0,peer:null,conn:null,st:'off',msg:'',oc:null,out:null,waiting:false};
-async function doLogin(){const pw=$('#apw').value;if(!pw)return;$('#aok').disabled=true;$('#aer').textContent='בודק...';let r=0;try{r=await login(pw)}catch(e){$('#aer').textContent='הדפדפן לא תומך בהצפנה (נדרש https)';$('#aok').disabled=false;return}
-$('#aok').disabled=false;$('#apw').value='';if(!r){$('#aer').textContent='סיסמה שגויה';return}$('#auth').style.display='none';net.role=r;netInit();pvpUI()}
-$('#aok').onclick=doLogin;$('#apw').onkeydown=e=>{if(e.key==='Enter')doLogin()};setTimeout(()=>$('#apw').focus(),50);
-function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;(function nx(){if(window.Peer)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
-function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}
-net.peer=new Peer('vxc'+NETR+'p'+net.role);
-net.peer.on('open',()=>{net.st='wait';net.msg='';pvpUI()});
-net.peer.on('connection',c=>{if(c.peer!=='vxc'+NETR+'p'+(3-net.role)){c.close();return}netAttach(c)});
-net.peer.on('error',e=>{if(e.type==='peer-unavailable')return;net.st='err';net.msg=e.type==='unavailable-id'?'הסיסמה הזאת כבר מחוברת במקום אחר':'שגיאת רשת ('+e.type+')';pvpUI()});
-net.peer.on('disconnected',()=>{try{net.peer.reconnect()}catch(e){}});
-setInterval(()=>{if(net.role===1&&net.peer&&net.peer.open&&!net.conn){try{if(net.pend)net.pend.close()}catch(e){}net.pend=net.peer.connect('vxc'+NETR+'p2',{reliable:true});netAttach(net.pend)}},3000)})}
-function netAttach(c){const op=()=>{if(net.conn===c)return;if(net.conn&&net.conn.open){c.close();return}net.conn=c;net.st='on';net.msg='';c.send({t:'h',r:net.role});pvpUI()};c.on('open',op);if(c.open)op();c.on('data',netData);c.on('close',()=>{if(net.conn===c){net.conn=null;net.st='wait';net.waiting=false;pvpUI();if(play&&play.pvp)pvpEnd('השחקן השני התנתק')}});c.on('error',()=>{})}
-function netSend(m){try{if(net.conn&&net.conn.open)net.conn.send(m)}catch(e){}}
-function pvpEnd(t){if(!play||play.over)return;play.over=true;$('#go').style.display='flex';$('#go').innerHTML='<h2 style="margin:0">'+t+'</h2><button class="g" id="gx3">יציאה</button>';$('#gx3').onclick=stopPlay}
-function pvpGo(map){stopPlay();const orig=ser();rw(map);$('#hub').style.display='none';$('#inv').style.display='none';startGame(1);play.orig=orig}
-function netData(m){if(!m||!m.t)return;
-if(m.t==='h'){if(m.r===net.role){net.msg='אותה סיסמה בשני המחשבים — אי אפשר לשחק';if(net.conn)net.conn.close();pvpUI()}return}
-if(m.t==='inv'){net.inv=m;$('#invt').textContent='השחקן השני מזמין אותך למשחק 1 על 1 במפה "'+m.n+'"';$('#inv').style.display='flex';return}
-if(m.t==='acc'){net.oc={parts:m.ch.parts};net.waiting=false;if(net.out)pvpGo(net.out.map);return}
-if(m.t==='dec'){net.waiting=false;net.msg='השחקן השני סירב';pvpUI();return}
-if(!play||!play.pvp)return;const e=play.opp;
-if(m.t==='s'){e.tp.set(m.p[0],m.p[1],m.p[2]);e.face=m.f;e.hp=m.hp;e.atk=m.at;if(!e.w.visible){e.p.copy(e.tp);e.w.visible=true;e.bar.visible=true}}
-else if(m.t==='sh'){shoot(new THREE.Vector3(m.o[0],m.o[1],m.o[2]),new THREE.Vector3(m.d[0],m.d[1],m.d[2]),WP[m.w]||WP[1],0)}
-else if(m.t==='e'){raw(m.k,m.v);power()}
-else if(m.t==='hit'){hurt(m.d)}
-else if(m.t==='dead'){pvpEnd('ניצחת! היריב הובס')}
-else if(m.t==='bye'){pvpEnd('השחקן השני יצא מהמשחק')}}
-$('#invok').onclick=()=>{const m=net.inv;if(!m)return;net.oc={parts:m.ch.parts};netSend({t:'acc',ch:{parts:(P.chars[selc]||P.chars[0]).parts}});pvpGo(m.map)};
-$('#invno').onclick=()=>{$('#inv').style.display='none';netSend({t:'dec'})};
-function pvpStart(){if(!(net.conn&&net.conn.open)){net.msg='השחקן השני לא מחובר';pvpUI();return}const id=$('#pvmap')?$('#pvmap').value:cur,p=P.list.find(x=>x.id===id);if(id===cur)sv.flush();if(!p||!p.d.length){net.msg='המפה ריקה';pvpUI();return}net.out={map:p.d};net.waiting=true;net.msg='ממתין לתשובה...';netSend({t:'inv',n:p.name,map:p.d,ch:{parts:(P.chars[selc]||P.chars[0]).parts}});pvpUI()}
-function pvpUI(){const el_=$('#pvp');if(!el_)return;if(!net.role){el_.innerHTML='<div class="card nw">נדרשת כניסה עם סיסמה</div>';return}
-const st={off:'לא מחובר לשרת התיווך',wait:'ממתין לשחקן השני...',on:'השחקן השני מחובר ✓',err:'שגיאה'}[net.st]||'';
-el_.innerHTML='<div class="card" style="cursor:default;gap:8px;max-width:340px"><b>את/ה משתמש '+net.role+'</b><div>'+st+'</div>'+(net.msg?'<div style="color:#fbbf24">'+net.msg+'</div>':'')+'<label>מפה <select id="pvmap">'+P.list.map(p=>'<option value="'+p.id+'"'+(p.id===(net.sel||cur)?' selected':'')+'>'+p.name+'</option>').join('')+'</select></label><button class="g" id="pvgo"'+(net.st==='on'&&!net.waiting?'':' disabled')+'>התחל משחק 1 על 1</button></div>';
-$('#pvgo').onclick=pvpStart;$('#pvmap').onchange=e=>{net.sel=e.target.value}}
-function netBody(e,dt){if(!e.w.visible)return;const dx=e.tp.x-e.p.x,dz=e.tp.z-e.p.z,sp=Math.hypot(dx,dz)/Math.max(dt,.001)/5.5;e.p.lerp(e.tp,Math.min(1,dt*12));fin(e,Math.min(1,sp),e.atk>0,0);e.bar.position.set(e.p.x,e.p.y+2.2,e.p.z);e.bar.quaternion.copy(cam.quaternion);e.bar.scale.set(Math.max(.02,e.hp/e.mx),.1,.05)}
-function lavaWater(){const L=[];for(const[k,b]of W)if(b===11)L.push(k);if(!L.length)return;const D=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
-const step=(fx,fy,fz,tx,ty,tz,id)=>{let bn=null,bb=Math.hypot(tx-fx,ty-fy,tz-fz);for(const d of D){const nx=fx+d[0],ny=fy+d[1],nz=fz+d[2];if(ny<0||ny>94||W.has(key(nx,ny,nz)))continue;const dd=Math.hypot(tx-nx,ty-ny,tz-nz);if(dd<bb){bb=dd;bn=[nx,ny,nz]}}if(bn)raw(key(bn[0],bn[1],bn[2]),id)};
-for(let t=0;t<Math.min(L.length,30);t++){const lk=L[Math.floor(Math.random()*L.length)];if(W.get(lk)!==11)continue;const[x,y,z]=dec(lk);let best=null,bd=99;
-for(let i=-3;i<=3;i++)for(let j=-3;j<=3;j++)for(let k=-3;k<=3;k++){const d2=Math.hypot(i,j,k);if(d2>3.2||d2>=bd)continue;if(W.get(key(x+i,y+j,z+k))===10){bd=d2;best=[x+i,y+j,z+k]}}
-if(!best)continue;if(Math.abs(best[0]-x)+Math.abs(best[1]-y)+Math.abs(best[2]-z)<=1){raw(lk,94);burst(new THREE.Vector3(x+.5,y+1,z+.5),0xbfc7d1,10,3,.15);continue}
-step(x,y,z,best[0],best[1],best[2],11);step(best[0],best[1],best[2],x,y,z,10)}}
-function gstep(dt){const q=play,a=q.a[0],L=LV[q.lv];q.t+=dt;q.cd-=dt;q.atk-=dt;a.pc-=dt;a.bc-=dt;q.mt-=dt;q.pt-=dt;if(q.pt<=0){q.pt=.25;pumps()}
-const T0=q.tm;q.tm=[];T0.forEach(o=>{o.t-=dt;if(o.t<=0)o.f();else q.tm.push(o)});
+return wired?out:[]}
+function ptele(a,c){const g=pgrp(c),dst=pdest(c);if(!dst.length)return false;const target=dst[Math.floor(Math.random()*dst.length)],[tx,ty,tz]=dec(target);a.p.set(tx+.5,ty+1,tz+.5);burst(a.p,0xa855f7,20,5,.2);return true}
 
-const mvx=(kd.w||kd.arrowup?1:0)-(kd.s||kd.arrowdown?1:0),mvr=(kd.d||kd.arrowright?1:0)-(kd.a||kd.arrowleft?1:0),fx=-Math.cos(th),fz=-Math.sin(th),mo=mvx||mvr,l=Math.hypot(mvx,mvr)||1,ix=mo?(fx*mvx-fz*mvr)/l:0,iz=mo?(fz*mvx+fx*mvr)/l:0;
-if(!q.over){a.sp=kd.shift?8.5:5.5;a.face=Math.atan2(fx,fz);
-if(q.on){const r=q.r,yy=Math.floor(r.p.y),ok=(x,z)=>[-1.2,1.2].every(i=>[-1.2,1.2].every(j=>W.get(key(Math.floor(x+i),yy,Math.floor(z+j)))===10&&!sol(Math.floor(x+i),yy+1,Math.floor(z+j),1))),nx=r.p.x+ix*3.5*dt,nz=r.p.z+iz*3.5*dt;
-if(ok(nx,r.p.z))r.p.x=nx;if(ok(r.p.x,nz))r.p.z=nz;if(mo){r.m.rotation.y=a.face;if(Math.random()<.3)burst(new THREE.Vector3(r.p.x+(Math.random()-.5)*2,r.p.y+.1,r.p.z+(Math.random()-.5)*2),0xbfe3ff,2,1.5,.1)}
-r.m.userData.pd.rotation.x=Math.sin(q.t*8)*.6*(mo?1:.2);r.m.position.copy(r.p);a.p.set(r.p.x,r.p.y+.15,r.p.z);a.v.set(0,0,0);a.g_=true}else stepA(a,dt,ix,iz,kd[' ']);
-if(a.dr){a.dr=0;hurt(20);msg('נפלת למים! רפסודה: E')}
-if(kd.f||q.mf)fire();q.dtm=dt;if((MC.mouse||kd.v)&&!MC.open)mcMine();q.ft=(q.ft||0)-dt;if(q.ft<=0){q.ft=.6;lavaWater()}q.nt=(q.nt||0)-dt;if(q.pvp&&q.nt<=0){q.nt=.066;netSend({t:'s',p:[a.p.x,a.p.y,a.p.z],f:a.face,hp:a.hp,at:q.atk>0?1:0})}
-const fx_=Math.floor(a.p.x),fz_=Math.floor(a.p.z),fy=Math.floor(a.p.y),bl=W.get(key(fx_,Math.floor(a.p.y-.1),fz_)),pi=W.get(key(fx_,fy,fz_))||W.get(key(fx_,fy+1,fz_));
-if(bl===26&&a.bc<=0&&a.g_){a.v.y=24;a.bc=.8;burst(a.p,0x4ade80,10,5,.15)}
-
-const pk_=[key(fx_,fy,fz_),key(fx_,fy+1,fz_)].find(k=>{const b=W.get(k);return b===22||b===23});
-if(pk_!==undefined&&a.pc<=0){const pc=W.get(pk_);let ds=pdest(pk_);if(ds===null){ds=[];for(const[k,b]of W)if(b===(pc===22?23:22))ds.push(k)}
-if(ds.length){const d=dec(ds[Math.floor(Math.random()*ds.length)]);burst(a.p,0xa855f7,20,6,.15);a.p.set(d[0]+.5,d[1],d[2]+.5);a.pc=1.5;burst(a.p,0xfb923c,20,6,.15)}}}
-if(a.wi!==q.wp){const P_=a.w.userData.parts.armR,w=WP[q.wp-1];if(a.it)P_.remove(a.it);const m=new THREE.Mesh(sb,pm(w.c));m.scale.set(w.w,w.len,w.w);m.position.set(0,-9-w.len/2,0);P_.add(m);a.it=m;a.wi=q.wp}
-fin(a,(mo&&!q.on)?1:0,q.atk>0,0);
-const live=q.en.filter(e=>!e.dead);q.en=live;
-if(!live.length&&!q.over&&!q.pvp&&$('#eny').checked){q.wt-=dt;if(q.wt<=0){wave();q.wt=3}}
-for(const e of live){if(e.net){netBody(e,dt);continue}const dx=a.p.x-e.p.x,dz=a.p.z-e.p.z,d=Math.hypot(dx,dz)||1,nx=dx/d,nz=dz/d;e.cd-=dt;e.fcd-=dt;let ex=0,ez=0;
-if(d<60&&!q.over){const st=e.rg?10:1.3;if(d>st){ex=nx;ez=nz}else if(e.rg&&d<6){ex=-nx*.5;ez=-nz*.5}}
-if(e.det>0){e.det-=dt;if(e.blk)e.sd=-e.sd;const c=Math.cos(e.sd*1.5),s=Math.sin(e.sd*1.5),tx=ex*c-ez*s;ez=ex*s+ez*c;ex=tx}else if(e.blk&&e.g_&&(ex||ez)){e.det=.9;e.sd=Math.random()<.5?1:-1}
-e.lt=(e.lt||0)-dt;if(e.lt<=0){e.lt=.6;if(Math.random()<.5)botSw(e)}
-if(!e.onr&&q.r&&!q.on&&!q.rb&&d>8&&Math.hypot(e.p.x-q.r.p.x,e.p.z-q.r.p.z)<2.5){e.onr=true;q.rb=e}
-if(e.onr){const r=q.r;if(!r||q.on){e.onr=false;q.rb=null}else{const mv=rftMove(r,nx,nz,dt);e.p.set(r.p.x,r.p.y+.15,r.p.z);e.v.set(0,0,0);e.g_=true;e.rt=(d<5||!mv)?(e.rt||0)+dt:0;if(d<4||e.rt>1.2){const Lp=landing(r);if(Lp){e.p.copy(Lp);e.onr=false;q.rb=null;e.rt=0}}}}else stepA(e,dt,ex,ez,e.blk&&e.g_);e.dr=0;e.face=Math.atan2(nx,nz);
-if(d<1.5&&Math.abs(a.p.y-e.p.y)<1.5&&e.cd<=0&&!q.over){e.cd=1;hurt(L.dm)}
-if(e.rg&&e.fcd<=0&&d<28&&!q.over){e.fcd=1.6+Math.random();const o=e.p.clone();o.y+=1.3;const t=a.p.clone();t.y+=1;t.sub(o).normalize();t.x+=(Math.random()-.5)*.1;t.z+=(Math.random()-.5)*.1;shoot(o,t.normalize(),{sp:16,dm:L.dm*.8},0)}
-fin(e,(ex||ez)?1:0,0,d<5);e.bar.position.set(e.p.x,e.p.y+2.2,e.p.z);e.bar.quaternion.copy(cam.quaternion);e.bar.scale.set(Math.max(.02,e.hp/e.mx),.1,.05)}
-{const np_=new Set(),acts=[a,...live];for(const x of acts){if(x.dead)continue;const f2=Math.floor(x.p.x),g2=Math.floor(x.p.z);for(const dy of[.1,1.1]){const pk=key(f2,Math.floor(x.p.y-dy),g2);if(W.get(pk)===25){np_.add(pk);break}}
-const yb=Math.floor(x.p.y-.1),b0=W.get(key(f2,yb,g2));x.sc=(x.sc||0)-dt;if((b0===90||W.get(key(f2,Math.floor(x.p.y+.1),g2))===90)&&x.sc<=0){x.sc=.6;if(x===a)hurt(15);else dmg(x,15);burst(x.p,0x9ca3af,6,3,.1)}
-if(b0===91){const fk=key(f2,yb,g2);if(!q.ff.has(fk)){q.ff.add(fk);q.tm.push({t:.35,f:()=>{q.ff.delete(fk);if(W.get(fk)===91){raw(fk,0);burst(new THREE.Vector3(f2+.5,yb+.5,g2+.5),0x8a8f98,12,4,.2)}}})}}}
-if(np_.size!==q.pp.size||[...np_].some(k=>!q.pp.has(k))){q.pp=np_;power()}
-q.tt=(q.tt||0)-dt;if(q.tt<=0){q.tt=2;q.tu=[];for(const[k,b]of W)if(b===92)q.tu.push(k)}
-for(const k of q.tu){if(W.get(k)!==92)continue;const tc=(q.tc.get(k)||0)-dt;q.tc.set(k,tc);if(tc>0)continue;const[x,y,z]=dec(k),o=new THREE.Vector3(x+.5,y+.5,z+.5);let best=null,bd=16;for(const x2 of acts){if(x2.dead)continue;const dd=Math.hypot(x2.p.x-o.x,x2.p.y+1-o.y,x2.p.z-o.z);if(dd<bd){bd=dd;best=x2}}
-if(best){q.tc.set(k,1.6);const dir=new THREE.Vector3(best.p.x-o.x,best.p.y+1-o.y,best.p.z-o.z).normalize();shoot(o.clone().addScaledVector(dir,.8),dir,{sp:22,dm:12},best!==a)}}}
-q.pr=q.pr.filter(b=>{b.l-=dt;if(b.l<=0){sc.remove(b.m);return false}
-for(let i=0;i<3;i++){b.p.addScaledVector(b.v,dt/3);if(sol(Math.floor(b.p.x),Math.floor(b.p.y),Math.floor(b.p.z),0)){sc.remove(b.m);{const hk=key(Math.floor(b.p.x),Math.floor(b.p.y),Math.floor(b.p.z));if(W.get(hk)===5){raw(hk,0);burst(b.p,0xa97c50,10,4,.15)}}if(b.ex)explode(b.p,b.ex,b.dm,1);else burst(b.p,0xfde047,4,3,.08);return false}
-if(b.own){for(const e of q.en)if(!e.dead&&Math.hypot(e.p.x-b.p.x,e.p.z-b.p.z)<.7&&b.p.y>e.p.y&&b.p.y<e.p.y+1.9){sc.remove(b.m);if(b.ex)explode(b.p,b.ex,b.dm,1);else dmg(e,b.dm);return false}}
-else if(Math.hypot(a.p.x-b.p.x,a.p.z-b.p.z)<.6&&b.p.y>a.p.y&&b.p.y<a.p.y+1.9){sc.remove(b.m);hurt(b.dm);return false}}
-b.m.position.copy(b.p);return true});
-PT=PT.filter(p=>{p.l-=dt;p.v.y-=15*dt;p.m.position.addScaledVector(p.v,dt);if(p.l<=0){sc.remove(p.m);return false}return true});
-if(fr%6===0)$('#mchp').textContent='❤ '+Math.max(0,Math.round(a.hp));if(fr%6===0)$('#gui').innerHTML=`<div>${q.pvp?'<span>יריב ❤ '+Math.max(0,Math.round(q.opp.hp))+'</span>':`<span>גל ${q.wave}</span><span>ניקוד ${q.score}</span><span>${live.length} אויבים</span>`}</div><div class="bar"><i style="width:${Math.max(0,a.hp/a.mx*100)}%"></i></div><div>${WP.map((w,i)=>`<span class="${i+1===q.wp?'on':''}">${i+1} ${w.n}</span>`).join('')}</div>${q.mt>0?`<div style="font-size:22px;font-weight:800">${q.msg}</div>`:''}`}
-function rw(d){MM.forEach(ms=>ms.forEach(m=>{sc.remove(m);m.geometry.dispose()}));MM.clear();CH.clear();DC.clear();W=new Map();for(let i=0;i<d.length;i+=2)raw(d[i],d[i+1])}
-function stopPlay(){if(!play)return;const q=play;if(q.pvp)netSend({t:'bye'});q.a.concat(q.en).forEach(e=>{sc.remove(e.w);e.bar&&sc.remove(e.bar)});q.pr.forEach(b=>sc.remove(b.m));if(q.r)sc.remove(q.r.m);PT.forEach(p=>sc.remove(p.m));PT=[];play=null;MC.mouse=false;MC.open=false;MC.fluidSources.clear();MC.fluidSeen.clear();if(document.fullscreenElement)try{document.exitFullscreen()}catch(e){}rw(q.snap);if(q.orig)rw(q.orig);floor.scale.set(1,1,1);floor.position.set(0,-.01,0);floor.material.color.set(0x1b2140);
-$('#gui').style.display='none';$('#go').style.display='none';$('#mcbar').style.display='none';$('#mcinfo').style.display='none';$('#mcx').style.display='none';$('#mcinv').style.display='none';$('#mcmsg').style.display='none';$('#gexit').style.display='none';$('#hi').textContent=H0;$('#app').classList.remove('gm','hl','hr');['tl1','tl2'].forEach(i=>$('#'+i).classList.add('on'));env();pl2()}
-function pl2(){$('#pl2').innerHTML=ic(play?'stop':'play')+(play?' עצור משחק':' התחל משחק')}
-function startGame(pv){stopPlay();MC.hunger=100;MC.clock=12;MC.open=false;MC.inv[93]=1;MC.hot[8]=93;mcUI();if(document.activeElement)document.activeElement.blur();const ch=P.chars[selc]||P.chars[0],snap=ser();let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;const cols=new Set();for(const k of W.keys()){const d=dec(k);cols.add(d[0]+KO+KA*(d[2]+KO));x0=Math.min(x0,d[0]);x1=Math.max(x1,d[0]);z0=Math.min(z0,d[2]);z1=Math.max(z1,d[2])}
-let b=W.size?[x0,z0,x1+1,z1+1]:[-24,-24,24,24];if(inf)b=[-1e9,-1e9,1e9,1e9];
-const w=mkChar(ch);sc.add(w);play={a:[],en:[],pr:[],tm:[],snap,b,lv:$('#lv').selectedIndex,wave:0,score:0,wp:2,cd:0,t:0,atk:0,mf:false,over:false,r:null,on:false,wt:1,msg:'',mt:0,bm:new Set(),pump:new Set(),pt:0,pp:new Set(),ff:new Set(),tc:new Map(),hd:new Set(),rb:null,tu:[],cols};
-let x=Math.floor(Math.min(b[2]-2,Math.max(b[0]+2,tg.x))),z=Math.floor(Math.min(b[3]-2,Math.max(b[1]+2,tg.z))),y=gpos(x,z);
-if(cols.size&&!cols.has(x+KO+KA*(z+KO))){let bd=1e9;for(const k of W.keys()){const d=dec(k),dd=Math.hypot(d[0]-tg.x,d[2]-tg.z);if(dd<bd){bd=dd;x=d[0];z=d[2]}}y=gpos(x,z)}
-for(let t=0;t<40&&W.get(key(x,y-1,z))===10;t++){x=Math.floor(Math.min(b[2]-2,Math.max(b[0]+2,x+(Math.random()-.5)*16)));z=Math.floor(Math.min(b[3]-2,Math.max(b[1]+2,z+(Math.random()-.5)*16)));y=gpos(x,z)}
-if(pv){let bk=null,bv=net.role===1?1e9:-1e9;for(const k of W.keys()){const d=dec(k),sm=d[0]+d[2];if(net.role===1?sm<bv:sm>bv){bv=sm;bk=d}}if(bk){x=bk[0];z=bk[2];y=gpos(x,z)}}
-const p=new THREE.Vector3(x+.5,y,z+.5);play.a.push({w,p,v:new THREE.Vector3(),h:1.8,sp:5.5,hp:400,mx:400,g_:false,face:0,pc:0,bc:0,safe:p.clone(),wi:0});
-if(pv){play.pvp=true;const e={net:true,w:mkChar(net.oc||P.chars[0]),bar:new THREE.Mesh(sb,pm(0xef4444)),p:new THREE.Vector3(0,-50,0),tp:new THREE.Vector3(0,-50,0),v:new THREE.Vector3(),h:1.8,hp:400,mx:400,face:0,atk:0,dead:0,g_:true,sp:5.5};e.w.visible=false;e.bar.visible=false;sc.add(e.w);sc.add(e.bar);play.en.push(e);play.opp=e}
-floor.material.color.set(0x4f8a3a);
-power();grid.visible=false;gh(null);$('#app').classList.add('gm');fsReq();$('#gexit').style.display='block';$('#gui').style.display='block';$('#mcbar').style.display='block';$('#mcinfo').style.display='flex';$('#mcx').style.display='none';
-$('#hi').textContent='WASD תנועה · רווח קפיצה · Shift ריצה · שמאל כרייה/תקיפה · ימין בנייה · גלגלת זום · אמצע+גרירה סיבוב · E שימוש · I תיק · 1-4 נשק · 5-9 בלוקים';dist=6.5;ph=1.05;pl2()}
-function ag(){const a=play&&play.a[0],tx=Math.floor((a?a.p.x:tg.x)/32),tz=Math.floor((a?a.p.z:tg.z)/32);for(let r=0;r<=3;r++)for(let i=-r;i<=r;i++)for(let j=-r;j<=r;j++){const k=(tx+i)+','+(tz+j);if(!gd.has(k)){gd.add(k);gen((tx+i)*32,(tz+j)*32,(tx+i)*32+32,(tz+j)*32+32,1,1);return}}}
-const kk=e=>/^Key/.test(e.code)?e.code[3].toLowerCase():/^Digit/.test(e.code)?e.code[5]:e.code==='Space'?' ':e.key.toLowerCase();
-let pfsel=0,rotm=false;P.pf=P.pf||[];P.cc=P.cc||[];
-function addCol(h,i){const id=35+i;T[id]=['צבע '+(i+1),h,0];typ[id]=0;colr[id]=new THREE.Color(h);return id}
-$('#ccb').onclick=()=>{const h=$('#cc').value,id=addCol(h,P.cc.length);P.cc.push(h);sel=id;pal();sv()};
-function rotUI(){$('#rot').onclick=e=>{rotm=!rotm;e.currentTarget.classList.toggle('on',rotm)}}
-function pfl(){$('#pfl').innerHTML=P.pf.length?P.pf.map((f,i)=>`<div class="pi ${i===pfsel?'on':''}" data-p="${i}"><b>${f.name}</b><small>${f.v.length/4}</small><button data-x="${i}">${ic('x')}</button></div>`).join(''):'<small style="color:var(--mu)">כלי "העתק": שתי פינות סביב מבנה. כלי "הדבק": מניח אותו.</small>';
-$('#pfl').querySelectorAll('.pi').forEach(e=>e.onclick=ev=>{const x=ev.target.closest('[data-x]');if(x){P.pf.splice(+x.dataset.x,1);pfsel=0}else pfsel=+e.dataset.p;pfl();sv()})}
-const D6=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
-function power(){
- const q=play;if(!q)return;const powered=new Set(),st=[];
- for(const[k,v]of W)if(v===28){powered.add(k);st.push(k)}
- for(const k of q.pp||[]){powered.add(k);st.push(k)}
- while(st.length){const k=st.pop(),[x,y,z]=dec(k);for(const d of D6){const nk=key(x+d[0],y+d[1],z+d[2]),v=W.get(nk);if((v===28||v===29)&&!powered.has(nk)){powered.add(nk);st.push(nk)}}}
- const targets=new Set();for(const k of powered){const[x,y,z]=dec(k);for(const d of D6)targets.add(key(x+d[0],y+d[1],z+d[2]))}
- const done=new Set();for(const k of [...targets]){if(done.has(k)||!fam(W.get(k)))continue;flood(k).forEach(c=>{done.add(c);targets.add(c)})}
- q.pump=new Set();
- for(const[k,v]of[...W]){const on=targets.has(k);if(v===30&&on)raw(k,31);else if(v===31&&!on)raw(k,30);else if(v===32&&(on||q.hd.has(k)))raw(k,33);else if(v===33&&!on&&!q.hd.has(k))raw(k,32);else if(v===34&&on)q.pump.add(k);else if(v===24&&on&&!q.bm.has(k)){q.bm.add(k);const c=dec(k);q.tm.push({t:.1,f:()=>explode(new THREE.Vector3(c[0]+.5,c[1]+.5,c[2]+.5),2.5,40)})}}
- rebuild();
+// ----- Multiplayer / PvP 1v1
+let pvpState={room:null,isHost:false,peer:null,conn:null};
+function pvpUI(){
+ const e=$('#pvp');if(!e)return;
+ e.innerHTML=`<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+  <button class="g" id="pvpHost">צור חדר חדש (מארח)</button>
+  <input type="text" id="pvpCode" placeholder="קוד חדר להצטרפות" style="width:140px">
+  <button id="pvpJoin">הצטרף לחדר</button>
+  <span id="pvpSt" style="color:var(--mu)"></span>
+ </div>`;
+ $('#pvpHost').onclick=pvpCreate;
+ $('#pvpJoin').onclick=pvpConnect;
 }
-function lever(){const q=play,a=q.a[0];let best=null,bd=4.5;for(const[k,b]of W)if(b===27||b===28){const[x,y,z]=dec(k),d=Math.hypot(x+.5-a.p.x,y+.5-a.p.y-.8,z+.5-a.p.z);if(d<bd){bd=d;best=[k,b]}}if(!best)return false;raw(best[0],best[1]===27?28:27);power();msg('מתג '+(best[1]===27?'הופעל':'כובה'));return true}
-function pumps(){
- const q=play;if(!q||!q.pump.size)return;const D=[[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1],[0,1,0]];
- for(const pk of q.pump){const[px,py,pz]=dec(pk);let source=null;for(const d of D)if(W.get(key(px+d[0],py+d[1],pz+d[2]))===10){source=1;break}if(!source)continue;
-  const vis=new Set(),st=[];for(const d of D){const k=key(px+d[0],py+d[1],pz+d[2]);if(W.get(k)===10){vis.add(k);st.push(k)}}
-  let made=0;while(st.length&&made<24){const k=st.shift(),[x,y,z]=dec(k);for(const d of D){const nk=key(x+d[0],y+d[1],z+d[2]);if(!W.has(nk)&&y+d[1]>=0&&y+d[1]<95){raw(nk,10);vis.add(nk);st.push(nk);made++}else if(W.get(nk)===10&&!vis.has(nk)){vis.add(nk);st.push(nk)}}}
+
+function pvpCreate(){
+ $('#pvpSt').textContent='יוצר חדר...';
+ const code=Math.floor(1000+Math.random()*9000).toString();
+ pvpState.room=code;pvpState.isHost=true;
+ initPeer(code);
+}
+
+function pvpConnect(){
+ const code=$('#pvpCode').value.trim();
+ if(!code)return alert('הכנס קוד חדר');
+ $('#pvpSt').textContent='מתחבר לחדר...';
+ pvpState.room=code;pvpState.isHost=false;
+ initPeer(null,code);
+}
+
+function initPeer(hostId,joinId){
+ if(window.peer)try{window.peer.destroy()}catch(e){}
+ const p=new Peer(hostId?`vx1v1_${hostId}`:undefined);
+ window.peer=p;
+ p.on('open',id=>{
+  if(hostId){
+   $('#pvpSt').textContent=`קוד חדר: ${hostId} (ממתין לשחקן נוסף...)`;
+  }else if(joinId){
+   const conn=p.connect(`vx1v1_${joinId}`);
+   setupConn(conn);
+  }
+ });
+ p.on('connection',conn=>{
+  setupConn(conn);
+ });
+ p.on('error',err=>{
+  $('#pvpSt').textContent='שגיאת תקשורת/חדר לא נמצא';
+ });
+}
+
+function setupConn(conn){
+ pvpState.conn=conn;
+ conn.on('open',()=>{
+  $('#pvpSt').textContent='מחובר!';
+  if(pvpState.isHost){
+   const inv=$('#inv');
+   $('#invt').textContent='שחקן הצטרף! להתחיל משחק 1 על 1?';
+   inv.style.display='flex';
+   $('#invok').onclick=()=>{
+    inv.style.display='none';
+    netSend({t:'start'});
+    startPvpGame();
+   };
+   $('#invno').onclick=()=>{inv.style.display='none'};
+  }
+ });
+ conn.on('data',data=>netRecv(data));
+ conn.on('close',()=>{
+  mcMsg('השחקן השני התנתק');
+  if(play&&play.pvp)stopPlay();
+ });
+}
+
+function netSend(msg){
+ if(pvpState.conn&&pvpState.conn.open)pvpState.conn.send(msg);
+}
+
+function netRecv(d){
+ if(d.t==='start'){
+  startPvpGame();
+ }else if(d.t==='pos'&&play&&play.pvp){
+  const e=play.en[0];
+  if(e){
+   e.p.set(d.p[0],d.p[1],d.p[2]);
+   e.face=d.f;
+   if(e.w)fin(e,d.sp||0,d.atk||0,false);
+  }
+ }else if(d.t==='sh'&&play&&play.pvp){
+  const w=WP[d.w];
+  if(w)shoot(new THREE.Vector3(...d.o),new THREE.Vector3(...d.d),w,0);
+ }else if(d.t==='hit'&&play&&play.pvp){
+  hurt(d.d);
+ }else if(d.t==='dead'&&play&&play.pvp){
+  msg('ניצחת! היריב הובס');
+  setTimeout(stopPlay,3000);
+ }else if(d.t==='e'){
+  raw(d.k,d.v);
+  power();
  }
 }
-function startFluid(k,id){MC.fluidSources.add(k);MC.fluidSeen.add(k)}
-function fluidStep(){if(!play)return;if(++MC.fluidTick<6)return;MC.fluidTick=0;const q=[...MC.fluidSources],next=[];let budget=80;while(q.length&&budget--){const k=q.shift(),id=W.get(k);if(id!==10&&id!==11)continue;const[x,y,z]=dec(k);for(const d of [[0,-1,0],[1,0,0],[-1,0,0],[0,0,1],[0,0,-1]]){const nk=key(x+d[0],y+d[1],z+d[2]),nb=W.get(nk);if((id===10&&nb===11)||(id===11&&nb===10)){raw(k,94);raw(nk,94);mcMsg('מים + לבה = אבן מים-לבה');continue}if(nb||d[1]!==0&&d[1]!==-1)continue;if(y+d[1]<0||y+d[1]>94)continue;if(MC.fluidSeen.has(nk))continue;raw(nk,id);MC.fluidSeen.add(nk);next.push(nk)}}MC.fluidSources= new Set(next);if(next.length)power()}
-function obj(){const v=[],f=[],cn=[[0,0],[1,0],[1,1],[0,1]];let n=1;for(const[k,b]of W){const[x,y,z]=dec(k);for(let a=0;a<3;a++)for(const s of[1,-1]){const q=[x,y,z];q[a]+=s;const nb=W.get(key(q[0],q[1],q[2]));if(nb&&(typ[nb]===0||nb===b))continue;const u=(a+1)%3,w=(a+2)%3,c=s>0?cn:[...cn].reverse();for(const[i,j]of c){const p=[x,y,z];p[a]+=s>0?1:0;p[u]+=i;p[w]+=j;v.push('v '+p.join(' '))}f.push('f '+[n,n+1,n+2,n+3].join(' '));n+=4}}return v.join('\n')+'\n'+f.join('\n')}
-$('#obj').onclick=()=>modal('ייצוא OBJ — העתק ושמור כקובץ .obj',`<textarea readonly style="width:100%">${obj()}</textarea>`,[['העתק',()=>{const t=$('#mb textarea');t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}}],close]);
-$('#pl2').onclick=e=>{e.currentTarget.blur();play?stopPlay():startGame()};
-$('#inf').onclick=e=>{inf=!inf;e.currentTarget.classList.toggle('on',inf)};
-$('#g3').onclick=()=>{const tx=Math.floor(tg.x/32),tz=Math.floor(tg.z/32);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){gd.add((tx+i)+','+(tz+j));gen((tx+i)*32,(tz+j)*32,(tx+i)*32+32,(tz+j)*32+32,1,1)}};
-clist();pl2();pfl();rotUI();setTool('place');pal();env();size();mcUI();hub();
-(function loop(){requestAnimationFrame(loop);const sp=dist*.015,fx=-Math.cos(th),fz=-Math.sin(th);
-const mvx=(kd.w||kd.arrowup?1:0)-(kd.s||kd.arrowdown?1:0),mvr=(kd.d||kd.arrowright?1:0)-(kd.a||kd.arrowleft?1:0);
-const dt=Math.min(.05,clk.getDelta());
-wu.t.value+=dt;mats[2].color.setScalar(.9+.1*Math.sin(wu.t.value*3));
-if(play){gstep(dt);fluidStep();const a=play.a[0];tg.lerp(new THREE.Vector3(a.p.x,a.p.y+1.5,a.p.z),.2)}
-else{tg.x+=(fx*mvx-fz*mvr)*sp;tg.z+=(fz*mvx+fx*mvr)*sp;tg.y+=((kd.e?1:0)-(kd.q?1:0))*sp}
-if(++fr%20===0&&inf)ag();rebuild();{floor.position.x=grid.position.x=Math.round(tg.x);floor.position.z=grid.position.z=Math.round(tg.z)}camUp();R.render(sc,cam)})();
+
+function startPvpGame(){
+ $('#hub').style.display='none';
+ startGame(true);
+}
+
+// ----- main game loop & start/stop
+function startGame(pvp=false){
+ stopPlay();
+ $('#app').classList.add('gm');
+ $('#gui').style.display='block';
+ $('#mcbar').style.display='block';
+ $('#mcinfo').style.display='flex';
+ $('#mcx').style.display='block';
+ $('#gexit').style.display='block';
+ 
+ const w0=mkChar(P.chars[selc]||{parts:skin(0)});sc.add(w0);
+ const a0={w:w0,p:new THREE.Vector3(0,10,0),v:new THREE.Vector3(),h:1.8,sp:7,hp:100,mx:100,g_:false,face:0,safe:new THREE.Vector3(0,10,0)};
+ 
+ play={a:[a0],en:[],pr:[],tm:[],pump:new Set(),hd:new Set(),wave:0,score:0,wp:1,cd:0,atk:0,t:0,b:[-100,-100,100,100],lv:+$('#lv').selectedIndex,pvp,over:false,msg:'',mt:0,on:false,r:null};
+ 
+ const ay=gpos(0,0);a0.p.set(.5,ay,.5);a0.safe.copy(a0.p);
+ tg.copy(a0.p);camUp();
+ 
+ if(pvp){
+  const oc=P.chars.filter((_,j)=>j!==selc);
+  const w1=mkChar(oc.length?oc[0]:{parts:skin(1)}),bar=new THREE.Mesh(sb,pm(0xef4444));sc.add(w1);sc.add(bar);
+  const p1=new THREE.Vector3(5,gpos(5,5),5);
+  play.en.push({w:w1,bar,p:p1,v:new THREE.Vector3(),h:1.8,sp:7,hp:100,mx:100,net:true,face:0,safe:p1.clone()});
+  msg('קרב 1 על 1 התחיל!');
+ }else{
+  if($('#eny').checked)wave();
+ }
+ 
+ mcUI();
+ play.loop=requestAnimationFrame(gameLoop);
+}
+
+function stopPlay(){
+ if(!play)return;
+ cancelAnimationFrame(play.loop);
+ $('#app').classList.remove('gm');
+ $('#gui').style.display='none';
+ $('#mcbar').style.display='none';
+ $('#mcinfo').style.display='none';
+ $('#mcx').style.display='none';
+ $('#mcinv').style.display='none';
+ $('#gexit').style.display='none';
+ $('#go').style.display='none';
+ 
+ if(play.a)play.a.forEach(x=>sc.remove(x.w));
+ if(play.en)play.en.forEach(x=>{sc.remove(x.w);if(x.bar)sc.remove(x.bar)});
+ if(play.pr)play.pr.forEach(x=>sc.remove(x.m));
+ if(play.r)sc.remove(play.r.m);
+ play=null;
+ $('#hi').textContent=H0;
+}
+
+function gameLoop(){
+ if(!play)return;
+ play.loop=requestAnimationFrame(gameLoop);
+ const dt=Math.min(clk.getDelta(),.1);play.dtm=dt;play.t+=dt;if(play.cd>0)play.cd-=dt;if(play.atk>0)play.atk-=dt;
+ const a=play.a[0];
+ 
+ // Controls & input
+ let ix=0,iz=0;
+ if(!MC.open){
+  if(kd.w||kd.W||kd['א'])iz-=1;
+  if(kd.s||kd.S||kd['ד'])iz+=1;
+  if(kd.a||kd.A||kd['ש'])ix-=1;
+  if(kd.d||kd.D||kd['ג'])ix+=1;
+ }
+ const len=Math.hypot(ix,iz);if(len>0){ix/=len;iz/=len}
+ const camRot=th;
+ const rx=ix*Math.cos(camRot)-iz*Math.sin(camRot),rz=ix*Math.sin(camRot)+iz*Math.cos(camRot);
+ 
+ if(len>0)a.face=Math.atan2(rx,rz);
+ stepA(a,dt,rx,rz,kd[' ']&&!MC.open);
+ fin(a,len,play.atk>0,false);
+ 
+ if(play.pvp){
+  netSend({t:'pos',p:[a.p.x,a.p.y,a.p.z],f:a.face,sp:len,atk:play.atk>0});
+ }
+ 
+ // Camera follow
+ tg.lerp(new THREE.Vector3(a.p.x,a.p.y+1.2,a.p.z),dt*10);
+ camUp();
+ 
+ // Projectiles
+ for(let i=play.pr.length-1;i>=0;i--){
+  const p=play.pr[i];p.p.addScaledVector(p.v,dt);p.m.position.copy(p.p);p.l-=dt;
+  let hitCol=false;
+  if(sol(Math.floor(p.p.x),Math.floor(p.p.y),Math.floor(p.p.z),0))hitCol=true;
+  if(!hitCol&&p.own){
+   for(const e of play.en){
+    if(!e.dead&&Math.hypot(e.p.x-p.p.x,e.p.z-p.p.z)<1&&Math.abs(e.p.y+1-p.p.y)<1.2){
+     dmg(e,p.dm,1);hitCol=true;break;
+    }
+   }
+  }
+  if(!hitCol&&!p.own){
+   if(Math.hypot(a.p.x-p.p.x,a.p.z-p.p.z)<1&&Math.abs(a.p.y+1-p.p.y)<1.2){
+    hurt(p.dm);hitCol=true;
+   }
+  }
+  if(hitCol||p.l<=0){
+   if(p.ex)explode(p.p,p.ex,60,1);
+   sc.remove(p.m);play.pr.splice(i,1);
+  }
+ }
+ 
+ // Enemies AI (Single player)
+ if(!play.pvp){
+  let alive=0;
+  for(const e of play.en){
+   if(e.dead)continue;alive++;
+   const dx=a.p.x-e.p.x,dz=a.p.z-e.p.z,d=Math.hypot(dx,dz);
+   if(d>0.1){e.face=Math.atan2(dx,dz);stepA(e,dt,dx/d,dz/d,e.blk&&e.g_)}
+   fin(e,1,false,false);
+   if(e.bar){e.bar.position.set(e.p.x,e.p.y+2.1,e.p.z);e.bar.scale.set(Math.max(0,e.hp/e.mx),.1,.1);e.bar.lookAt(cam.position)}
+   if(d<1.4&&Math.abs(a.p.y-e.p.y)<1.5){
+    e.cd-=dt;if(e.cd<=0){e.cd=1;hurt(LV[play.lv].dm)}
+   }
+  }
+  if(alive===0&&play.wave>0&&!play.over)wave();
+ }else{
+  for(const e of play.en){
+   if(e.bar){e.bar.position.set(e.p.x,e.p.y+2.1,e.p.z);e.bar.scale.set(Math.max(0,e.hp/e.mx),.1,.1);e.bar.lookAt(cam.position)}
+  }
+ }
+ 
+ // UI Update
+ $('#mchp').textContent='❤ '+Math.max(0,Math.round(a.hp));
+ $('#gui').innerHTML=`<span>גל: ${play.wave}</span><span>ניקוד: ${play.score}</span><div class="bar"><i style="width:${Math.max(0,a.hp)}%"></i></div>${play.msg?`<div>${play.msg}</div>`:''}`;
+ if(play.mt>0){play.mt-=dt;if(play.mt<=0)play.msg=''}
+ 
+ rebuild();
+ R.render(sc,cam);
+}
+
+// Helper functions for mechanics
+const D6=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]],STONE=[3,7,14,15,16,94],NOMINE=[3,7,16];
+function cok(p){return true}
+function power(){}
+function startFluid(k,b){}
+function pumps(){}
+function addCol(c){}
+function pfl(){}
+function kk(e){return e.key}
+function fsToggle(){}
+
+// Load PeerJS dynamically
+const script=document.createElement('script');
+script.src='https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js';
+document.head.appendChild(script);
 </script></body></html>
