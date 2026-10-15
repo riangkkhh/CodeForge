@@ -104,7 +104,7 @@ button.tb.pri{background:var(--acc);color:var(--accink)}.tb.on{background:var(--
     <div id="scroll"><div id="sheet" contenteditable="true" spellcheck="false"></div></div>
     <div id="ai">
       <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)"><b class="grow" style="display:flex;gap:6px;align-items:center"><svg class="i"><use href="#sp"/></svg> עוזר כתיבה ועיצוב</b><button class="tb " id="cg" title="הגדרות"><svg class="i"><use href="#gr"/></svg></button><button class="tb " id="xAi" title="סגור"><svg class="i"><use href="#x"/></svg></button></div>
-      <div id="cfg"><span>מפתח API של Google AI Studio (נשמר רק בדפדפן שלך):</span><input id="key" type="password" placeholder="AIza..." dir="ltr"><span>מודל (חינמי):</span><input id="mdl" list="mdls" dir="ltr"><datalist id="mdls"><option value="gemini-2.5-flash"><option value="gemini-2.5-flash-lite"><option value="gemini-2.0-flash"></datalist><span id="cn" style="color:var(--mut)"></span></div>
+      <div id="cfg"><span>מפתח API של Google AI Studio (נשמר רק בדפדפן שלך):</span><input id="key" type="password" placeholder="AIza..." dir="ltr"><span>מודל (חינמי):</span><input id="mdl" list="mdls" dir="ltr"><datalist id="mdls"><option value="gemini-3.8-flash"></datalist><span id="cn" style="color:var(--mut)"></span></div>
       <div class="chips" id="chips"></div>
       <div id="msgs"><div class="m a">שלום! סמנו טקסט במסמך ובחרו פעולה, או כתבו לי מה ליצור. בלי סימון אני עובד על כל המסמך.</div></div>
       <div id="ask"><textarea id="q" placeholder="כתבו בקשה..."></textarea><button class="pri" id="send">שלח</button></div>
@@ -222,13 +222,15 @@ $('#eMore').onchange=async e=>{const v=e.target.value;e.target.value='';if(v==='
 // AI assistant
 $('#tAi').onclick=()=>$('#ai').classList.toggle('off');$('#xAi').onclick=()=>$('#ai').classList.add('off');
 $('#cg').onclick=()=>{const c=$('#cfg');c.style.display=c.style.display==='flex'?'none':'flex'};
-$('#key').value=LS.get('summit:key')||'';$('#mdl').value=LS.get('summit:mdl')||'gemini-2.5-flash';
-$('#key').onchange=e=>LS.set('summit:key',e.target.value.trim());$('#mdl').onchange=e=>LS.set('summit:mdl',e.target.value.trim());
+$('#key').value=LS.get('summit:key')||'';$('#mdl').value=(LS.get('summit:mdl')||'').replace(/^gemini-(2\.[05]).*$/,'')||'gemini-3.8-flash';
+$('#key').onchange=e=>{LS.set('summit:key',e.target.value.trim());bestModel(e.target.value.trim())};$('#mdl').onchange=e=>LS.set('summit:mdl',e.target.value.trim());
 let rng=null;document.addEventListener('selectionchange',()=>{const s=getSelection();if(s.rangeCount&&!s.isCollapsed&&sheet.contains(s.anchorNode))rng=s.getRangeAt(0).cloneRange()});
 const SYS='אתה עוזר מקצועי לכתיבה ועיצוב מסמכים. ענה בשפת המשתמש (ברירת מחדל עברית). החזר תמיד קטע HTML בלבד, בלי הסברים מסביב ובלי גדרות markdown, באמצעות התגיות p,h1,h2,ul,ol,li,b,i,u,table,tr,th,td בלבד. שמור על מבנה מסמך נקי ומקצועי.';
 function clean(h){const t=document.createElement('template');t.innerHTML=h.replace(/^\s*```(?:html)?\s*|\s*```\s*$/gi,'');t.content.querySelectorAll('script,style,iframe,object,embed,link,meta,img,form,svg').forEach(n=>n.remove());t.content.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||/javascript:/i.test(a.value))n.removeAttribute(a.name)}));return t.innerHTML}
-async function ask(prompt){
-  const key=LS.get('summit:key'),model=($('#mdl').value||'gemini-2.5-flash').trim();let note='';
+async function bestModel(k){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':k}}),j=await r.json(),A=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/',''));$('#mdls').innerHTML=A.map(n=>'<option value="'+n+'">').join('');const v=n=>parseFloat((n.match(/(\d+(?:\.\d+)?)/)||[0,0])[1]);return A.filter(n=>/flash/.test(n)&&!/lite|image|tts|live|exp|thinking/.test(n)).sort((a,b)=>v(b)-v(a))[0]}catch(e){}}
+async function ask(prompt){try{return await ask1(prompt)}catch(e){const k=LS.get('summit:key');if(k&&/no longer available|not found|not supported|deprecated/i.test(e.message||'')){const m=await bestModel(k);if(m&&m!==$('#mdl').value){$('#mdl').value=m;LS.set('summit:mdl',m);return await ask1(prompt)}}throw e}}
+async function ask1(prompt){
+  const key=LS.get('summit:key'),model=($('#mdl').value||'gemini-3.8-flash').trim();let note='';
   if(key){try{
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
     const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||('שגיאה '+r.status));
