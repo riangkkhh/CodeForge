@@ -228,9 +228,20 @@ let rng=null;document.addEventListener('selectionchange',()=>{const s=getSelecti
 const SYS='אתה עוזר מקצועי לכתיבה ועיצוב מסמכים. ענה בשפת המשתמש (ברירת מחדל עברית). החזר תמיד קטע HTML בלבד, בלי הסברים מסביב ובלי גדרות markdown, באמצעות התגיות p,h1,h2,ul,ol,li,b,i,u,table,tr,th,td בלבד. שמור על מבנה מסמך נקי ומקצועי.';
 function clean(h){const t=document.createElement('template');t.innerHTML=h.replace(/^\s*```(?:html)?\s*|\s*```\s*$/gi,'');t.content.querySelectorAll('script,style,iframe,object,embed,link,meta,img,form,svg').forEach(n=>n.remove());t.content.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||/javascript:/i.test(a.value))n.removeAttribute(a.name)}));return t.innerHTML}
 async function bestModel(k){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':k}}),j=await r.json(),A=(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/',''));$('#mdls').innerHTML=A.map(n=>'<option value="'+n+'">').join('');const v=n=>parseFloat((n.match(/(\d+(?:\.\d+)?)/)||[0,0])[1]);return A.filter(n=>/flash/.test(n)&&!/lite|image|tts|live|exp|thinking/.test(n)).sort((a,b)=>v(b)-v(a))[0]}catch(e){}}
-async function ask(prompt){try{return await ask1(prompt)}catch(e){const k=LS.get('summit:key');if(k&&/no longer available|not found|not supported|deprecated/i.test(e.message||'')){const m=await bestModel(k);if(m&&m!==$('#mdl').value){$('#mdl').value=m;LS.set('summit:mdl',m);return await ask1(prompt)}}throw e}}
-async function ask1(prompt){
-  const key=LS.get('summit:key'),model=($('#mdl').value||'gemini-3.8-flash').trim();let note='';
+const sleep=t=>new Promise(r=>setTimeout(r,t)),busy=e=>/high demand|overload|unavailable|try again|429|503|quota|rate/i.test(e.message||''),gone=e=>/no longer available|not found|not supported|deprecated/i.test(e.message||'');
+let onStat=()=>{};
+async function altModels(k,cur){try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':k}}),j=await r.json(),v=n=>parseFloat((n.match(/(\d+(?:\.\d+)?)/)||[0,0])[1]);return(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')).filter(n=>/flash/.test(n)&&n!==cur&&!/image|tts|live|exp|thinking|audio/.test(n)).sort((a,b)=>v(b)-v(a)).slice(0,3)}catch(e){return[]}}
+async function ask(prompt){const k=LS.get('summit:key');
+ try{return await ask1(prompt)}catch(e){
+  if(k&&gone(e)){const m=await bestModel(k);if(m&&m!==$('#mdl').value){$('#mdl').value=m;LS.set('summit:mdl',m);return await ask1(prompt)}}
+  if(k&&busy(e)){
+   for(const d of [2500,6000]){onStat('המודל עמוס, מנסה שוב...');await sleep(d);try{return await ask1(prompt)}catch(x){if(!busy(x))throw x}}
+   for(const m of await altModels(k,$('#mdl').value)){onStat('מנסה מודל חלופי: '+m);try{const r=await ask1(prompt,m);r.note='המודל הראשי עמוס, נעשה שימוש ב-'+m;return r}catch(x){if(!busy(x)&&!gone(x))throw x}}
+   if(sample){onStat('עובר לעוזר המובנה...');const r=await sample(SYS+'\n\n'+prompt);return{text:r.text,via:'Claude (מובנה)',note:'Gemini עמוס כרגע.'}}
+   throw new Error('Gemini עמוס כרגע גם במודלים החלופיים. נסו שוב בעוד דקה.')}
+  throw e}}
+async function ask1(prompt,mo){
+  const key=LS.get('summit:key'),model=(mo||$('#mdl').value||'gemini-3.8-flash').trim();let note='';
   if(key){try{
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
     const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||('שגיאה '+r.status));
@@ -243,7 +254,7 @@ function add(cls,html){const d=document.createElement('div');d.className='m '+cl
 function applyHtml(h,mode){sheet.focus();if(mode==='sel'&&rng){const s=getSelection();s.removeAllRanges();s.addRange(rng);document.execCommand('insertHTML',false,h)}else{sheet.insertAdjacentHTML('beforeend',h)}sheet.dispatchEvent(new Event('input'))}
 async function run(instr,label){
   if(!instr)return;const sel=rng&&!rng.collapsed?rng.toString().trim():'',ctx=sel||sheet.innerText.slice(0,30000);
-  add('u',esc(label||instr));const w=add('a','חושב...');
+  add('u',esc(label||instr));const w=add('a','חושב...');onStat=t=>w.textContent=t;
   try{const r=await ask(instr+(ctx?'\n\n'+(sel?'הטקסט שנבחר:':'תוכן המסמך:')+'\n"""\n'+ctx+'\n"""':''));const h=clean(r.text);
     w.innerHTML=h+'<small>'+esc(r.via)+(r.note?' · '+esc(r.note):'')+'</small><div class="acts"><button data-m="sel">החלף בחירה</button><button data-m="end">הוסף לסוף</button><button data-m="all">החלף הכל</button></div>';
     w.querySelectorAll('.acts button').forEach(b=>b.onclick=()=>{if(b.dataset.m==='all'){sheet.innerHTML=h;sheet.dispatchEvent(new Event('input'))}else applyHtml(h,b.dataset.m)})
@@ -306,7 +317,3 @@ $('#dOk').onclick=()=>{const d=cc.getImageData(0,0,ca.width,ca.height).data;let 
 </script>
 </body>
 </html>
-
-<!-- Injection By NetFree -->
-<script src="//netfree.link/injection-script/go-payment.js" type="text/javascript" async ></script>
-<script src="//netfree.link/injection-script/popup-card-init.js" type="text/javascript" async ></script>
