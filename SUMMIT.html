@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Summit – עורך מסמכים חכם</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6fa;--bar:#fff;--ink:#14213d;--mut:#64708a;--line:#dbe1ec;--acc:#1f4fd8;--accink:#fff;--gold:#f2a93b;--card:#fff;color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1220;--bar:#151c30;--ink:#e9edf7;--mut:#93a0bd;--line:#27304a;--acc:#6f9bff;--accink:#0b1226;--card:#151c30;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1220;--bar:#151c30;--ink:#e9edf7;--mut:#93a0bd;--line:#27304a;--acc:#6f9bff;--accink:#0b1226;--card:#151c30;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bar);z-index:20}
+button,select,input,textarea,label.btn{font:inherit;font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button,label.btn{cursor:pointer}button:hover,label.btn:hover{border-color:var(--acc)}
+.pri{background:var(--acc);color:var(--accink);border-color:var(--acc);font-weight:600}
+button:disabled{opacity:.4;cursor:default}
+a{color:var(--acc)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;letter-spacing:.5px;cursor:pointer}
+.brand svg{width:30px;height:30px}
+/* home */
+#home{min-height:100%;display:flex;flex-direction:column}
+.hero{text-align:center;padding:56px 18px 30px;background:linear-gradient(180deg,rgba(31,79,216,.14),transparent)}
+.hero h1{font-size:clamp(38px,8vw,72px);margin:10px 0 0;letter-spacing:1px}
+.hero h1 span{color:var(--gold)}
+.hero p{max-width:560px;margin:12px auto 22px;color:var(--mut);font-size:18px;line-height:1.6}
+.cta{font-size:17px;padding:12px 26px;border-radius:12px}
+#drop{max-width:560px;margin:22px auto 0;border:2px dashed var(--line);border-radius:16px;padding:22px;color:var(--mut)}
+#drop.drag{border-color:var(--acc);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;max-width:980px;margin:10px auto;padding:0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card b{display:flex;gap:8px;align-items:center;margin-bottom:6px}.ci{color:var(--gold);width:22px;height:22px}.card span{color:var(--mut);font-size:14px;line-height:1.5}
+footer{margin-top:auto;text-align:center;padding:26px 14px;color:var(--mut);font-size:14px}
+footer a{font-weight:700;letter-spacing:1px;text-decoration:none}
+/* editor */
+#ed{display:none;height:100%;flex-direction:column}
+.sep{width:1px;height:22px;background:var(--line);margin:0 2px}.grow{flex:1}
+#main{flex:1;display:flex;min-height:0}
+#scroll{flex:1;overflow:auto;padding:18px 10px 60px;display:flex;justify-content:center;align-items:flex-start}
+#sheet{width:794px;max-width:100%;min-height:1123px;background:#fff;color:#111;padding:70px;box-shadow:0 2px 14px rgba(0,0,0,.2);outline:none;font-family:"David","Times New Roman",serif;font-size:16px;line-height:1.55;overflow-wrap:anywhere}
+#sheet p,#sheet h1,#sheet h2{margin:0 0 10px}#sheet h1{font-size:26px}#sheet h2{font-size:20px}
+#sheet table{border-collapse:collapse;width:100%;margin:8px 0}#sheet td,#sheet th{border:1px solid #999;padding:6px}
+.pb{border:0;border-top:1px dashed #bbb;margin:18px 0}
+#find{display:none;gap:6px;padding:6px 10px;background:var(--bar);border-bottom:1px solid var(--line);flex-wrap:wrap}
+#ai{width:360px;border-inline-start:1px solid var(--line);background:var(--bar);display:flex;flex-direction:column;min-height:0}
+#ai.off{display:none}
+#msgs{flex:1;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:10px}
+.m{border-radius:12px;padding:9px 11px;font-size:14px;line-height:1.55;border:1px solid var(--line)}
+.m.u{background:var(--acc);color:var(--accink);border-color:var(--acc);align-self:flex-start;max-width:90%}
+.m.a p,.m.a h1,.m.a h2{margin:0 0 6px}.m.a table{border-collapse:collapse}.m.a td,.m.a th{border:1px solid var(--line);padding:3px}
+.m small{display:block;color:var(--mut);margin-top:6px}.acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.acts button{font-size:12px;padding:3px 8px}
+.chips{display:flex;gap:5px;flex-wrap:wrap;padding:6px 10px}.chips button{font-size:12px;padding:3px 9px;border-radius:99px}
+#ask{display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--line)}#ask textarea{flex:1;resize:none;height:54px}
+#cfg{display:none;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px;gap:6px;flex-direction:column}#cfg input{width:100%}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.hd{background:var(--bar);border-bottom:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:8px}
+.rb{background:var(--bar);border-bottom:1px solid var(--line);padding:6px 10px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.g{display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--bg);flex:none;align-items:center}
+button.tb,label.tb,.ib{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:34px;height:34px;padding:0 8px;border:0;border-radius:9px;background:transparent;cursor:pointer;color:var(--ink);position:relative;white-space:nowrap}
+.tb:hover,.ib:hover{background:color-mix(in srgb,var(--acc) 18%,transparent)}
+button.tb.pri{background:var(--acc);color:var(--accink)}.tb.on{background:var(--acc)!important;color:var(--accink)}
+.g select,select.tb{border:0;background:transparent;height:34px;border-radius:9px}
+.ib input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0;border:0;cursor:pointer}
+.ib u{position:absolute;bottom:4px;left:9px;right:9px;height:3px;border-radius:2px;text-decoration:none}
+.pop{position:fixed;z-index:30;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:none}
+.shg{display:grid;grid-template-columns:repeat(4,52px);gap:6px}.shg .tb{height:40px}.pop svg.s{width:38px;height:27px}
+.pop input[type=color]{width:34px;height:30px;padding:0}.pr{display:flex;gap:8px;align-items:center;margin-top:8px;font-size:13px;color:var(--mut)}
+#sheet img{max-width:100%;cursor:pointer}#sheet img.sel{outline:2px solid #1f4fd8;outline-offset:2px}
+.modal{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:10px}
+.dwbox{background:var(--card);border-radius:16px;padding:10px;width:min(920px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:8px}
+#cv{background:#fff;border-radius:10px;width:100%;height:auto;touch-action:none;cursor:crosshair;border:1px solid var(--line)}
+.dwt{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media(max-width:600px){.hero{padding:30px 14px 16px}.hero p{font-size:15px}.cta{display:block;width:100%;max-width:340px;margin:8px auto}.grid{grid-template-columns:1fr;padding:0 14px}#drop{margin:16px 14px 0;padding:16px}.tx{display:none}.hd{padding:6px 8px}.brand{font-size:17px}#st{display:none}#sheet{min-height:70vh}footer{padding:18px 12px}}
+@media(max-width:900px){#ai{position:fixed;inset:auto 0 0 0;width:100%;height:62%;z-index:15;border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(0,0,0,.25)}#sheet{padding:26px 16px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs><symbol id="b" viewBox="0 0 24 24"><path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z"/></symbol><symbol id="it" viewBox="0 0 24 24"><path d="M19 4h-9M14 20H5M15 4 9 20"/></symbol><symbol id="u" viewBox="0 0 24 24"><path d="M6 4v6a6 6 0 0 0 12 0V4M4 20h16"/></symbol><symbol id="ar" viewBox="0 0 24 24"><path d="M21 6H3M21 12H9M21 18H5"/></symbol><symbol id="ac" viewBox="0 0 24 24"><path d="M21 6H3M17 12H7M19 18H5"/></symbol><symbol id="al" viewBox="0 0 24 24"><path d="M21 6H3M15 12H3M17 18H3"/></symbol><symbol id="ul" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol><symbol id="ol" viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></symbol><symbol id="tb" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></symbol><symbol id="pg" viewBox="0 0 24 24"><path d="M3 12h4M10 12h4M17 12h4M6 3h12v6M6 21h12v-6"/></symbol><symbol id="dr" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></symbol><symbol id="sr" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol><symbol id="un" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></symbol><symbol id="re" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></symbol><symbol id="im" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></symbol><symbol id="sh" viewBox="0 0 24 24"><path d="M12 3 7 11h10z"/><rect x="3" y="14" width="7" height="7" rx="1"/><circle cx="17.5" cy="17.5" r="3.5"/></symbol><symbol id="pn" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol><symbol id="sp" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol><symbol id="dn" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></symbol><symbol id="fl" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol><symbol id="up" viewBox="0 0 24 24"><path d="M12 15V3m0 0L8 7m4-4 4 4M4 21h16"/></symbol><symbol id="gr" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol><symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="tr" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/></symbol><symbol id="pl" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="mi" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol><symbol id="er" viewBox="0 0 24 24"><path d="m7 21-4.3-4.3a1 1 0 0 1 0-1.4l9.6-9.6a1 1 0 0 1 1.4 0l5.6 5.6a1 1 0 0 1 0 1.4L11 21zM22 21H7M5 11l9 9"/></symbol><symbol id="hi" viewBox="0 0 24 24"><path d="m9 11-6 6v3h9l3-3M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></symbol><symbol id="br" viewBox="0 0 24 24"><path d="m9 12 8-8a2.8 2.8 0 1 1 4 4l-8 8M7 15a3 3 0 0 0-3 3c0 1.3-2.5 1.5-2 2 1 1 2.5 2 4 2a4 4 0 0 0 4-4 3 3 0 0 0-3-3z"/></symbol><symbol id="pc" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol><symbol id="pt" viewBox="0 0 24 24"><path d="m12 19 7-7 3 3-7 7zM18 13l-1.5-7.5L2 2l3.5 14.5L13 18zM2 2l7.6 7.6"/><circle cx="11" cy="11" r="2"/></symbol><symbol id="ck" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="ty" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol><symbol id="lk" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol><symbol id="zp" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol><symbol id="sv" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7V3M8 21v-7h8v7"/></symbol></defs></svg>
+<svg width="0" height="0" style="position:absolute"><symbol id="lg" viewBox="0 0 32 32"><path d="M2 28 13 7l5 9 3-4 9 16z" fill="currentColor"/><path d="m13 7 3.4 6.2-2.4-1.2-1.7 2.2-1.6-2.4z" fill="#fff" opacity=".9"/></symbol></svg>
+
+<div id="home">
+  <div class="hero">
+    <div class="brand" style="justify-content:center;color:var(--acc)"><svg><use href="#lg"/></svg>SUMMIT</div>
+    <h1>המסמך שלך, <span>בפסגה.</span></h1>
+    <p>מעלים PDF, עורכים כמו בוורד, מקבלים עזרה מעוזר AI לכתיבה ועיצוב, ומורידים כ-PDF או Word. הכל קורה בדפדפן שלך.</p>
+    <button class="pri cta" id="go">פתיחת העורך</button>
+    <button class="cta" id="resume" style="display:none">המשך מסמך אחרון</button>
+    <div id="drop">או גררו לכאן קובץ PDF</div>
+  </div>
+  <div class="grid">
+    <div class="card"><b><svg class="i ci"><use href="#lk"/></svg> פרטיות מלאה</b><span>הקבצים לא עוזבים את המכשיר שלך ולא עולים לשום שרת.</span></div>
+    <div class="card"><b><svg class="i ci"><use href="#zp"/></svg> המרה חכמה</b><span>זיהוי כותרות ופסקאות, הסרת כותרות עליונות ומספרי עמודים חוזרים, וחיבור שורות שנקטעו.</span></div>
+    <div class="card"><b><svg class="i ci"><use href="#sp"/></svg> עוזר AI</b><span>שיפור ניסוח, סיכום, תרגום, תיקון שגיאות וכתיבת מסמך מאפס, עם Gemini או Claude.</span></div>
+    <div class="card"><b><svg class="i ci"><use href="#sv"/></svg> שמירה אוטומטית</b><span>העריכה נשמרת במכשיר, כדי שאפשר לחזור אליה בכל רגע.</span></div><div class="card"><b><svg class="i ci"><use href="#pn"/></svg> תמונות, צורות וציור</b><span>הוספת תמונות וצורות, וציור חופשי עם עט, עיפרון, טוש, מרקר וקליגרפיה.</span></div>
+  </div>
+  <footer>פותח על ידי <a href="https://riangkkhh.github.io/My-website/" target="_blank" rel="noopener">MONT BLANC</a> · Summit</footer>
+</div>
+
+<div id="ed">
+  <div class="hd"><div class="brand" id="home2" style="color:var(--acc)"><svg class=""><use href="#lg"/></svg><span>SUMMIT</span></div><span class="grow"></span><span id="st" style="font-size:13px;color:var(--mut)"></span><label class="tb" title="PDF חדש"><svg class="i"><use href="#up"/></svg><span class="tx">PDF חדש</span><input id="file" type="file" accept="application/pdf" hidden></label><button class="tb pri" id="tAi" title="עוזר AI"><svg class="i"><use href="#sp"/></svg><span class="tx">עוזר AI</span></button><button class="tb " id="ePdf" title="PDF"><svg class="i"><use href="#dn"/></svg><span class="tx">PDF</span></button><button class="tb " id="eDocx" title="Word"><svg class="i"><use href="#fl"/></svg><span class="tx">Word</span></button><select id="eMore" class="tb"><option value="">עוד...</option><option value="html">HTML</option><option value="txt">טקסט</option></select></div><div class="rb"><div class="g"><button class="tb" data-c="undo" title="ביטול"><svg class="i"><use href="#un"/></svg></button><button class="tb" data-c="redo" title="שחזור"><svg class="i"><use href="#re"/></svg></button></div><div class="g"><button class="tb" data-c="bold" title="מודגש"><svg class="i"><use href="#b"/></svg></button><button class="tb" data-c="italic" title="נטוי"><svg class="i"><use href="#it"/></svg></button><button class="tb" data-c="underline" title="קו תחתון"><svg class="i"><use href="#u"/></svg></button></div><div class="g"><select id="blk"><option value="p">פסקה</option><option value="h1">כותרת</option><option value="h2">כותרת משנה</option></select><select id="fs"><option value="">גודל</option><option value="2">קטן</option><option value="3">רגיל</option><option value="5">גדול</option><option value="6">ענק</option></select></div><div class="g"><label class="ib" title="צבע טקסט"><svg class="i"><use href="#ty"/></svg><input type="color" id="col" value="#c0392b"></label><label class="ib" title="הדגשה"><svg class="i"><use href="#hi"/></svg><input type="color" id="hl" value="#fff176"></label></div><div class="g"><button class="tb" data-c="justifyRight" title="ימין"><svg class="i"><use href="#ar"/></svg></button><button class="tb" data-c="justifyCenter" title="מרכז"><svg class="i"><use href="#ac"/></svg></button><button class="tb" data-c="justifyLeft" title="שמאל"><svg class="i"><use href="#al"/></svg></button><button class="tb" data-c="insertUnorderedList" title="רשימה"><svg class="i"><use href="#ul"/></svg></button><button class="tb" data-c="insertOrderedList" title="רשימה ממוספרת"><svg class="i"><use href="#ol"/></svg></button></div><div class="g"><button class="tb " id="tbl" title="טבלה"><svg class="i"><use href="#tb"/></svg></button><button class="tb " id="pgb" title="שבירת עמוד"><svg class="i"><use href="#pg"/></svg></button><button class="tb " id="dir" title="כיוון טקסט"><svg class="i"><use href="#dr"/></svg></button><button class="tb " id="fnd" title="חיפוש והחלפה"><svg class="i"><use href="#sr"/></svg></button></div><div class="g"><label class="tb" title="תמונה"><svg class="i"><use href="#im"/></svg><span class="tx">תמונה</span><input id="img" type="file" accept="image/*" hidden></label><button class="tb " id="bSh" title="צורות"><svg class="i"><use href="#sh"/></svg><span class="tx">צורות</span></button><button class="tb " id="bDw" title="ציור"><svg class="i"><use href="#pn"/></svg><span class="tx">ציור</span></button></div></div><div id="shp" class="pop"><div class="shg" id="shg"></div><div class="pr">מילוי<input type="color" id="sf" value="#4f7cff"><label><input type="checkbox" id="sn"> ללא</label>קו<input type="color" id="ss" value="#1f3a8a"></div></div><div id="ob" class="pop" style="flex-direction:row;gap:2px;padding:4px"><button class="tb " id="oM" title="הקטן"><svg class="i"><use href="#mi"/></svg></button><button class="tb " id="oP" title="הגדל"><svg class="i"><use href="#pl"/></svg></button><button class="tb " id="oR" title="ימין"><svg class="i"><use href="#ar"/></svg></button><button class="tb " id="oC" title="מרכז"><svg class="i"><use href="#ac"/></svg></button><button class="tb " id="oL" title="שמאל"><svg class="i"><use href="#al"/></svg></button><button class="tb " id="oD" title="מחק"><svg class="i"><use href="#tr"/></svg></button></div><div id="dw" class="modal"><div class="dwbox"><div class="dwt"><div class="g"><button class="tb" data-p="pen" title="עט כדורי"><svg class="i"><use href="#pn"/></svg></button><button class="tb" data-p="pc" title="עיפרון"><svg class="i"><use href="#pc"/></svg></button><button class="tb" data-p="mk" title="טוש"><svg class="i"><use href="#br"/></svg></button><button class="tb" data-p="hl" title="מרקר"><svg class="i"><use href="#hi"/></svg></button><button class="tb" data-p="cal" title="קליגרפיה"><svg class="i"><use href="#pt"/></svg></button><button class="tb" data-p="er" title="מחק"><svg class="i"><use href="#er"/></svg></button></div><label class="ib" title="צבע"><input type="color" id="pc" value="#1f2937" style="position:static;opacity:1;width:34px;height:30px"></label><input type="range" id="ps" min="1" max="24" value="4" style="width:110px;padding:0"><button class="tb " id="dU" title="ביטול"><svg class="i"><use href="#un"/></svg></button><button class="tb " id="dC" title="נקה"><svg class="i"><use href="#tr"/></svg></button><span class="grow"></span><button class="tb pri" id="dOk" title="הוסף למסמך"><svg class="i"><use href="#ck"/></svg><span class="tx">הוסף למסמך</span></button><button class="tb " id="dX" title="סגור"><svg class="i"><use href="#x"/></svg></button></div><canvas id="cv" width="900" height="560"></canvas></div></div>
+<div id="find"><input id="f1" placeholder="חיפוש"><input id="f2" placeholder="החלפה ב..."><button id="fr">החלף הכל</button><span id="fc" style="align-self:center;font-size:13px;color:var(--mut)"></span></div>
+  <div id="main">
+    <div id="scroll"><div id="sheet" contenteditable="true" spellcheck="false"></div></div>
+    <div id="ai">
+      <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)"><b class="grow" style="display:flex;gap:6px;align-items:center"><svg class="i"><use href="#sp"/></svg> עוזר כתיבה ועיצוב</b><button class="tb " id="cg" title="הגדרות"><svg class="i"><use href="#gr"/></svg></button><button class="tb " id="xAi" title="סגור"><svg class="i"><use href="#x"/></svg></button></div>
+      <div id="cfg"><span>מפתח API של Google AI Studio (נשמר רק בדפדפן שלך):</span><input id="key" type="password" placeholder="AIza..." dir="ltr"><span>מודל (חינמי):</span><input id="mdl" list="mdls" dir="ltr"><datalist id="mdls"><option value="gemini-2.5-flash"><option value="gemini-2.5-flash-lite"><option value="gemini-2.0-flash"></datalist><span id="cn" style="color:var(--mut)"></span></div>
+      <div class="chips" id="chips"></div>
+      <div id="msgs"><div class="m a">שלום! סמנו טקסט במסמך ובחרו פעולה, או כתבו לי מה ליצור. בלי סימון אני עובד על כל המסמך.</div></div>
+      <div id="ask"><textarea id="q" placeholder="כתבו בקשה..."></textarea><button class="pri" id="send">שלח</button></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+<script>
+const $=s=>document.querySelector(s),sheet=$('#sheet'),HEB=/[\u0590-\u05FF]/;
+let name='document',dl=null,sample=null,saved=null;
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+try{pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}catch(e){}
+(async()=>{try{dl=await claude.use('downloads')}catch(e){}try{sample=await claude.use('sample')}catch(e){}})();
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const say=t=>$('#st').textContent=t||'';
+function view(v){$('#home').style.display=v==='home'?'flex':'none';$('#ed').style.display=v==='ed'?'flex':'none';if(v==='home')$('#resume').style.display=LS.get('summit:doc')?'':'none'}
+function open(html,n){sheet.innerHTML=html;if(n)name=n;view('ed');count();if(innerWidth<900)$('#ai').classList.add('off')}
+$('#go').onclick=()=>open(sheet.innerHTML||'<p dir="auto">התחילו לכתוב כאן, או העלו PDF.</p>');
+$('#resume').onclick=()=>open(LS.get('summit:doc'),LS.get('summit:name')||'document');
+$('#home2').onclick=()=>view('home');
+view('home');
+function count(){const t=sheet.innerText.trim();say((t?t.split(/\s+/).length:0)+' מילים')}
+let tm;sheet.addEventListener('input',()=>{count();clearTimeout(tm);tm=setTimeout(()=>{LS.set('summit:doc',sheet.innerHTML.replace(/ class="sel"/g,''));LS.set('summit:name',name)},800)});
+
+async function load(f){
+  if(!f||!/pdf$/i.test(f.type||f.name))return;
+  name=f.name.replace(/\.pdf$/i,'');
+  try{
+    const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise,P=[],sizes=[];
+    for(let n=1;n<=pdf.numPages;n++){
+      const tc=await(await pdf.getPage(n)).getTextContent(),lines=[];
+      tc.items.filter(i=>i.str.trim()).forEach(i=>{
+        const it={s:i.str,x:i.transform[4],w:i.width,y:i.transform[5],h:Math.abs(i.transform[3])||i.height,b:/bold|black|heavy/i.test((tc.styles[i.fontName]||{}).fontFamily||i.fontName||'')};
+        sizes.push(it.h);let l=lines.find(l=>Math.abs(l.y-it.y)<Math.max(2,it.h*.4));if(!l)lines.push(l={y:it.y,h:0,it:[]});l.it.push(it);l.h=Math.max(l.h,it.h)});
+      lines.sort((a,b)=>b.y-a.y);
+      lines.forEach(l=>{const rtl=HEB.test(l.it.map(i=>i.s).join(''));l.it.sort((a,b)=>rtl?b.x-a.x:a.x-b.x);
+        l.t=l.it.map(i=>i.s).join(rtl?' ':'').replace(/\s+/g,' ').trim();l.b=l.it.every(i=>i.b);
+        l.w=Math.max(...l.it.map(i=>i.x+i.w))-Math.min(...l.it.map(i=>i.x))});
+      P.push(lines.filter(l=>l.t))}
+    sizes.sort((a,b)=>a-b);const med=sizes[sizes.length>>1]||12;
+    // smart: drop repeated headers/footers and page numbers
+    const key=t=>t.replace(/\d+/g,'#'),cnt={};
+    P.forEach(L=>new Set([...L.slice(0,2),...L.slice(-2)].map(l=>key(l.t))).forEach(k=>cnt[k]=(cnt[k]||0)+1));
+    let removed=0;
+    if(P.length>=3)P.forEach((L,i)=>P[i]=L.filter((l,j)=>{const edge=j<2||j>=L.length-2,bad=edge&&(cnt[key(l.t)]>=Math.max(2,P.length*.6)||/^[-–\s]*\d{1,4}[-–\s]*$/.test(l.t));if(bad)removed++;return!bad}));
+    let html='';
+    P.forEach((L,pi)=>{
+      const maxW=Math.max(1,...L.map(l=>l.w));let cur=null,prev=null;
+      const flush=()=>{if(!cur)return;const t=cur.t.join(' ');const tag=cur.h>med*1.5?'h1':cur.h>med*1.2?'h2':'p';html+=`<${tag} dir="auto">${cur.b&&tag==='p'?'<b>'+esc(t)+'</b>':esc(t)}</${tag}>`;cur=null};
+      L.forEach(l=>{
+        const np=!cur||(prev.y-l.y)>l.h*1.9||Math.abs(l.h-cur.h)>1.5||l.b!==cur.b||(cur.lw<maxW*.72&&/[.:?!]$/.test(cur.t[cur.t.length-1]))||/^([•●▪·–-]|\d+[.)])\s/.test(l.t);
+        if(np){flush();cur={t:[],h:l.h,b:l.b}}
+        const last=cur.t[cur.t.length-1];
+        if(last&&/[a-z]-$/.test(last)&&/^[a-z]/.test(l.t))cur.t[cur.t.length-1]=last.slice(0,-1)+l.t;else cur.t.push(l.t);
+        cur.lw=l.w;prev=l});
+      flush();if(pi<P.length-1)html+='<hr class="pb" contenteditable="false">'});
+    open(html||'<p>לא נמצא טקסט בקובץ. ייתכן שזו סריקה.</p>',name);
+    say(pdf.numPages+' עמודים'+(removed?' · הוסרו '+removed+' שורות חוזרות':''));
+    LS.set('summit:doc',sheet.innerHTML.replace(/ class="sel"/g,''));LS.set('summit:name',name)
+  }catch(e){console.error(e);alert('שגיאה בקריאת הקובץ')}
+}
+$('#file').onchange=e=>load(e.target.files[0]);
+const dr=$('#drop');
+['dragover','dragenter'].forEach(v=>document.addEventListener(v,e=>{e.preventDefault();dr.classList.add('drag')}));
+document.addEventListener('dragleave',()=>dr.classList.remove('drag'));
+document.addEventListener('drop',e=>{e.preventDefault();dr.classList.remove('drag');load(e.dataTransfer.files[0])});
+
+// toolbar
+document.querySelectorAll('[data-c]').forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{sheet.focus();document.execCommand(b.dataset.c)}});
+$('#blk').onchange=e=>{sheet.focus();document.execCommand('formatBlock',false,e.target.value)};
+$('#fs').onchange=e=>{if(e.target.value){sheet.focus();document.execCommand('fontSize',false,e.target.value)}e.target.value=''};
+$('#col').oninput=e=>{sheet.focus();document.execCommand('foreColor',false,e.target.value)};
+$('#hl').oninput=e=>{sheet.focus();document.execCommand('hiliteColor',false,e.target.value)};
+['#tbl','#pgb','#dir'].forEach(s=>$(s).onmousedown=e=>e.preventDefault());
+$('#tbl').onclick=()=>{sheet.focus();const r=n=>'<tr>'+'<td><br></td>'.repeat(n)+'</tr>';document.execCommand('insertHTML',false,'<table>'+r(3).repeat(3)+'</table><p><br></p>')};
+$('#pgb').onclick=()=>{sheet.focus();document.execCommand('insertHTML',false,'<hr class="pb"><p><br></p>')};
+$('#dir').onclick=()=>{const s=getSelection();let n=s.anchorNode;while(n&&n.parentNode!==sheet)n=n.parentNode;if(n&&n.nodeType===1)n.dir=n.dir==='rtl'?'ltr':'rtl'};
+$('#fnd').onclick=()=>{const f=$('#find');f.style.display=f.style.display==='flex'?'none':'flex'};
+function textNodes(){const w=document.createTreeWalker(sheet,NodeFilter.SHOW_TEXT),a=[];while(w.nextNode())a.push(w.currentNode);return a}
+$('#fr').onclick=()=>{const a=$('#f1').value,b=$('#f2').value;if(!a)return;let n=0;textNodes().forEach(t=>{const p=t.textContent.split(a);if(p.length>1){n+=p.length-1;t.textContent=p.join(b)}});$('#fc').textContent=n+' החלפות';sheet.dispatchEvent(new Event('input'))};
+
+// export
+async function save(fn,data){if(!dl){say('ההורדה לא זמינה בתצוגה הזו');return}try{await dl.save({filename:fn,data});say('נשמר')}catch(e){say(e&&e.code==='declined'?'בוטל':'שגיאה בהורדה')}}
+$('#ePdf').onclick=async()=>{say('יוצר PDF...');try{
+  const hs=[...sheet.querySelectorAll('.pb')];hs.forEach(h=>h.style.visibility='hidden');
+  const c=await html2canvas(sheet,{scale:2,backgroundColor:'#fff'});hs.forEach(h=>h.style.visibility='');
+  const pdf=new jspdf.jsPDF({unit:'pt',format:'a4'}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),ph=Math.floor(c.width*H/W);
+  for(let y=0,p=0;y<c.height;y+=ph,p++){const s=document.createElement('canvas');s.width=c.width;s.height=Math.min(ph,c.height-y);s.getContext('2d').drawImage(c,0,y,c.width,s.height,0,0,c.width,s.height);if(p)pdf.addPage();pdf.addImage(s.toDataURL('image/jpeg',.92),'JPEG',0,0,W,s.height*W/c.width)}
+  await save(name+'-summit.pdf',pdf.output('blob'))}catch(e){console.error(e);say('שגיאה ביצירת PDF')}};
+$('#eDocx').onclick=async()=>{say('יוצר Word...');try{
+  const D=docx,out=[],IMGD=new Map();
+  for(const im of sheet.querySelectorAll('img')){const r=im.getBoundingClientRect(),c=document.createElement('canvas'),o=new Image();await new Promise(z=>{o.onload=z;o.onerror=z;o.src=im.src});c.width=o.naturalWidth||r.width;c.height=o.naturalHeight||r.height;c.getContext('2d').drawImage(o,0,0,c.width,c.height);const jp=/^data:image\/jpeg/.test(im.src),u=c.toDataURL(jp?'image/jpeg':'image/png',.9);IMGD.set(im,{d:Uint8Array.from(atob(u.split(',')[1]),ch=>ch.charCodeAt(0)),t:jp?'jpg':'png',w:Math.round(r.width),h:Math.round(r.height)})}
+  const runs=(node,st,r=[])=>{node.childNodes.forEach(n=>{
+    if(n.nodeType===3){if(n.textContent)r.push(new D.TextRun({text:n.textContent,bold:st.b,italics:st.i,underline:st.u?{}:undefined,color:st.c,rightToLeft:HEB.test(n.textContent)}))}
+    else if(n.tagName==='IMG'){const g=IMGD.get(n);if(g)r.push(new D.ImageRun({data:g.d,type:g.t,transformation:{width:g.w,height:g.h}}))}else if(n.nodeType===1){const c=n.getAttribute&&n.getAttribute('color');runs(n,{...st,b:st.b||/^(B|STRONG)$/.test(n.tagName)||/bold|[6-9]00/.test(n.style.fontWeight),i:st.i||/^(I|EM)$/.test(n.tagName),u:st.u||n.tagName==='U',c:c?c.replace('#',''):st.c},r)}});return r};
+  const al=el=>({center:D.AlignmentType.CENTER,left:D.AlignmentType.LEFT,right:D.AlignmentType.RIGHT})[el.style.textAlign];
+  const para=(el,x={})=>{const t=el.textContent,rtl=el.dir==='rtl'||(el.dir!=='ltr'&&HEB.test(t)),h=el.tagName==='H1'?32:el.tagName==='H2'?26:0;
+    const ch=runs(el,{b:!!h});if(h)ch.forEach(r=>r.options&&(r.options.size=h));
+    return new D.Paragraph({children:ch,bidirectional:rtl,alignment:al(el)||(rtl?D.AlignmentType.RIGHT:undefined),spacing:{after:140},...x})};
+  sheet.childNodes.forEach(el=>{
+    if(el.nodeType===3){if(el.textContent.trim())out.push(new D.Paragraph(el.textContent));return}
+    if(el.nodeType!==1)return;
+    if(el.classList.contains('pb'))return out.push(new D.Paragraph({children:[new D.PageBreak()]}));
+    if(/^(UL|OL)$/.test(el.tagName))return el.querySelectorAll('li').forEach(li=>out.push(para(li,el.tagName==='UL'?{bullet:{level:0}}:{numbering:{reference:'n',level:0}})));
+    if(el.tagName==='TABLE')return out.push(new D.Table({width:{size:100,type:D.WidthType.PERCENTAGE},rows:[...el.querySelectorAll('tr')].map(tr=>new D.TableRow({children:[...tr.cells].map(c=>new D.TableCell({children:[para(c)]}))}))}));
+    out.push(para(el))});
+  const doc=new D.Document({numbering:{config:[{reference:'n',levels:[{level:0,format:'decimal',text:'%1.',alignment:D.AlignmentType.START}]}]},sections:[{children:out.length?out:[new D.Paragraph('')]}]});
+  await save(name+'-summit.docx',await D.Packer.toBlob(doc))}catch(e){console.error(e);say('שגיאה ביצירת Word')}};
+$('#eMore').onchange=async e=>{const v=e.target.value;e.target.value='';if(v==='txt')await save(name+'.txt',sheet.innerText);else if(v==='html')await save(name+'.html','<!DOCTYPE html><html lang="he" dir="rtl"><meta charset="utf-8"><body style="max-width:800px;margin:auto;font-family:serif">'+sheet.innerHTML+'</body></html>')};
+
+// AI assistant
+$('#tAi').onclick=()=>$('#ai').classList.toggle('off');$('#xAi').onclick=()=>$('#ai').classList.add('off');
+$('#cg').onclick=()=>{const c=$('#cfg');c.style.display=c.style.display==='flex'?'none':'flex'};
+$('#key').value=LS.get('summit:key')||'';$('#mdl').value=LS.get('summit:mdl')||'gemini-2.5-flash';
+$('#key').onchange=e=>LS.set('summit:key',e.target.value.trim());$('#mdl').onchange=e=>LS.set('summit:mdl',e.target.value.trim());
+let rng=null;document.addEventListener('selectionchange',()=>{const s=getSelection();if(s.rangeCount&&!s.isCollapsed&&sheet.contains(s.anchorNode))rng=s.getRangeAt(0).cloneRange()});
+const SYS='אתה עוזר מקצועי לכתיבה ועיצוב מסמכים. ענה בשפת המשתמש (ברירת מחדל עברית). החזר תמיד קטע HTML בלבד, בלי הסברים מסביב ובלי גדרות markdown, באמצעות התגיות p,h1,h2,ul,ol,li,b,i,u,table,tr,th,td בלבד. שמור על מבנה מסמך נקי ומקצועי.';
+function clean(h){const t=document.createElement('template');t.innerHTML=h.replace(/^\s*```(?:html)?\s*|\s*```\s*$/gi,'');t.content.querySelectorAll('script,style,iframe,object,embed,link,meta,img,form,svg').forEach(n=>n.remove());t.content.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{if(/^on/i.test(a.name)||/javascript:/i.test(a.value))n.removeAttribute(a.name)}));return t.innerHTML}
+async function ask(prompt){
+  const key=LS.get('summit:key'),model=($('#mdl').value||'gemini-2.5-flash').trim();let note='';
+  if(key){try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error((j.error&&j.error.message)||('שגיאה '+r.status));
+    return{text:(j.candidates&&j.candidates[0].content.parts.map(p=>p.text).join(''))||'',via:'Gemini · '+model}
+  }catch(e){if(!(e instanceof TypeError))throw e;note='החיבור ל-Gemini נחסם בסביבה הזו (ייתכן שהאתר רץ בתוך claude.ai). עברתי לעוזר המובנה. ב-GitHub Pages של האתר Gemini יעבוד.'}}
+  if(sample){const r=await sample(SYS+'\n\n'+prompt);return{text:r.text,via:'Claude (מובנה)',note}}
+  throw new Error(note||'הוסיפו מפתח API של Google AI Studio בהגדרות ⚙')}
+const msgs=$('#msgs');
+function add(cls,html){const d=document.createElement('div');d.className='m '+cls;d.innerHTML=html;msgs.appendChild(d);msgs.scrollTop=1e9;return d}
+function applyHtml(h,mode){sheet.focus();if(mode==='sel'&&rng){const s=getSelection();s.removeAllRanges();s.addRange(rng);document.execCommand('insertHTML',false,h)}else{sheet.insertAdjacentHTML('beforeend',h)}sheet.dispatchEvent(new Event('input'))}
+async function run(instr,label){
+  if(!instr)return;const sel=rng&&!rng.collapsed?rng.toString().trim():'',ctx=sel||sheet.innerText.slice(0,30000);
+  add('u',esc(label||instr));const w=add('a','חושב...');
+  try{const r=await ask(instr+(ctx?'\n\n'+(sel?'הטקסט שנבחר:':'תוכן המסמך:')+'\n"""\n'+ctx+'\n"""':''));const h=clean(r.text);
+    w.innerHTML=h+'<small>'+esc(r.via)+(r.note?' · '+esc(r.note):'')+'</small><div class="acts"><button data-m="sel">החלף בחירה</button><button data-m="end">הוסף לסוף</button><button data-m="all">החלף הכל</button></div>';
+    w.querySelectorAll('.acts button').forEach(b=>b.onclick=()=>{if(b.dataset.m==='all'){sheet.innerHTML=h;sheet.dispatchEvent(new Event('input'))}else applyHtml(h,b.dataset.m)})
+  }catch(e){w.textContent='שגיאה: '+(e.message||e)}}
+[['שפר ניסוח','שפר את הניסוח: ברור, רהוט ומקצועי, בלי לשנות את המשמעות.'],['תקן שגיאות','תקן שגיאות כתיב, פיסוק ודקדוק בלבד.'],['סכם','סכם בקצרה בנקודות עיקריות.'],['רשמי יותר','כתוב מחדש בטון רשמי ומכובד.'],['תרגם לאנגלית','תרגם לאנגלית.'],['עצב כמסמך','ארגן ועצב כמסמך מסודר עם כותרות, כותרות משנה ורשימות היכן שמתאים.']].forEach(([l,p])=>{const b=document.createElement('button');b.textContent=l;b.onmousedown=e=>e.preventDefault();b.onclick=()=>run(p,l);$('#chips').appendChild(b)});
+$('#send').onclick=()=>{const v=$('#q').value.trim();$('#q').value='';run(v)};
+$('#q').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('#send').click()}};
+
+// ---- insert: images, shapes, drawing
+let lastR=null;document.addEventListener('selectionchange',()=>{const q=getSelection();if(q.rangeCount&&sheet.contains(q.anchorNode))lastR=q.getRangeAt(0).cloneRange()});
+function put(h){sheet.focus();if(lastR&&sheet.contains(lastR.startContainer)){const q=getSelection();q.removeAllRanges();q.addRange(lastR);document.execCommand('insertHTML',false,h)}else sheet.insertAdjacentHTML('beforeend',h);sheet.dispatchEvent(new Event('input'))}
+const pimg=(src,w)=>put('<p><img src="'+src+'" style="width:'+Math.round(w)+'px"></p>');
+$('#img').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const o=new Image(),u=URL.createObjectURL(f);o.onload=()=>{const k=Math.min(1,1400/o.width),c=document.createElement('canvas');c.width=o.width*k;c.height=o.height*k;c.getContext('2d').drawImage(o,0,0,c.width,c.height);pimg(c.toDataURL(/png|gif|svg/.test(f.type)?'image/png':'image/jpeg',.88),Math.min(c.width,480));URL.revokeObjectURL(u)};o.src=u};
+function shp(k,f,s,sw){const a=`fill="${f}" stroke="${s}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"`;let b;
+ if(k=='rc')b=`<rect x="6" y="6" width="188" height="128" ${a}/>`;else if(k=='rr')b=`<rect x="6" y="6" width="188" height="128" rx="28" ${a}/>`;
+ else if(k=='el')b=`<ellipse cx="100" cy="70" rx="93" ry="63" ${a}/>`;else if(k=='tr')b=`<polygon points="100,7 194,133 6,133" ${a}/>`;
+ else if(k=='di')b=`<polygon points="100,6 194,70 100,134 6,70" ${a}/>`;
+ else if(k=='st'){let p='';for(let i=0;i<10;i++){const r=i%2?30:66,t=-Math.PI/2+i*Math.PI/5;p+=(100+r*Math.cos(t)).toFixed(1)+','+(74+r*Math.sin(t)).toFixed(1)+' '}b=`<polygon points="${p}" ${a}/>`}
+ else if(k=='ln')b=`<line x1="8" y1="70" x2="192" y2="70" ${a}/>`;
+ else b=`<path d="M8 70H184M154 38l36 32-36 32" ${a.replace(/fill="[^"]*"/,'fill="none"')}/>`;
+ return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 140" width="200" height="140">${b}</svg>`}
+const SHN={rc:'מלבן',rr:'מלבן מעוגל',el:'אליפסה',tr:'משולש',di:'מעוין',st:'כוכב',ln:'קו',ar:'חץ'};
+Object.keys(SHN).forEach(k=>{const b=document.createElement('button');b.className='tb';b.title=SHN[k];b.innerHTML=shp(k,'none','currentColor',9).replace('<svg ','<svg class="s" ');
+ b.onclick=()=>{const sv=shp(k,$('#sn').checked?'none':$('#sf').value,$('#ss').value,5);pimg('data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sv),k=='ln'||k=='ar'?200:150);$('#shp').style.display='none'};$('#shg').appendChild(b)});
+function pop(p,b){const r=b.getBoundingClientRect();p.style.display='block';p.style.top=(r.bottom+6)+'px';p.style.left=Math.max(6,Math.min(innerWidth-p.offsetWidth-6,r.left))+'px'}
+$('#bSh').onmousedown=e=>e.preventDefault();$('#bSh').onclick=e=>{const p=$('#shp');p.style.display==='block'?p.style.display='none':pop(p,e.currentTarget)};
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#shp,#bSh'))$('#shp').style.display='none'});
+// object bar
+let sel=null;const ob=$('#ob');
+sheet.addEventListener('click',e=>{sheet.querySelectorAll('img.sel').forEach(i=>i.classList.remove('sel'));const t=e.target;if(t.tagName==='IMG'){sel=t;t.classList.add('sel');const r=t.getBoundingClientRect();ob.style.display='flex';ob.style.top=Math.max(4,r.top-48)+'px';ob.style.left=Math.max(4,Math.min(innerWidth-ob.offsetWidth-4,r.left))+'px'}else{sel=null;ob.style.display='none'}});
+$('#scroll').addEventListener('scroll',()=>ob.style.display='none');
+const sz=k=>{if(sel){sel.style.width=Math.max(20,sel.offsetWidth*k)+'px';sheet.dispatchEvent(new Event('input'));ob.style.display='none'}};
+$('#oM').onclick=()=>sz(1/1.2);$('#oP').onclick=()=>sz(1.2);
+[['oR','right'],['oC','center'],['oL','left']].forEach(([i,a])=>$('#'+i).onclick=()=>{if(sel&&sel.parentNode!==sheet)sel.parentNode.style.textAlign=a;sheet.dispatchEvent(new Event('input'))});
+$('#oD').onclick=()=>{if(sel){const p=sel.parentNode;sel.remove();if(p!==sheet&&!p.textContent.trim()&&!p.querySelector('img'))p.remove();sel=null;ob.style.display='none';sheet.dispatchEvent(new Event('input'))}};
+$('#ePdf').addEventListener('click',()=>sheet.querySelectorAll('img.sel').forEach(i=>i.classList.remove('sel')),true);
+// drawing
+const cv=$('#cv'),cx=cv.getContext('2d'),ca=document.createElement('canvas');ca.width=cv.width;ca.height=cv.height;const cc=ca.getContext('2d');let S=[],cur=null,tool='pen';
+function paint(c,s){c.save();c.lineCap=c.lineJoin='round';c.strokeStyle=c.fillStyle=s.col;const p=s.pts,w=s.sz;c.globalCompositeOperation=s.t==='er'?'destination-out':'source-over';
+ const path=()=>{c.beginPath();c.moveTo(p[0].x,p[0].y);if(p.length<3)c.lineTo(p[p.length-1].x+.01,p[p.length-1].y);else{for(let i=1;i<p.length-1;i++)c.quadraticCurveTo(p[i].x,p[i].y,(p[i].x+p[i+1].x)/2,(p[i].y+p[i+1].y)/2);c.lineTo(p[p.length-1].x,p[p.length-1].y)}c.stroke()};
+ if(s.t==='cal'){const dx=Math.cos(-.785)*w*.8,dy=Math.sin(-.785)*w*.8;for(let i=1;i<p.length;i++){c.beginPath();c.moveTo(p[i-1].x+dx,p[i-1].y+dy);c.lineTo(p[i].x+dx,p[i].y+dy);c.lineTo(p[i].x-dx,p[i].y-dy);c.lineTo(p[i-1].x-dx,p[i-1].y-dy);c.closePath();c.fill()}}
+ else if(s.t==='hl'){c.globalAlpha=.35;c.lineWidth=w*4;c.lineCap='butt';path()}
+ else if(s.t==='mk'){c.globalAlpha=.9;c.lineWidth=w*2;path()}
+ else if(s.t==='pc'){c.lineWidth=w*.7;c.globalAlpha=.55;[[0,0],[.6,-.5],[-.5,.6]].forEach(o=>{c.save();c.translate(o[0],o[1]);path();c.restore()})}
+ else if(s.t==='er'){c.lineWidth=w*3;path()}else{c.lineWidth=w;path()}
+ c.restore()}
+const draw=()=>{cx.clearRect(0,0,cv.width,cv.height);cx.drawImage(ca,0,0);if(cur)paint(cx,cur)};
+const pt=e=>{const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
+cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);cur={t:tool,col:$('#pc').value,sz:+$('#ps').value,pts:[pt(e)]};draw()};
+cv.onpointermove=e=>{if(cur){cur.pts.push(pt(e));draw()}};
+cv.onpointerup=cv.onpointercancel=()=>{if(cur){S.push(cur);paint(cc,cur);cur=null;draw()}};
+const redo=()=>{cc.clearRect(0,0,ca.width,ca.height);S.forEach(x=>paint(cc,x));draw()};
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{tool=b.dataset.p;document.querySelectorAll('[data-p]').forEach(x=>x.classList.toggle('on',x===b))});
+document.querySelector('[data-p=pen]').classList.add('on');
+$('#dU').onclick=()=>{S.pop();redo()};$('#dC').onclick=()=>{S=[];redo()};
+$('#bDw').onmousedown=e=>e.preventDefault();$('#bDw').onclick=()=>$('#dw').style.display='flex';$('#dX').onclick=()=>$('#dw').style.display='none';
+$('#dOk').onclick=()=>{const d=cc.getImageData(0,0,ca.width,ca.height).data;let x0=1e9,y0=1e9,x1=-1,y1=-1;for(let y=0;y<ca.height;y++)for(let x=0;x<ca.width;x++)if(d[(y*ca.width+x)*4+3]>8){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+ if(x1<0){$('#dw').style.display='none';return}const m=6;x0=Math.max(0,x0-m);y0=Math.max(0,y0-m);x1=Math.min(ca.width-1,x1+m);y1=Math.min(ca.height-1,y1+m);
+ const o=document.createElement('canvas');o.width=x1-x0+1;o.height=y1-y0+1;o.getContext('2d').drawImage(ca,x0,y0,o.width,o.height,0,0,o.width,o.height);pimg(o.toDataURL('image/png'),Math.min(o.width*.7,560));S=[];redo();$('#dw').style.display='none'};
+</script>
+</body>
+</html>
+
+<!-- Injection By NetFree -->
+<script src="//netfree.link/injection-script/go-payment.js" type="text/javascript" async ></script>
+<script src="//netfree.link/injection-script/popup-card-init.js" type="text/javascript" async ></script>
