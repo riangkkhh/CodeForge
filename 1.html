@@ -141,7 +141,9 @@ canvas{max-width:100%;max-height:78vh;height:auto;border-radius:4px;box-shadow:0
   $("up").onclick=function(){$("file").click()};
   $("file").onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){setWm(r.result,true)};r.readAsDataURL(f)};
   $("rm").onclick=function(){S.wm=null;S.wmData=null;$("wmtools").hidden=true;$("rm").hidden=true;$("up").textContent="העלאת תמונת סימן מים";$("wmhint").textContent="לא הועלה סימן מים. בחרו קובץ תמונה מהמכשיר; הוא יישמר בדפדפן לפעם הבאה.";try{localStorage.removeItem("wm_img")}catch(e){}draw()};
-  try{var saved=localStorage.getItem("wm_img");if(saved)setWm(saved,false)}catch(e){}
+  var DEFAULT_WM="img/1.png";
+  function tryDefault(){var t=new Image();t.onload=function(){setWm(encodeURI(DEFAULT_WM),false)};t.onerror=function(){};t.src=encodeURI(DEFAULT_WM)}
+  try{var saved=localStorage.getItem("wm_img");if(saved)setWm(saved,false);else tryDefault()}catch(e){tryDefault()}
 
   // position presets (3x3)
   var arrows=["↖","↑","↗","←","•","→","↙","↓","↘"];
