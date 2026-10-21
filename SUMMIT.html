@@ -191,7 +191,7 @@ function textNodes(){const w=document.createTreeWalker(sheet,NodeFilter.SHOW_TEX
 $('#fr').onclick=()=>{const a=$('#f1').value,b=$('#f2').value;if(!a)return;let n=0;textNodes().forEach(t=>{const p=t.textContent.split(a);if(p.length>1){n+=p.length-1;t.textContent=p.join(b)}});$('#fc').textContent=n+' החלפות';sheet.dispatchEvent(new Event('input'))};
 
 // export
-async function save(fn,data){if(!dl){say('ההורדה לא זמינה בתצוגה הזו');return}try{await dl.save({filename:fn,data});say('נשמר')}catch(e){say(e&&e.code==='declined'?'בוטל':'שגיאה בהורדה')}}
+async function save(fn,data){if(!dl){try{const bl=data instanceof Blob?data:new Blob([data],{type:'text/plain;charset=utf-8'}),u=URL.createObjectURL(bl),l=document.createElement('a');l.href=u;l.download=fn;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);say('ההורדה התחילה')}catch(e){say('שגיאה בהורדה')}return}try{await dl.save({filename:fn,data});say('נשמר')}catch(e){say(e&&e.code==='declined'?'בוטל':'שגיאה בהורדה')}}
 $('#ePdf').onclick=async()=>{say('יוצר PDF...');try{
   const hs=[...sheet.querySelectorAll('.pb')];hs.forEach(h=>h.style.visibility='hidden');
   const c=await html2canvas(sheet,{scale:2,backgroundColor:'#fff'});hs.forEach(h=>h.style.visibility='');
