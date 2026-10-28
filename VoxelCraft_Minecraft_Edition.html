@@ -370,7 +370,9 @@ function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.clo
 const ICE={iceServers:[
  {urls:'stun:stun.l.google.com:19302'},
  {urls:'stun:stun1.l.google.com:19302'},
- {urls:'stun:global.stun.twilio.com:3478'}
+ {urls:'stun:global.stun.twilio.com:3478'},
+ {urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'},
+ {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}
 ]};
 function netInit(){needPeer(ok=>{
  if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();setTimeout(netInit,10000);return}
