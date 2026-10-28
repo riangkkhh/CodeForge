@@ -175,7 +175,7 @@ if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();e.shiftKey?redoF():undo()
 const m={b:'place',x:'erase',p:'paint',i:'pick',r:'box',o:'sphere',l:'line',c:'spray',y:'pyr',t:'swap'};if(m[k]&&!e.ctrlKey&&!play){setTool(m[k]);return}
 if(/^[1-9]$/.test(k)){sel=+k;pal();return}kd[k]=1};onkeyup=e=>delete kd[kk(e)];
 // ---------- UI
-const IC={place:'M12 3 4 7.5v9L12 21l8-4.5v-9zM12 12l8-4.5M12 12 4 7.5M12 12v9',erase:'M20 20H9l-5.5-5.5a2 2 0 0 1 0-3L12 3l8 8-6 6M10 8l7 7',paint:'M18 3l3 3-9 9-3-3zM9 12c-3 0-4 2-4 4s-1 3-2 4c3 1 7 0 7-4',pick:'m15 4 5 5M18 2l4 4-3 3-4-4zM14 7 4 17v3h3l10-10',box:'M4 5h16v14H4zM4 9h16',sphere:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',line:'M5 19 19 5M5 19h.01M19 5h.01',spray:'M7 8h8v13H7zM9 3h4v5H9zM19 5h.01M21 8h.01M19 11h.01',pyr:'M12 3 3 20h18zM12 3v17',swap:'M4 8h14l-4-4M20 16H6l4 4',undo:'M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3',redo:'m15 14 5-5-5-5M20 9H9a5 5 0 0 0 0 10h3',cam:'M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8',up:'M12 16V4m-5 5 5-5 5 5M4 20h16',dn:'M12 4v12m-5-5 5 5 5-5M4 20h16',pnl:'M3 5h18v14H3zM9 5v14',pal:'M12 3a9 9 0 1 0 0 18c2 0 2-2 1-3s0-3 2-3h3a3 3 0 0 0 3-3c0-5-4-9-9-9zM7.5 11h.01M10 7h.01M15 7h.01',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',edit:'M4 20h4L19 9l-4-4L4 16zM13 7l4 4',copy:'M9 9h11v11H9zM5 15V4h11',x:'M6 6l12 12M18 6 6 18',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6',play:'M7 4v16l13-8z',stop:'M6 6h12v12H6z',plus:'M12 5v14M5 12h14',home:'M3 11l9-8 9 8M5 10v10h14V10',pst:'M8 4h8v3H8zM6 6H4v15h16V6h-2',rot:'M21 12a9 9 0 1 1-3-6.7M21 4v5h-5'};
+const IC={place:'M12 3 4 7.5v9L12 21l8-4.5v-9zM12 12l8-4.5M12 12 4 7.5M12 12v9',erase:'M20 20H9l-5.5-5.5a2 2 0 0 1 0-3L12 3l8 8-6 6M10 8l7 7',paint:'M18 3l3 3-9 9-3-3zM9 12c-3 0-4 2-4 4s-1 3-2 4c3 1 7 0 7-4',pick:'m15 4 5 5M18 2l4 4-3 3-4-4zM14 7 4 17v3h3l10-10',box:'M4 5h16v14H4zM4 9h16',sphere:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',line:'M5 19 19 5M5 19h.01M19 5h.01',spray:'M7 8h8v13H7zM9 3h4v5H9zM19 5h.01M21 8h.01M19 11h.01',pyr:'M12 3 3 20h18zM12 3v17',swap:'M4 8h14l-4-4M20 16H6l4 4',undo:'M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3',redo:'m15 14 5-5-5-5M20 9H9a5 5 0 0 0 0 10h3',cam:'M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',up:'M12 16V4m-5 5 5-5 5 5M4 20h16',dn:'M12 4v12m-5-5 5 5 5-5M4 20h16',pnl:'M3 5h18v14H3zM9 5v14',pal:'M12 3a9 9 0 1 0 0 18c2 0 2-2 1-3s0-3 2-3h3a3 3 0 0 0 3-3c0-5-4-9-9-9zM7.5 11h.01M10 7h.01M15 7h.01',trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',edit:'M4 20h4L19 9l-4-4L4 16zM13 7l4 4',copy:'M9 9h11v11H9zM5 15V4h11',x:'M6 6l12 12M18 6 6 18',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 4-6 8-6s8 2 8 6',play:'M7 4v16l13-8z',stop:'M6 6h12v12H6z',plus:'M12 5v14M5 12h14',home:'M3 11l9-8 9 8M5 10v10h14V10',pst:'M8 4h8v3H8zM6 6H4v15h16V6h-2',rot:'M21 12a9 9 0 1 1-3-6.7M21 4v5h-5'};
 const ic=n=>`<svg viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
 const TL=[['place','place','בנה'],['erase','erase','מחק'],['paint','paint','צבע'],['pick','pick','טפטפת'],['box','box','קופסה'],['sphere','sphere','כדור'],['line','line','קו'],['spray','spray','ריסוס'],['pyr','pyr','פירמידה'],['swap','swap','החלפה'],['copy','copy','העתק'],['paste','pst','הדבק'],['slab','box','משטח'],['tree','place','עץ']];
 function setTool(t){tool=t;boxA=null;$('#tl').innerHTML=TL.map(([k,i,n])=>`<button class="${k===t?'on':''}" data-t="${k}"><span>${ic(i)}</span>${n}</button>`).join('');document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>setTool(b.dataset.t))}
@@ -367,14 +367,42 @@ async function doLogin(){const pw=$('#apw').value;if(!pw)return;$('#aok').disabl
 $('#aok').disabled=false;$('#apw').value='';if(!r){$('#aer').textContent='סיסמה שגויה';return}$('#auth').style.display='none';net.role=r;netInit();pvpUI()}
 $('#aok').onclick=doLogin;$('#apw').onkeydown=e=>{if(e.key==='Enter')doLogin()};setTimeout(()=>$('#apw').focus(),50);
 function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;(function nx(){if(window.Peer)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
-function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}
-net.peer=new Peer('vxc'+NETR+'p'+net.role);
-net.peer.on('open',()=>{net.st='wait';net.msg='';pvpUI()});
-net.peer.on('connection',c=>{if(c.peer!=='vxc'+NETR+'p'+(3-net.role)){c.close();return}netAttach(c)});
-net.peer.on('error',e=>{if(e.type==='peer-unavailable')return;net.st='err';net.msg=e.type==='unavailable-id'?'הסיסמה הזאת כבר מחוברת במקום אחר':'שגיאת רשת ('+e.type+')';pvpUI()});
-net.peer.on('disconnected',()=>{try{net.peer.reconnect()}catch(e){}});
-setInterval(()=>{if(net.role===1&&net.peer&&net.peer.open&&!net.conn){try{if(net.pend)net.pend.close()}catch(e){}net.pend=net.peer.connect('vxc'+NETR+'p2',{reliable:true,serialization:'json'});netAttach(net.pend)}},3000)})}
-function netAttach(c){const op=()=>{if(net.conn===c)return;if(net.conn&&net.conn.open){c.close();return}net.conn=c;net.st='link';net.msg='';c.send({t:'h',r:net.role});pvpUI()};c.on('open',op);if(c.open)op();c.on('data',netData);c.on('close',()=>{if(net.conn===c){net.conn=null;net.st='wait';net.waiting=false;pvpUI();if(play&&play.net)pvpEnd('השחקן השני התנתק')}});c.on('error',()=>{})}
+const ICE={iceServers:[
+ {urls:'stun:stun.l.google.com:19302'},
+ {urls:'stun:stun1.l.google.com:19302'},
+ {urls:'stun:global.stun.twilio.com:3478'},
+ {urls:['turn:eu-0.turn.peerjs.com:3478','turn:us-0.turn.peerjs.com:3478'],username:'peerjs',credential:'peerjsp'},
+ {urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}
+]};
+function netInit(){needPeer(ok=>{
+ if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();setTimeout(netInit,10000);return}
+ netStart();setInterval(netWatch,2000)})}
+function netStart(){
+ const old=net.peer;net.peer=null;try{if(old)old.destroy()}catch(e){}
+ net.conn=null;net.pend=null;net.st='off';net.msg='מתחבר לשרת התיווך...';net.t0=Date.now();pvpUI();
+ const p=new Peer('vxc'+NETR+'p'+net.role,{config:ICE,debug:0});net.peer=p;
+ p.on('open',()=>{if(net.peer!==p)return;net.st='wait';net.msg='';net.retry=0;pvpUI()});
+ p.on('connection',c=>{if(net.peer!==p)return;if(c.peer!=='vxc'+NETR+'p'+(3-net.role)){c.close();return}netAttach(c)});
+ p.on('error',e=>{if(net.peer!==p)return;
+  if(e.type==='peer-unavailable'){try{if(net.pend)net.pend.close()}catch(x){}net.pend=null;return}
+  net.retry=(net.retry||0)+1;net.st='off';
+  if(e.type==='unavailable-id')net.msg=net.retry>6?'הסיסמה הזאת מחוברת במקום אחר':'ממתין לשחרור החיבור הקודם...';
+  else net.msg='שגיאת רשת ('+e.type+') — מנסה שוב...';
+  net.restart=Date.now()+(e.type==='unavailable-id'?5000:4000);pvpUI()});
+ p.on('disconnected',()=>{if(net.peer===p){try{p.reconnect()}catch(e){}}});
+ p.on('close',()=>{if(net.peer===p&&!net.restart)net.restart=Date.now()+2000})}
+function netWatch(){
+ const p=net.peer;
+ if(net.restart&&Date.now()>=net.restart){net.restart=0;netStart();return}
+ if(!p||net.restart)return;
+ if(net.st==='off'&&Date.now()-net.t0>20000){net.msg='שרת התיווך לא מגיב (ייתכן שחסום בסינון) — מנסה שוב...';pvpUI();net.restart=Date.now()+500;return}
+ if(p.disconnected&&!p.destroyed){try{p.reconnect()}catch(e){}}
+ if(net.role===1&&p.open&&!net.conn){
+  const c=net.pend;
+  if(c&&!c.open&&Date.now()-net.pt<20000)return;
+  try{if(c)c.close()}catch(e){}
+  net.pend=p.connect('vxc'+NETR+'p2',{reliable:true,serialization:'json'});net.pt=Date.now();netAttach(net.pend)}}
+function netAttach(c){const op=()=>{if(net.conn===c)return;if(net.conn&&net.conn.open){c.close();return}net.conn=c;net.st='link';net.msg='';c.send({t:'h',r:net.role});pvpUI()};c.on('open',op);if(c.open)op();c.on('data',netData);c.on('close',()=>{if(net.pend===c)net.pend=null;if(net.conn===c){net.conn=null;net.st='wait';net.waiting=false;pvpUI();if(play&&play.net)pvpEnd('השחקן השני התנתק')}});c.on('error',()=>{if(net.pend===c)net.pend=null})}
 function netSend(m){try{if(net.conn&&net.conn.open){net.conn.send(m);return true}}catch(e){}return false}
 function coopOver(){const q=play;$('#go').style.display='flex';$('#go').innerHTML='<h2 style="margin:0">המשחק נגמר</h2><div>גל '+q.wave+' · ניקוד '+q.score+'</div><button class="g" id="gx5">יציאה</button>';$('#gx5').onclick=stopPlay}
 function pvpEnd(t){if(!play||play.over)return;play.over=true;$('#go').style.display='flex';$('#go').innerHTML='<h2 style="margin:0">'+t+'</h2><button class="g" id="gx3">יציאה</button>';$('#gx3').onclick=stopPlay}
