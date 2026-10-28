@@ -367,7 +367,6 @@ async function doLogin(){const pw=$('#apw').value;if(!pw)return;$('#aok').disabl
 $('#aok').disabled=false;$('#apw').value='';if(!r){$('#aer').textContent='סיסמה שגויה';return}$('#auth').style.display='none';net.role=r;netInit();pvpUI()}
 $('#aok').onclick=doLogin;$('#apw').onkeydown=e=>{if(e.key==='Enter')doLogin()};setTimeout(()=>$('#apw').focus(),50);
 function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;(function nx(){if(window.Peer)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
-let ICE={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]};
 const ICE={iceServers:[
  {urls:'stun:stun.l.google.com:19302'},
  {urls:'stun:stun1.l.google.com:19302'},
