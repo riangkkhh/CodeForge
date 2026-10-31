@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>צ'אט</title>
+<style>
+:root{--bg:#f8fafd;--panel:#fff;--side:#f0f4f9;--text:#1f1f1f;--muted:#5f6368;--line:#e3e7ec;--sel:#d3e3fd;--hover:#e4e9f0;--mine:#d3e3fd;--blue:#0b57d0;--bubble:#f0f4f9}
+@media (prefers-color-scheme:dark){:root{--bg:#131314;--panel:#1b1b1d;--side:#1e1f20;--text:#e3e3e3;--muted:#9aa0a6;--line:#2d2f31;--sel:#0842a0;--hover:#2a2b2d;--mine:#0842a0;--blue:#a8c7fa;--bubble:#2a2b2d}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Google Sans",Roboto,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:12px;padding:8px 16px;height:56px}
+header .logo{width:28px;height:28px;border-radius:8px;background:#00ac47;display:grid;place-items:center;color:#fff;font-weight:700}
+header h1{font-size:20px;font-weight:400;margin:0}
+header .sp{flex:1}
+.search{background:var(--side);border:0;border-radius:24px;padding:10px 18px;width:min(420px,40vw);color:var(--text);font:inherit;outline:none}
+.app{flex:1;display:flex;min-height:0;padding:0 8px 8px;gap:8px}
+aside{width:300px;background:var(--side);border-radius:16px;overflow:auto;padding:8px;flex-shrink:0}
+aside h2{font-size:12px;color:var(--muted);margin:12px 12px 6px;font-weight:500}
+.space{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:24px;cursor:pointer}
+.space:hover{background:var(--hover)}.space.on{background:var(--sel);font-weight:500}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:14px;flex-shrink:0}
+.space .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{flex:1;background:var(--panel);border-radius:16px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{padding:12px 20px;border-bottom:1px solid var(--line);font-size:18px;display:flex;align-items:center;gap:12px}
+.top small{color:var(--muted);font-size:12px}
+#msgs{flex:1;overflow:auto;padding:12px 20px}
+.day{text-align:center;color:var(--muted);font-size:12px;margin:16px 0 8px}
+.m{display:flex;gap:12px;padding:2px 0}
+.m .av{margin-top:4px}.m.cont .av{visibility:hidden;height:0}
+.m .b{min-width:0}
+.m .h{font-size:13px;color:var(--muted);margin-bottom:2px}.m .h b{color:var(--text);font-weight:500;margin-left:8px}
+.m .x{white-space:pre-wrap;word-break:break-word;line-height:1.45;font-size:14px;background:var(--bubble);padding:8px 14px;border-radius:4px 18px 18px 18px;display:inline-block;max-width:min(640px,100%)}
+.m.cont .h{display:none}
+.m a{color:var(--blue)}
+form{display:flex;gap:8px;padding:12px 16px;align-items:flex-end}
+textarea{flex:1;resize:none;border:1px solid var(--line);background:var(--side);color:var(--text);border-radius:24px;padding:12px 18px;font:inherit;max-height:140px;outline:none}
+textarea:focus{border-color:var(--blue)}
+button.send{border:0;width:44px;height:44px;border-radius:50%;background:var(--blue);color:var(--panel);cursor:pointer;font-size:18px}
+button.send:disabled{opacity:.4}
+.note{margin:auto;color:var(--muted);text-align:center;padding:24px;max-width:420px;line-height:1.6}
+#back{display:none;background:none;border:0;color:var(--text);font-size:22px;cursor:pointer}
+.new{display:flex;align-items:center;gap:8px;margin:8px;padding:14px 20px;border:0;border-radius:16px;background:var(--sel);color:var(--text);font:inherit;cursor:pointer;font-weight:500}
+.new:hover{filter:brightness(.96)}
+.space .jb{margin-inline-start:auto;border:0;border-radius:14px;padding:4px 12px;background:var(--blue);color:var(--panel);cursor:pointer;font:inherit;font-size:12px}
+dialog{border:0;border-radius:24px;background:var(--panel);color:var(--text);padding:24px;width:min(420px,92vw);box-shadow:0 8px 40px #0005}
+dialog::backdrop{background:#0006}
+dialog p{color:var(--muted);font-size:13px;margin:0;line-height:1.5}
+dialog input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;margin:8px 0 12px;direction:ltr;text-align:left}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;border:0;padding:8px;border-radius:16px;background:var(--side);color:var(--text);font:inherit;cursor:pointer}
+.tabs button.on{background:var(--sel)}
+.row{display:flex;gap:8px;margin-top:6px}
+.row button{border:0;border-radius:20px;padding:10px 20px;font:inherit;cursor:pointer;background:var(--side);color:var(--text)}
+.row button.pri{background:var(--blue);color:var(--panel)}
+.m{position:relative}
+.acts{display:none;position:absolute;top:-8px;inset-inline-end:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:2px;gap:2px;z-index:2}
+.m:hover .acts{display:flex}
+.acts button{border:0;background:none;color:var(--text);cursor:pointer;border-radius:12px;padding:4px 8px;font-size:14px}.acts button:hover{background:var(--hover)}
+.qt{border-inline-start:3px solid var(--blue);background:var(--panel);padding:4px 10px;margin-bottom:6px;border-radius:6px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+.qt b{display:block;color:var(--blue);font-weight:500}
+.ai{max-width:320px;max-height:240px;border-radius:12px;display:block;margin-top:6px;cursor:pointer;background:var(--hover);min-width:80px;min-height:60px}
+.file{display:flex;gap:8px;align-items:center;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text);font-size:13px;max-width:320px}
+.tl{margin-top:4px;color:var(--blue);cursor:pointer;background:none;border:0;padding:0;font:inherit;font-size:12px}
+#tp{width:340px;background:var(--panel);border-radius:16px;display:none;flex-direction:column;flex-shrink:0;overflow:hidden}
+#tp.on{display:flex}
+#tph{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+#tph button,#qbar button,.top .fb{background:none;border:0;color:var(--text);cursor:pointer;font:inherit}
+#tb{flex:1;overflow:auto;padding:8px 14px}
+#tf{display:none;padding:8px;gap:6px;align-items:flex-end}#tf.on{display:flex}
+#tf textarea{border-radius:18px;padding:10px 14px}
+#qbar{display:none;margin:0 16px;padding:6px 12px;border-inline-start:3px solid var(--blue);background:var(--side);border-radius:8px;font-size:12px;color:var(--muted);justify-content:space-between;gap:8px}#qbar.on{display:flex}
+.top .fb{margin-inline-start:auto;padding:6px 12px;border-radius:16px;background:var(--side)}
+@media (max-width:760px){#tp.on{position:fixed;inset:0;width:auto;border-radius:0;z-index:5}}
+@media (max-width:760px){aside{width:100%}.search{display:none}main{display:none}.app.chat aside{display:none}.app.chat main{display:flex}#back{display:block}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">💬</div><h1>צ'אט</h1><div class="sp"></div>
+  <input class="search" id="q" placeholder="חיפוש בשיחות" autocomplete="off">
+  <button id="lo" style="border:0;background:var(--side);color:var(--text);border-radius:16px;padding:8px 14px;font:inherit;cursor:pointer">יציאה</button>
+</header>
+<div class="app" id="app">
+  <aside><button class="new" id="new">✏️ שיחה חדשה</button><div id="spaces"></div></aside>
+  <main>
+    <div class="top"><button id="back" aria-label="חזרה">→</button><span id="title">בחר שיחה</span><small id="status"></small><button class="fb" id="fb">📎 משותף</button></div>
+    <div id="msgs"><div class="note">בחר שיחה מהרשימה כדי להתחיל.</div></div>
+    <div id="qbar"><span id="qtxt"></span><button type="button" id="qx" aria-label="ביטול ציטוט">✕</button></div>
+    <form id="f"><textarea id="t" rows="1" placeholder="כתיבת הודעה"></textarea><button class="send" id="s" disabled aria-label="שליחה">➤</button></form>
+  </main>
+  <section id="tp"><div id="tph"><b id="tpt"></b><button id="tclose" aria-label="סגירה">✕</button></div><div id="tb"></div>
+    <form id="tf"><textarea id="tt" rows="1" placeholder="תגובה בשרשור" style="flex:1;resize:none;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;outline:none"></textarea><button class="send" aria-label="שליחה">➤</button></form></section>
+</div>
+<div id="lg" style="display:none;position:fixed;inset:0;z-index:30;background:var(--bg);place-items:center">
+  <form id="lgf" style="background:var(--panel);padding:32px;border-radius:24px;width:min(360px,90vw);display:flex;flex-direction:column;gap:12px;text-align:center">
+    <div style="font-size:40px">💬</div><h2 style="margin:0;font-weight:400">כניסה</h2>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="סיסמה" style="padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;text-align:center">
+    <div id="lge" style="color:#d93025;font-size:13px;min-height:16px"></div>
+    <button class="send" style="width:auto;border-radius:20px;padding:0 20px">כניסה</button>
+  </form></div>
+<dialog id="dlg"><div class="tabs"><button id="tdm" class="on">שיחה אישית</button><button id="tjoin">הצטרפות למרחב</button></div>
+<p id="hint"></p><input id="inp" autocomplete="off"><p id="err" style="color:#d93025"></p>
+<div class="row"><button class="pri" id="ok">אישור</button><button id="cancel">ביטול</button></div></dialog>
+<script>
+// ===== הגדרות =====
+const CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbyPQH3cg5c4BOOMsuPCecn-Nf-NxbUEX24JcA7pkOM2QRICKYY3MDu_pojPkv7gxxX4sw/exec',   // הדבק כאן את כתובת /exec של אפליקציית ה-Apps Script
+  REFRESH_MS: 15000
+};
+// ==================
+const $ = id => document.getElementById(id);
+const DEMO = !CONFIG.API_URL;
+let TOKEN=''; try{TOKEN=localStorage.getItem('tk')||'';}catch(_){}
+const colors = ['#1a73e8','#d93025','#188038','#e37400','#9334e6','#007b83','#c2185b'];
+const colorOf = s => colors[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)%colors.length];
+let spaces=[], cur=null, timer=null, last='';
+
+async function api(params){
+  if(DEMO) return demo(params);
+  const u = new URL(CONFIG.API_URL);
+  Object.entries({...params, token:TOKEN}).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r = await fetch(u); const j = await r.json();
+  if(j.error){ if(j.error==='unauthorized') showLogin(); throw new Error(j.error); } return j;
+}
+function demo(p){
+  const now=Date.now();
+  if(p.action==='spaces') return {spaces:[{name:'spaces/1',type:'SPACE',title:'צוות הפרויקט'},{name:'spaces/2',type:'SPACE',title:'הודעות כלליות'},{name:'spaces/3',type:'DIRECT_MESSAGE',title:'דוד כהן'},{name:'spaces/4',type:'GROUP_CHAT',title:'דוד, שרה'}]};
+  return {messages:[
+    {id:1,sender:'דוד כהן',text:'בוקר טוב לכולם!',thread:'t1',time:new Date(now-864e5).toISOString()},
+    {id:2,sender:'שרה לוי',text:'בוקר טוב, האתר מוכן לבדיקה.',time:new Date(now-36e5).toISOString()},
+    {id:3,sender:'שרה לוי',text:'שלחתי לכם את הקישור: https://example.com',time:new Date(now-35e5).toISOString()},
+    {id:4,sender:'דוד כהן',text:'מעולה, תודה רבה!',time:new Date(now-1e5).toISOString(),quote:{sender:'שרה לוי',text:'האתר מוכן לבדיקה.'}},{id:5,sender:'שרה לוי',text:'בשמחה 🙂',thread:'t1',reply:true,time:new Date(now-5e4).toISOString()}]};
+}
+const esc = s => s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const linkify = s => esc(s).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+const fmtDay = d => d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'});
+const fmtTime = d => d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+
+const SEC=[['INV','הזמנות'],['DIRECT_MESSAGE','שיחות אישיות'],['GROUP_CHAT','קבוצות'],['SPACE','מרחבים']];
+let invites={};
+function renderSpaces(filter=''){
+  const box=$('spaces'); box.innerHTML='';
+  const list=spaces.filter(s=>s.title.includes(filter));
+  SEC.forEach(([k,label])=>{
+    const items=list.filter(s=>k==='INV'?invites[s.name]:(!invites[s.name]&&(s.type||'SPACE')===k));
+    if(!items.length) return;
+    box.insertAdjacentHTML('beforeend',`<h2>${label}</h2>`);
+    items.forEach(s=>{
+      const d=document.createElement('div'); d.className='space'+(cur&&cur.name===s.name?' on':'');
+      d.innerHTML=`<div class="av" style="background:${colorOf(s.title)};${k==='SPACE'||k==='INV'?'border-radius:8px':''}">${esc([...s.title][0]||'?')}</div><div class="t">${esc(s.title)}</div>`;
+      if(k==='INV'){const b=document.createElement('button');b.className='jb';b.textContent='הצטרף';b.onclick=ev=>{ev.stopPropagation();join(s.name);};d.appendChild(b);}
+      d.onclick=()=>openSpace(s); box.appendChild(d);
+    });
+  });
+  if(!box.children.length) box.innerHTML='<div class="note">אין שיחות להצגה.</div>';
+}
+async function post(body){
+  if(DEMO) throw new Error('זמין לאחר חיבור ה-Apps Script');
+  const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body,token:TOKEN})});
+  const j=await r.json(); if(j.error){ if(j.error==='unauthorized') showLogin(); throw new Error(j.error); } return j;
+}
+async function refreshSpaces(){ spaces=(await api({action:'spaces'})).spaces; renderSpaces($('q').value); }
+async function loadInvites(fresh){
+  if(DEMO) return;
+  try{ invites={}; (await api(fresh?{action:'invites',fresh:1}:{action:'invites'})).invited.forEach(n=>invites[n]=1); renderSpaces($('q').value); }catch(e){}
+}
+// ה-API של Google Chat לא מאפשר להצטרף או לאשר הזמנה, לכן פותחים את המרחב ב-Chat עצמו
+function join(name){
+  window.open('https://chat.google.com/room/'+name.split('/')[1],'_blank','noopener');
+  $('status').textContent='אשר את ההצטרפות ב-Chat, ואז חזור לכאן';
+  window.addEventListener('focus',async()=>{await refreshSpaces();loadInvites(true);},{once:true});
+}
+let mode='dm';
+function setMode(m){
+  mode=m; $('tdm').className=m==='dm'?'on':''; $('tjoin').className=m==='join'?'on':'';
+  $('hint').textContent=m==='dm'?'הכנס כתובת אימייל של מי שתרצה לשוחח איתו.':'הדבק קישור למרחב. הוא ייפתח ב-Google Chat, ושם מאשרים את ההצטרפות.';
+  $('inp').placeholder=m==='dm'?'name@example.com':'https://chat.google.com/room/AAAA…'; $('err').textContent=''; $('inp').value='';
+}
+$('new').onclick=()=>{setMode('dm');$('dlg').showModal();};
+$('tdm').onclick=()=>setMode('dm'); $('tjoin').onclick=()=>setMode('join'); $('cancel').onclick=()=>$('dlg').close();
+$('ok').onclick=async()=>{
+  const v=$('inp').value.trim(); if(!v) return; $('ok').disabled=true; $('err').textContent='';
+  try{
+    let r;
+    if(mode==='dm') r=await post({action:'dm',email:v});
+    else{
+      const m=v.match(/(?:space|room)\/([\w-]+)/)||v.match(/^(?:spaces\/)?([\w-]+)$/);
+      if(!m) throw new Error('קישור או מזהה לא תקינים');
+      join('spaces/'+m[1]); $('dlg').close(); $('ok').disabled=false; return;
+    }
+    $('dlg').close(); await refreshSpaces();
+    let s=spaces.find(x=>x.name===r.space);
+    if(!s){ s={name:r.space,title:r.title||v,type:mode==='dm'?'DIRECT_MESSAGE':'SPACE'}; spaces.unshift(s); renderSpaces(); }
+    openSpace(s);
+  }catch(e){ $('err').textContent=e.message; }
+  $('ok').disabled=false;
+};
+async function openSpace(s){
+  cur=s; last=''; panel=null; $('tp').classList.remove('on'); clearQuote(); $('title').textContent=s.title; $('s').disabled=false;
+  $('app').classList.add('chat'); renderSpaces($('q').value);
+  $('msgs').innerHTML='<div class="note">טוען…</div>';
+  await load(true); clearInterval(timer); timer=setInterval(()=>load(false),CONFIG.REFRESH_MS);
+}
+let curMsgs=[],byId={},quoteTo=null,panel=null;const mediaCache={};
+const ico=t=>/image/.test(t||'')?'🖼️':/pdf/.test(t||'')?'📕':/video/.test(t||'')?'🎞️':'📎';
+function attHtml(m){return (m.att||[]).map(a=>{
+  const href=a.drive?`https://drive.google.com/file/d/${a.drive}/view`:(a.url||'#');
+  return `<a class="file" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${ico(a.type)} <span>${esc(a.file||'קובץ')}</span></a>`;}).join('');}
+function quoteHtml(m){
+  if(!m.quote) return ''; const o=byId[m.quote.name]||{};
+  const s=m.quote.sender||o.sender||'', t=m.quote.text||o.text||'';
+  return `<div class="qt"><b>${esc(s)}</b>${esc(t.slice(0,160))}${t.length>160?'…':''}</div>`;}
+function msgHtml(m,cont,rep,mini){
+  const d=new Date(m.time);
+  const tl=rep&&rep.length?`<button class="tl" data-a="t">💬 ${rep.length} תגובות</button>`:'';
+  const acts=mini?'':'<div class="acts"><button data-a="q" title="ציטוט">↩</button><button data-a="t" title="שרשור">💬</button></div>';
+  return `<div class="m${cont?' cont':''}" data-id="${esc(m.id)}"><div class="av" style="background:${colorOf(m.sender)}">${esc([...m.sender][0]||'?')}</div><div class="b"><div class="h"><b>${esc(m.sender)}</b>${fmtTime(d)}</div>${m.text||m.quote?`<div class="x">${quoteHtml(m)}${linkify(m.text)}</div>`:''}${attHtml(m)}${tl}</div>${acts}</div>`;}
+function renderList(box,msgs,collapse){
+  box.innerHTML=''; let prev=null,prevDay='';
+  const rep={}; if(collapse) msgs.forEach(m=>{if(m.reply&&m.thread)(rep[m.thread]=rep[m.thread]||[]).push(m);});
+  const roots=new Set(msgs.filter(m=>!m.reply).map(m=>m.thread));
+  (collapse?msgs.filter(m=>!m.reply||!roots.has(m.thread)):msgs).forEach(m=>{
+    const d=new Date(m.time),day=fmtDay(d);
+    if(day!==prevDay){box.insertAdjacentHTML('beforeend',`<div class="day">${day}</div>`);prevDay=day;prev=null;}
+    const cont=prev===m.sender;prev=m.sender;
+    box.insertAdjacentHTML('beforeend',msgHtml(m,cont,collapse?(rep[m.thread]||[]):null,!collapse));});
+  box.querySelectorAll('img[data-res]').forEach(loadImg);}
+async function loadImg(el){
+  const r=el.dataset.res;
+  try{
+    if(!mediaCache[r]) mediaCache[r]=api({action:'media',res:r}).then(j=>`data:${j.mime};base64,${j.data}`);
+    el.src=await mediaCache[r];
+    el.onclick=()=>{const w=window.open();if(w) w.document.write(`<body style="margin:0;background:#111"><img src="${el.src}" style="max-width:100%;display:block;margin:auto">`);};
+  }catch(e){delete mediaCache[r];el.replaceWith(Object.assign(document.createElement('span'),{textContent:'🖼️ תמונה (לא נטענה)'}));}}
+async function load(scroll){
+  if(!cur) return; loadThread();
+  try{
+    const {messages}=await api({action:'messages',space:cur.name});
+    const sig=messages.map(m=>m.id+m.upd).join(); if(sig===last) return; last=sig;
+    const box=$('msgs'); const atEnd=scroll||box.scrollHeight-box.scrollTop-box.clientHeight<80;
+    curMsgs=messages; byId={}; messages.forEach(m=>byId[m.id]=m);
+    if(!messages.length) box.innerHTML='<div class="note">אין הודעות בשיחה זו.</div>'; else renderList(box,messages,true);
+    if(atEnd) box.scrollTop=box.scrollHeight;
+    if(panel&&panel.type==='files') renderFiles();
+    $('status').textContent=DEMO?'מצב הדגמה':'עודכן '+fmtTime(new Date());
+  }catch(e){ $('msgs').innerHTML=`<div class="note">שגיאה בטעינה: ${esc(e.message)}</div>`; }
+}
+function setQuote(m){quoteTo=m;$('qtxt').textContent='מצטט את '+m.sender+': '+m.text.slice(0,80);$('qbar').classList.add('on');$('t').focus();}
+function clearQuote(){quoteTo=null;$('qbar').classList.remove('on');}
+$('qx').onclick=clearQuote;
+function showPanel(t){$('tpt').textContent=t;$('tp').classList.add('on');$('tf').classList.remove('on');}
+async function openThread(m){panel={type:'thread',thread:m.thread};showPanel('שרשור');$('tf').classList.add('on');$('tb').innerHTML='<div class="note">טוען…</div>';await loadThread(true);}
+async function loadThread(first){
+  if(!panel||panel.type!=='thread') return;
+  try{const {messages}=await api({action:'thread',space:cur.name,thread:panel.thread});renderList($('tb'),messages,false);if(first) $('tb').scrollTop=$('tb').scrollHeight;}
+  catch(e){$('tb').innerHTML=`<div class="note">שגיאה: ${esc(e.message)}</div>`;}}
+function renderFiles(){
+  const atts=[],links=new Set();
+  [...curMsgs].reverse().forEach(m=>{(m.att||[]).forEach(a=>atts.push({att:[a]}));(m.text.match(/https?:\/\/[^\s<]+/g)||[]).forEach(u=>links.add(u));});
+  let html='';
+  if(atts.length) html+='<div class="day">קבצים ותמונות</div>'+atts.map(attHtml).join('');
+  if(links.size) html+='<div class="day">קישורים</div>'+[...links].map(u=>`<a class="file" href="${esc(u)}" target="_blank" rel="noopener noreferrer">🔗 <span style="overflow:hidden;text-overflow:ellipsis">${esc(u)}</span></a>`).join('');
+  $('tb').innerHTML=html||'<div class="note">אין קבצים או קישורים בהודעות האחרונות.</div>';
+  $('tb').querySelectorAll('img[data-res]').forEach(loadImg);}
+$('fb').onclick=()=>{if(!cur) return;panel={type:'files'};showPanel('משותף בשיחה');renderFiles();};
+$('tclose').onclick=()=>{panel=null;$('tp').classList.remove('on');};
+$('msgs').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-a]'); if(!b) return;
+  const m=byId[b.closest('.m').dataset.id]; if(!m) return;
+  if(b.dataset.a==='q') setQuote(m); else if(m.thread) openThread(m);});
+$('tf').onsubmit=async e=>{
+  e.preventDefault(); const text=$('tt').value.trim(); if(!text||!panel||panel.type!=='thread') return;
+  try{await post({action:'send',space:cur.name,text,thread:panel.thread});$('tt').value='';await loadThread(true);last='';load(false);}
+  catch(err){$('status').textContent='השליחה נכשלה: '+err.message;}};
+$('f').onsubmit=async e=>{
+  e.preventDefault(); const text=$('t').value.trim(); if(!text||!cur) return;
+  if(DEMO){ $('status').textContent='שליחה זמינה לאחר חיבור ה-Apps Script'; return; }
+  $('s').disabled=true;
+  try{
+    await post({action:'send',space:cur.name,text,quote:quoteTo?{name:quoteTo.id,lastUpdateTime:quoteTo.upd}:undefined});
+    $('t').value='';$('t').style.height='auto';clearQuote();last='';await load(true);
+  }catch(err){ $('status').textContent='השליחה נכשלה: '+err.message; }
+  $('s').disabled=false;
+};
+$('t').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('f').requestSubmit();}});
+$('t').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=e.target.scrollHeight+'px';});
+$('q').oninput=e=>renderSpaces(e.target.value);
+$('back').onclick=()=>$('app').classList.remove('chat');
+function showLogin(){
+  TOKEN=''; try{localStorage.removeItem('tk');}catch(_){}
+  clearInterval(timer); $('lg').style.display='grid'; $('pw').focus();
+}
+$('lgf').onsubmit=async e=>{
+  e.preventDefault(); $('lge').textContent='';
+  try{
+    const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'login',password:$('pw').value})});
+    const j=await r.json();
+    if(j.error) throw new Error(j.error==='locked'?'יותר מדי ניסיונות. נסה שוב בעוד כמה דקות.':'סיסמה שגויה');
+    TOKEN=j.token; try{localStorage.setItem('tk',TOKEN);}catch(_){}
+    $('pw').value=''; $('lg').style.display='none'; start();
+  }catch(err){ $('lge').textContent=err.message; }
+};
+$('lo').onclick=async()=>{ try{await post({action:'logout'});}catch(_){} showLogin(); location.reload(); };
+async function start(){
+  try{ spaces=(await api({action:'spaces'})).spaces; renderSpaces(); loadInvites(); if(DEMO) $('status').textContent='מצב הדגמה'; }
+  catch(e){ if(e.message!=='unauthorized') $('spaces').innerHTML=`<div class="note">שגיאה: ${esc(e.message)}</div>`; }
+}
+if(DEMO||TOKEN) start(); else showLogin();
+</script>
+</body>
+</html>
