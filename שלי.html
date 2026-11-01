@@ -5,108 +5,177 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>צ'אט</title>
 <style>
-:root{--bg:#f8fafd;--panel:#fff;--side:#f0f4f9;--text:#1f1f1f;--muted:#5f6368;--line:#e3e7ec;--sel:#d3e3fd;--hover:#e4e9f0;--mine:#d3e3fd;--blue:#0b57d0;--bubble:#f0f4f9}
-@media (prefers-color-scheme:dark){:root{--bg:#131314;--panel:#1b1b1d;--side:#1e1f20;--text:#e3e3e3;--muted:#9aa0a6;--line:#2d2f31;--sel:#0842a0;--hover:#2a2b2d;--mine:#0842a0;--blue:#a8c7fa;--bubble:#2a2b2d}}
+:root{--bg:#f6f8fc;--panel:#fff;--hover:rgba(31,31,31,.08);--msgh:#f5f7fa;--sel:#d3e3fd;--text:#1f1f1f;--muted:#5f6368;--line:#e1e3e1;--blue:#0b57d0;--field:#e9eef6;--code:#f0f4f9;--newbtn:#c2e7ff;--onnew:#001d35;--shadow:0 1px 3px rgba(60,64,67,.3),0 4px 8px 3px rgba(60,64,67,.15)}
+@media (prefers-color-scheme:dark){:root{--bg:#131314;--panel:#1e1f20;--hover:rgba(227,227,227,.1);--msgh:#232426;--sel:#0842a0;--text:#e3e3e3;--muted:#9aa0a6;--line:#37393b;--blue:#a8c7fa;--field:#2a2b2d;--code:#2b2c2e;--newbtn:#004a77;--onnew:#c2e7ff;--shadow:0 1px 3px rgba(0,0,0,.6),0 4px 8px 3px rgba(0,0,0,.4)}}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font-family:"Google Sans",Roboto,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:12px;padding:8px 16px;height:56px}
-header .logo{width:28px;height:28px;border-radius:8px;background:#00ac47;display:grid;place-items:center;color:#fff;font-weight:700}
-header h1{font-size:20px;font-weight:400;margin:0}
+body{font-family:"Google Sans","Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;font-size:14px}
+svg{width:24px;height:24px;fill:currentColor;display:block}
+button{font-family:inherit}
+.ib{border:0;background:none;color:var(--muted);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex-shrink:0;padding:0}
+.ib:hover{background:var(--hover)}.ib.on{background:var(--sel);color:var(--text)}
+.ib svg{width:20px;height:20px}
+/* header */
+header{display:flex;align-items:center;gap:12px;padding:8px 16px 8px 12px;height:64px;flex-shrink:0}
+header .brand{display:flex;align-items:center;gap:10px;width:268px;flex-shrink:0}
+header .logo{width:36px;height:36px}
+header h1{font-size:22px;font-weight:400;margin:0;color:var(--muted)}
+.searchbox{flex:1;max-width:720px;position:relative}
+.searchbox svg{position:absolute;inset-inline-start:14px;top:11px;width:22px;height:22px;color:var(--muted)}
+.search{background:var(--field);border:0;border-radius:24px;padding:0 48px;height:46px;width:100%;color:var(--text);font:inherit;font-size:16px;outline:none;transition:.15s}
+.search:focus{background:var(--panel);box-shadow:var(--shadow)}
 header .sp{flex:1}
-.search{background:var(--side);border:0;border-radius:24px;padding:10px 18px;width:min(420px,40vw);color:var(--text);font:inherit;outline:none}
-.app{flex:1;display:flex;min-height:0;padding:0 8px 8px;gap:8px}
-aside{width:300px;background:var(--side);border-radius:16px;overflow:auto;padding:8px;flex-shrink:0}
-aside h2{font-size:12px;color:var(--muted);margin:12px 12px 6px;font-weight:500}
-.space{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:24px;cursor:pointer}
+/* layout */
+.app{flex:1;display:flex;min-height:0;padding:0 12px 12px 12px;gap:12px}
+aside{width:268px;overflow:auto;flex-shrink:0;padding-bottom:8px}
+.new{display:flex;align-items:center;gap:12px;margin:4px 0 12px;padding:0 24px 0 20px;height:56px;border:0;border-radius:16px;background:var(--newbtn);color:var(--onnew);font:inherit;font-size:14px;font-weight:500;cursor:pointer;box-shadow:0 1px 2px rgba(60,64,67,.3)}
+.new:hover{box-shadow:var(--shadow)}
+.new svg{width:24px;height:24px}
+aside h2{font-size:12px;color:var(--muted);margin:10px 4px 2px;font-weight:500;display:flex;align-items:center;gap:4px;cursor:pointer;padding:6px 8px;border-radius:16px;user-select:none}
+aside h2:hover{background:var(--hover)}
+aside h2 svg{width:18px;height:18px;transition:transform .15s}
+aside h2.c svg{transform:rotate(90deg)}
+.space{display:flex;align-items:center;gap:12px;padding:0 12px;height:44px;border-radius:22px;cursor:pointer}
 .space:hover{background:var(--hover)}.space.on{background:var(--sel);font-weight:500}
 .av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:14px;flex-shrink:0}
-.space .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.space .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.space .jb{border:0;border-radius:14px;padding:4px 12px;background:var(--blue);color:var(--panel);cursor:pointer;font-size:12px}
 main{flex:1;background:var(--panel);border-radius:16px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
-.top{padding:12px 20px;border-bottom:1px solid var(--line);font-size:18px;display:flex;align-items:center;gap:12px}
-.top small{color:var(--muted);font-size:12px}
-#msgs{flex:1;overflow:auto;padding:12px 20px}
-.day{text-align:center;color:var(--muted);font-size:12px;margin:16px 0 8px}
-.m{display:flex;gap:12px;padding:2px 0}
-.m .av{margin-top:4px}.m.cont .av{visibility:hidden;height:0}
-.m .b{min-width:0}
-.m .h{font-size:13px;color:var(--muted);margin-bottom:2px}.m .h b{color:var(--text);font-weight:500;margin-left:8px}
-.m .x{white-space:pre-wrap;word-break:break-word;line-height:1.45;font-size:14px;background:var(--bubble);padding:8px 14px;border-radius:4px 18px 18px 18px;display:inline-block;max-width:min(640px,100%)}
+.top{padding:0 16px 0 12px;height:64px;border-bottom:1px solid var(--line);font-size:18px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.top .av{width:36px;height:36px;display:none}
+.top .tt{display:flex;flex-direction:column;min-width:0}
+.top #title{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top small{color:var(--muted);font-size:12px;line-height:14px}
+.top .fb{margin-inline-start:auto;display:flex;align-items:center;gap:6px;padding:0 14px 0 16px;height:36px;border-radius:18px;border:1px solid var(--line);background:none;color:var(--text);cursor:pointer;font:inherit;font-size:14px}
+.top .fb:hover{background:var(--hover)}.top .fb svg{width:18px;height:18px}
+#back{display:none}
+/* messages */
+#msgs{flex:1;overflow:auto;padding:8px 0}
+.day{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:12px;margin:16px 20px 8px}
+.day:before,.day:after{content:"";flex:1;height:1px;background:var(--line)}
+.m{display:flex;gap:12px;padding:6px 20px;position:relative}
+.m:hover{background:var(--msgh)}
+.m .av{width:36px;height:36px;margin-top:2px}
+.m .ts{width:36px;flex-shrink:0;font-size:10px;color:var(--muted);text-align:center;padding-top:4px;visibility:hidden}
+.m:hover .ts{visibility:visible}
+.m.cont{padding-top:1px;padding-bottom:1px}
+.m .b{min-width:0;flex:1}
+.m .h{font-size:12px;color:var(--muted);margin-bottom:2px;display:flex;align-items:baseline;gap:8px}.m .h b{color:var(--text);font-weight:500;font-size:14px}
 .m.cont .h{display:none}
-.m a{color:var(--blue)}
-form{display:flex;gap:8px;padding:12px 16px;align-items:flex-end}
-textarea{flex:1;resize:none;border:1px solid var(--line);background:var(--side);color:var(--text);border-radius:24px;padding:12px 18px;font:inherit;max-height:140px;outline:none}
-textarea:focus{border-color:var(--blue)}
-button.send{border:0;width:44px;height:44px;border-radius:50%;background:var(--blue);color:var(--panel);cursor:pointer;font-size:18px}
-button.send:disabled{opacity:.4}
+.x{line-height:20px;word-break:break-word;font-size:14px;max-width:760px}
+.x a,.m a{color:var(--blue)}
+.x ul,.x ol,.ed ul,.ed ol{margin:2px 0;padding-inline-start:24px}
+.x code,.ed code{font-family:"Roboto Mono",Consolas,monospace;font-size:13px;background:var(--code);padding:1px 5px;border-radius:4px}
+.x pre,.ed pre{font-family:"Roboto Mono",Consolas,monospace;font-size:13px;background:var(--code);padding:10px 12px;border-radius:8px;margin:4px 0;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;line-height:18px}
 .note{margin:auto;color:var(--muted);text-align:center;padding:24px;max-width:420px;line-height:1.6}
-#back{display:none;background:none;border:0;color:var(--text);font-size:22px;cursor:pointer}
-.new{display:flex;align-items:center;gap:8px;margin:8px;padding:14px 20px;border:0;border-radius:16px;background:var(--sel);color:var(--text);font:inherit;cursor:pointer;font-weight:500}
-.new:hover{filter:brightness(.96)}
-.space .jb{margin-inline-start:auto;border:0;border-radius:14px;padding:4px 12px;background:var(--blue);color:var(--panel);cursor:pointer;font:inherit;font-size:12px}
-dialog{border:0;border-radius:24px;background:var(--panel);color:var(--text);padding:24px;width:min(420px,92vw);box-shadow:0 8px 40px #0005}
-dialog::backdrop{background:#0006}
-dialog p{color:var(--muted);font-size:13px;margin:0;line-height:1.5}
-dialog input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;margin:8px 0 12px;direction:ltr;text-align:left}
-.tabs{display:flex;gap:8px;margin-bottom:14px}
-.tabs button{flex:1;border:0;padding:8px;border-radius:16px;background:var(--side);color:var(--text);font:inherit;cursor:pointer}
-.tabs button.on{background:var(--sel)}
-.row{display:flex;gap:8px;margin-top:6px}
-.row button{border:0;border-radius:20px;padding:10px 20px;font:inherit;cursor:pointer;background:var(--side);color:var(--text)}
-.row button.pri{background:var(--blue);color:var(--panel)}
-.m{position:relative}
-.acts{display:none;position:absolute;top:-8px;inset-inline-end:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:2px;gap:2px;z-index:2}
+.acts{display:none;position:absolute;top:-16px;inset-inline-end:20px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px;gap:0;z-index:2;box-shadow:0 1px 3px rgba(60,64,67,.2)}
 .m:hover .acts{display:flex}
-.acts button{border:0;background:none;color:var(--text);cursor:pointer;border-radius:12px;padding:4px 8px;font-size:14px}.acts button:hover{background:var(--hover)}
-.qt{border-inline-start:3px solid var(--blue);background:var(--panel);padding:4px 10px;margin-bottom:6px;border-radius:6px;font-size:12px;color:var(--muted);white-space:pre-wrap}
+.acts .ib{width:32px;height:32px}
+.qt{border-inline-start:3px solid var(--blue);background:var(--code);padding:4px 10px;margin-bottom:6px;border-radius:4px;font-size:12px;color:var(--muted);white-space:pre-wrap}
 .qt b{display:block;color:var(--blue);font-weight:500}
 .ai{max-width:320px;max-height:240px;border-radius:12px;display:block;margin-top:6px;cursor:pointer;background:var(--hover);min-width:80px;min-height:60px}
-.file{display:flex;gap:8px;align-items:center;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text);font-size:13px;max-width:320px}
-.tl{margin-top:4px;color:var(--blue);cursor:pointer;background:none;border:0;padding:0;font:inherit;font-size:12px}
-#tp{width:340px;background:var(--panel);border-radius:16px;display:none;flex-direction:column;flex-shrink:0;overflow:hidden}
+.file{display:flex;gap:8px;align-items:center;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text)!important;font-size:13px;max-width:320px}
+.file:hover{background:var(--hover)}
+.tl{margin-top:4px;color:var(--blue);cursor:pointer;background:none;border:0;padding:2px 0;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px}
+.tl svg{width:16px;height:16px}.tl:hover{text-decoration:underline}
+/* thread panel */
+#tp{width:360px;background:var(--panel);border-radius:16px;display:none;flex-direction:column;flex-shrink:0;overflow:hidden}
 #tp.on{display:flex}
-#tph{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
-#tph button,#qbar button,.top .fb{background:none;border:0;color:var(--text);cursor:pointer;font:inherit}
-#tb{flex:1;overflow:auto;padding:8px 14px}
-#tf{display:none;padding:8px;gap:6px;align-items:flex-end}#tf.on{display:flex}
-#tf textarea{border-radius:18px;padding:10px 14px}
-#qbar{display:none;margin:0 16px;padding:6px 12px;border-inline-start:3px solid var(--blue);background:var(--side);border-radius:8px;font-size:12px;color:var(--muted);justify-content:space-between;gap:8px}#qbar.on{display:flex}
-.top .fb{margin-inline-start:auto;padding:6px 12px;border-radius:16px;background:var(--side)}
-@media (max-width:760px){#tp.on{position:fixed;inset:0;width:auto;border-radius:0;z-index:5}}
-@media (max-width:760px){aside{width:100%}.search{display:none}main{display:none}.app.chat aside{display:none}.app.chat main{display:flex}#back{display:block}}
+#tph{display:flex;justify-content:space-between;align-items:center;padding:0 20px 0 12px;height:64px;border-bottom:1px solid var(--line);font-size:16px}
+#tb{flex:1;overflow:auto;padding:8px 0}
+#tb .m{padding:6px 14px}
+/* composer */
+.cw{margin:0 16px 16px}
+#tcomp{display:none;margin:0 10px 10px}
+#qbar{display:none;margin:0 16px 8px;padding:8px 12px;border-inline-start:3px solid var(--blue);background:var(--code);border-radius:8px;font-size:12px;color:var(--muted);justify-content:space-between;align-items:center;gap:8px}#qbar.on{display:flex}
+#qbar .ib{width:28px;height:28px}
+.cmp{border:1px solid #c4c7c5;border-radius:24px;background:var(--panel);transition:border-color .15s,box-shadow .15s}
+@media (prefers-color-scheme:dark){.cmp{border-color:#5f6368}}
+.cmp:focus-within{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+.fmt{display:none;align-items:center;gap:2px;padding:6px 12px 0;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:6px}
+.cmp.fmt-on .fmt{display:flex}
+.fmt .ib{width:32px;height:32px;border-radius:8px}
+.fmt .sep{width:1px;height:20px;background:var(--line);margin:0 6px}
+.ed{min-height:24px;max-height:220px;overflow:auto;padding:12px 18px 8px;outline:none;font-size:14px;line-height:20px;word-break:break-word}
+.ed:empty:before{content:attr(data-ph);color:var(--muted);pointer-events:none}
+.cbar{display:flex;align-items:center;gap:2px;padding:2px 8px 8px}
+.send{border:0;width:36px;height:36px;border-radius:50%;background:transparent;color:var(--blue);cursor:pointer;display:grid;place-items:center;padding:0}
+.send svg{width:22px;height:22px;transform:scaleX(-1)}
+.send:disabled{color:var(--muted);opacity:.5;cursor:default}
+.send:not(:disabled):hover{background:var(--hover)}
+/* dialogs */
+dialog{border:0;border-radius:28px;background:var(--panel);color:var(--text);padding:24px;width:min(420px,92vw);box-shadow:0 8px 40px #0005}
+dialog::backdrop{background:#0006}
+dialog h3{margin:0 0 16px;font-size:24px;font-weight:400}
+dialog p{color:var(--muted);font-size:13px;margin:0;line-height:1.5}
+dialog input{width:100%;padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:inherit;margin:8px 0 6px;direction:ltr;text-align:left;outline:none}
+dialog input:focus{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+dialog input.rtl{direction:rtl;text-align:right}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{flex:1;border:1px solid var(--line);padding:8px;border-radius:16px;background:none;color:var(--text);font:inherit;cursor:pointer}
+.tabs button.on{background:var(--sel);border-color:transparent}
+.row{display:flex;gap:8px;margin-top:14px;justify-content:flex-end}
+.row button{border:0;border-radius:20px;padding:10px 24px;font:inherit;cursor:pointer;background:none;color:var(--blue);font-weight:500}
+.row button:hover{background:var(--hover)}
+.row button.pri{background:var(--blue);color:var(--panel)}.row button.pri:hover{filter:brightness(1.1)}
+#emo{position:fixed;display:none;z-index:40;background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:8px;width:296px;grid-template-columns:repeat(8,1fr);gap:2px}
+#emo.on{display:grid}
+#emo button{border:0;background:none;font-size:20px;border-radius:8px;cursor:pointer;padding:4px;line-height:1.3}
+#emo button:hover{background:var(--hover)}
+#lg{display:none;position:fixed;inset:0;z-index:30;background:var(--bg);place-items:center}
+#lgf{background:var(--panel);padding:36px 32px;border-radius:28px;width:min(380px,90vw);display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:var(--shadow)}
+#lgf h2{margin:0;font-weight:400;font-size:24px}
+#lgf input{padding:14px 16px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:inherit;text-align:center;outline:none}
+#lgf input:focus{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
+#lgf button{border:0;border-radius:20px;height:40px;background:var(--blue);color:var(--panel);font:inherit;font-weight:500;cursor:pointer}
+#lge{color:#d93025;font-size:13px;min-height:16px}
+@media (max-width:760px){
+  #tp.on{position:fixed;inset:0;width:auto;border-radius:0;z-index:5}
+  aside{width:100%}.searchbox{max-width:none}header .brand{width:auto}header h1{display:none}
+  main{display:none}.app.chat aside{display:none}.app.chat main{display:flex}#back{display:grid}.top .fb span{display:none}.top .fb{padding:0;width:36px;justify-content:center}
+  .app{padding:0 0 0}main,#tp{border-radius:0}
+  .acts{display:flex;opacity:.0;pointer-events:none}.m:active .acts,.m:focus-within .acts{opacity:1;pointer-events:auto}
+}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">💬</div><h1>צ'אט</h1><div class="sp"></div>
-  <input class="search" id="q" placeholder="חיפוש בשיחות" autocomplete="off">
-  <button id="lo" style="border:0;background:var(--side);color:var(--text);border-radius:16px;padding:8px 14px;font:inherit;cursor:pointer">יציאה</button>
+  <div class="brand"><svg class="logo" viewBox="0 0 36 36"><path fill="#00ac47" d="M6 6h24a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H15l-7.5 6V29H6a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z"/><path fill="#fff" d="M10 13h16v2.4H10zm0 5h11v2.4H10z"/></svg><h1>צ'אט</h1></div>
+  <div class="searchbox"><span data-i="search"></span><input class="search" id="q" placeholder="חיפוש בשיחות" autocomplete="off"></div>
+  <div class="sp"></div>
+  <button class="ib" id="lo" title="יציאה" aria-label="יציאה" data-i="logout"></button>
 </header>
 <div class="app" id="app">
-  <aside><button class="new" id="new">✏️ שיחה חדשה</button><div id="spaces"></div></aside>
+  <aside><button class="new" id="new"><span data-i="add"></span>שיחה חדשה</button><div id="spaces"></div></aside>
   <main>
-    <div class="top"><button id="back" aria-label="חזרה">→</button><span id="title">בחר שיחה</span><small id="status"></small><button class="fb" id="fb">📎 משותף</button></div>
+    <div class="top"><button class="ib" id="back" aria-label="חזרה" data-i="back"></button><div class="av" id="tav"></div><div class="tt"><span id="title">בחר שיחה</span><small id="status"></small></div><button class="fb" id="fb"><span data-i="attach"></span><span>משותף</span></button></div>
     <div id="msgs"><div class="note">בחר שיחה מהרשימה כדי להתחיל.</div></div>
-    <div id="qbar"><span id="qtxt"></span><button type="button" id="qx" aria-label="ביטול ציטוט">✕</button></div>
-    <form id="f"><textarea id="t" rows="1" placeholder="כתיבת הודעה"></textarea><button class="send" id="s" disabled aria-label="שליחה">➤</button></form>
+    <div id="cwrap" style="display:none">
+      <div id="qbar"><span id="qtxt"></span><button type="button" class="ib" id="qx" aria-label="ביטול ציטוט" data-i="close"></button></div>
+      <div id="cmain" class="cw"></div>
+    </div>
   </main>
-  <section id="tp"><div id="tph"><b id="tpt"></b><button id="tclose" aria-label="סגירה">✕</button></div><div id="tb"></div>
-    <form id="tf"><textarea id="tt" rows="1" placeholder="תגובה בשרשור" style="flex:1;resize:none;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;outline:none"></textarea><button class="send" aria-label="שליחה">➤</button></form></section>
+  <section id="tp"><div id="tph"><b id="tpt"></b><button class="ib" id="tclose" aria-label="סגירה" data-i="close"></button></div><div id="tb"></div><div id="tcomp"></div></section>
 </div>
-<div id="lg" style="display:none;position:fixed;inset:0;z-index:30;background:var(--bg);place-items:center">
-  <form id="lgf" style="background:var(--panel);padding:32px;border-radius:24px;width:min(360px,90vw);display:flex;flex-direction:column;gap:12px;text-align:center">
-    <div style="font-size:40px">💬</div><h2 style="margin:0;font-weight:400">כניסה</h2>
-    <input id="pw" type="password" autocomplete="current-password" placeholder="סיסמה" style="padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:var(--side);color:var(--text);font:inherit;text-align:center">
-    <div id="lge" style="color:#d93025;font-size:13px;min-height:16px"></div>
-    <button class="send" style="width:auto;border-radius:20px;padding:0 20px">כניסה</button>
+<div id="emo"></div>
+<div id="lg">
+  <form id="lgf">
+    <svg viewBox="0 0 36 36" style="width:56px;height:56px;margin:0 auto"><path fill="#00ac47" d="M6 6h24a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H15l-7.5 6V29H6a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z"/><path fill="#fff" d="M10 13h16v2.4H10zm0 5h11v2.4H10z"/></svg>
+    <h2>כניסה</h2>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="סיסמה">
+    <div id="lge"></div>
+    <button>כניסה</button>
   </form></div>
-<dialog id="dlg"><div class="tabs"><button id="tdm" class="on">שיחה אישית</button><button id="tjoin">הצטרפות למרחב</button></div>
+<dialog id="dlg"><h3 id="dt">שיחה חדשה</h3><div class="tabs"><button id="tdm" class="on">שיחה אישית</button><button id="tjoin">הצטרפות למרחב</button></div>
 <p id="hint"></p><input id="inp" autocomplete="off"><p id="err" style="color:#d93025"></p>
-<div class="row"><button class="pri" id="ok">אישור</button><button id="cancel">ביטול</button></div></dialog>
+<div class="row"><button id="cancel">ביטול</button><button class="pri" id="ok">אישור</button></div></dialog>
+<dialog id="ldlg"><h3>הוספת קישור</h3>
+<input id="ltxt" class="rtl" placeholder="טקסט להצגה" autocomplete="off"><input id="lurl" placeholder="https://example.com" autocomplete="off">
+<div class="row"><button id="lcancel" type="button">ביטול</button><button class="pri" id="lok" type="button">הוספה</button></div></dialog>
 <script>
 // ===== הגדרות =====
 const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbyPQH3cg5c4BOOMsuPCecn-Nf-NxbUEX24JcA7pkOM2QRICKYY3MDu_pojPkv7gxxX4sw/exec',   // הדבק כאן את כתובת /exec של אפליקציית ה-Apps Script
+  API_URL: 'https://script.google.com/macros/s/AKfycbyPQH3cg5c4BOOMsuPCecn-Nf-NxbUEX24JcA7pkOM2QRICKYY3MDu_pojPkv7gxxX4sw/exec',   // כתובת /exec של אפליקציית ה-Apps Script
   REFRESH_MS: 15000
 };
 // ==================
@@ -117,6 +186,213 @@ const colors = ['#1a73e8','#d93025','#188038','#e37400','#9334e6','#007b83','#c2
 const colorOf = s => colors[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)%colors.length];
 let spaces=[], cur=null, timer=null, last='';
 
+/* ---------- אייקונים ---------- */
+const ic=d=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
+const I={
+ search:ic('M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'),
+ add:ic('M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'),
+ bold:ic('M15.6 10.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 6.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z'),
+ italic:ic('M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z'),
+ strike:ic('M3 11h18v2H3zM16.5 9c0-2-1.8-3.5-4.5-3.5S7.5 7 7.5 9h2.3c0-.9.9-1.5 2.2-1.5s2.2.6 2.2 1.5zM7.5 15.5c0 2 1.8 3.5 4.5 3.5s4.5-1.5 4.5-3.5h-2.3c0 .9-.9 1.5-2.2 1.5s-2.2-.6-2.2-1.5z'),
+ ul:ic('M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.68-1.5 1.5s.68 1.5 1.5 1.5 1.5-.68 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z'),
+ ol:ic('M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z'),
+ link:ic('M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z'),
+ code:ic('M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z'),
+ pre:ic('M4 4h16a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 2v12h14V6H5zm5 3.5L7.5 12 10 14.5l1-1L9.5 12 11 10.5zm4 0l-1 1 1.5 1.5-1.5 1.5 1 1 2.5-2.5z'),
+ clear:ic('M3.27 5L2 6.27l6.97 6.97L6.5 19h3l1.57-3.66L16.73 21 18 19.73 3.55 5.27 3.27 5zM6 5v.18L8.82 8h2.4l-.72 1.68 2.1 2.1L14.21 8H20V5H6z'),
+ send:ic('M2.01 21L23 12 2.01 3 2 10l15 2-15 2z'),
+ close:ic('M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'),
+ reply:ic('M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z'),
+ thread:ic('M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z'),
+ mood:ic('M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z'),
+ fmt:ic('M5 17v2h14v-2H5zm4.5-4.2h5l.9 2.2h2.1L12.75 4h-1.5L6.5 15h2.1l.9-2.2zM12 5.98L13.87 11h-3.74L12 5.98z'),
+ attach:ic('M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z'),
+ logout:ic('M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z'),
+ back:ic('M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'),
+ chev:ic('M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z')
+};
+document.querySelectorAll('[data-i]').forEach(el=>{el.innerHTML=I[el.dataset.i];});
+
+/* ---------- עזרים ---------- */
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const aLink = u => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(u)}</a>`;
+function fmtDay(d){const n=new Date(),y=new Date(n-864e5),sd=(a,b)=>a.toDateString()===b.toDateString();
+  return sd(d,n)?'היום':sd(d,y)?'אתמול':d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'});}
+const fmtTime = d => d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit',hour12:false});
+
+/* ---------- פורמט הודעות של Google Chat -> HTML ---------- */
+function fmtInline(s){
+  s=s.replace(/(^|[\s(>])\*(?!\s)([^*\n]*[^*\s])\*(?=$|[\s.,!?;:)<])/g,'$1<b>$2</b>');
+  s=s.replace(/(^|[\s(>])_(?!\s)([^_\n]*[^_\s])_(?=$|[\s.,!?;:)<])/g,'$1<i>$2</i>');
+  s=s.replace(/(^|[\s(>])~(?!\s)([^~\n]*[^~\s])~(?=$|[\s.,!?;:)<])/g,'$1<s>$2</s>');
+  return s;
+}
+function chatFmt(text){
+  const stash=[]; const put=h=>'\uE000'+(stash.push(h)-1)+'\uE001';
+  let t=String(text||'');
+  t=t.replace(/```\n?([\s\S]*?)```/g,(_,c)=>put('<pre>'+esc(c.replace(/\n$/,''))+'</pre>'));
+  t=t.replace(/`([^`\n]+)`/g,(_,c)=>put('<code>'+esc(c)+'</code>'));
+  t=t.replace(/<(https?:\/\/[^\s|>]+)\|([^>\n]+)>/g,(_,u,l)=>put(`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${esc(l)}</a>`));
+  t=t.replace(/<(https?:\/\/[^\s|>]+)>/g,(_,u)=>put(aLink(u)));
+  t=t.replace(/(https?:\/\/[^\s<]+)/g,u=>put(aLink(u)));
+  t=esc(t);
+  const parts=[]; let list=null;
+  const flush=()=>{if(list){parts.push({b:1,h:`<${list.type}>`+list.items.map(i=>`<li>${i}</li>`).join('')+`</${list.type}>`});list=null;}};
+  t.split('\n').forEach(line=>{
+    const mu=line.match(/^\s*[*\-•]\s+(.*)$/), mo=line.match(/^\s*(\d+)\.\s+(.*)$/);
+    if(mu||mo){const type=mu?'ul':'ol'; if(!list||list.type!==type){flush();list={type,items:[]};} list.items.push(fmtInline(mu?mu[1]:mo[2]));return;}
+    flush();
+    const pm=line.trim().match(/^\uE000(\d+)\uE001$/);
+    parts.push({b:pm&&stash[pm[1]].startsWith('<pre'),h:fmtInline(line)});
+  });
+  flush();
+  let html='';
+  parts.forEach((p,i)=>{ if(i&&!p.b&&!parts[i-1].b) html+='<br>'; html+=p.h; });
+  return html.replace(/\uE000(\d+)\uE001/g,(_,i)=>stash[i]);
+}
+
+/* ---------- עורך טקסט -> פורמט Google Chat ---------- */
+function wrapM(m,inner){const r=inner.match(/^(\s*)([\s\S]*?)(\s*)$/);return r[2]?r[1]+m+r[2]+m+r[3]:inner;}
+function serialize(ed){
+  const walk=parent=>{
+    let out='';
+    parent.childNodes.forEach(n=>{
+      if(n.nodeType===3){out+=n.nodeValue;return;}
+      if(n.nodeType!==1) return;
+      const tag=n.tagName;
+      if(tag==='BR'){out+='\n';return;}
+      const block=/^(DIV|P|PRE|UL|OL|LI|BLOCKQUOTE|H[1-6])$/.test(tag);
+      if(block&&out&&!out.endsWith('\n')) out+='\n';
+      let s;
+      switch(tag){
+        case 'B':case 'STRONG': s=wrapM('*',walk(n));break;
+        case 'I':case 'EM': s=wrapM('_',walk(n));break;
+        case 'S':case 'STRIKE':case 'DEL': s=wrapM('~',walk(n));break;
+        case 'CODE': s=wrapM('`',n.textContent);break;
+        case 'PRE': s='```\n'+n.textContent.replace(/\n$/,'')+'\n```\n';break;
+        case 'A':{const l=walk(n).trim(),h=n.getAttribute('href')||'';
+          s=/^https?:/i.test(h)?(l&&l!==h?`<${h}|${l.replace(/[<>|]/g,'')}>`:h):l;break;}
+        case 'UL': s=[...n.children].map(li=>'* '+walk(li).trim()+'\n').join('');break;
+        case 'OL': s=[...n.children].map((li,i)=>(i+1)+'. '+walk(li).trim()+'\n').join('');break;
+        default: s=walk(n);
+      }
+      out+=s;
+      if(block&&tag!=='UL'&&tag!=='OL'&&tag!=='PRE'&&!out.endsWith('\n')) out+='\n';
+    });
+    return out;
+  };
+  return walk(ed).replace(/\u200b/g,'').replace(/\u00a0/g,' ').replace(/\n{3,}/g,'\n\n').trim();
+}
+
+/* ---------- אימוג'י וקישור ---------- */
+const EMO='😀 😁 😂 🤣 😊 😍 😘 😎 🤔 😅 😢 😭 😡 👍 👎 👏 🙏 💪 🙌 👌 🤝 ❤️ 🔥 ✨ 🎉 ✅ ❌ ⭐ 💡 📌 📎 📅 ⏰ 🙂 😉 😴 🤗 😇 🥳 😬 🙈 👀 💯 ☕ 🌹 🌞 🍎'.split(' ');
+const emo=$('emo'); emo.innerHTML=EMO.map(e=>`<button type="button">${e}</button>`).join('');
+let emoPick=null;
+emo.addEventListener('mousedown',e=>e.preventDefault());
+emo.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&emoPick){emoPick(b.textContent);emo.classList.remove('on');}});
+document.addEventListener('mousedown',e=>{if(!e.target.closest('#emo')&&!e.target.closest('[data-c=emoji]')) emo.classList.remove('on');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') emo.classList.remove('on');});
+function openEmoji(btn,pick){
+  if(emo.classList.contains('on')){emo.classList.remove('on');return;}
+  emoPick=pick; emo.classList.add('on');
+  const r=btn.getBoundingClientRect();
+  emo.style.left=Math.max(8,Math.min(r.left,innerWidth-304))+'px';
+  emo.style.bottom=(innerHeight-r.top+8)+'px'; emo.style.top='auto';
+}
+let linkCb=null;
+function openLink(text,url,cb){
+  linkCb=cb; $('ltxt').value=text||''; $('lurl').value=url||''; $('ldlg').showModal();
+  (text?$('lurl'):$('ltxt')).focus();
+}
+$('lcancel').onclick=()=>$('ldlg').close();
+$('lok').onclick=()=>{
+  let u=$('lurl').value.trim(); if(!u) return;
+  if(!/^https?:\/\//i.test(u)) u='https://'+u;
+  const t=$('ltxt').value.trim()||u; $('ldlg').close(); if(linkCb) linkCb(t,u);
+};
+['ltxt','lurl'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('lok').click();}}));
+
+/* ---------- רכיב כתיבת הודעה ---------- */
+let FMT_ON=true; try{FMT_ON=localStorage.getItem('fmt')!=='0';}catch(_){}
+const FMT_BTNS=[['b','הדגשה (Ctrl+B)','bold'],['i','נטוי (Ctrl+I)','italic'],['s','קו חוצה (Ctrl+Shift+X)','strike'],'|',
+  ['ul','רשימת תבליטים','ul'],['ol','רשימה ממוספרת','ol'],'|',['link','קישור (Ctrl+K)','link'],['code','קוד','code'],['pre','בלוק קוד','pre'],'|',['clear','ניקוי עיצוב (Ctrl+\\)','clear']];
+function Composer(root,{ph,onSend}){
+  root.innerHTML=`<div class="cmp${FMT_ON?' fmt-on':''}"><div class="fmt" role="toolbar" aria-label="עיצוב טקסט">${
+    FMT_BTNS.map(b=>b==='|'?'<span class="sep"></span>':`<button type="button" class="ib" data-c="${b[0]}" title="${b[1]}" aria-label="${b[1]}">${I[b[2]]}</button>`).join('')
+  }</div><div class="ed" contenteditable="true" role="textbox" aria-multiline="true" data-ph="${ph}"></div><div class="cbar"><button type="button" class="ib${FMT_ON?' on':''}" data-c="toggle" title="אפשרויות עיצוב" aria-label="אפשרויות עיצוב">${I.fmt}</button><button type="button" class="ib" data-c="emoji" title="אימוג'י" aria-label="אימוג'י">${I.mood}</button><span style="flex:1"></span><button type="button" class="send" data-c="send" disabled title="שליחה (Enter)" aria-label="שליחה">${I.send}</button></div></div>`;
+  const box=root.firstChild, ed=box.querySelector('.ed'), sendB=box.querySelector('.send');
+  let saved=null, busy=false;
+  const has=()=>ed.textContent.replace(/[\u200b\s]/g,'')!=='';
+  const refresh=()=>{sendB.disabled=busy||!has();};
+  const restore=()=>{ed.focus();const s=getSelection();
+    if(saved){s.removeAllRanges();s.addRange(saved);}
+    else{const r=document.createRange();r.selectNodeContents(ed);r.collapse(false);s.removeAllRanges();s.addRange(r);}};
+  const inTag=tag=>{const s=getSelection();let n=s.anchorNode;while(n&&n!==ed){if(n.nodeName===tag) return n;n=n.parentNode;}return null;};
+  const qs=c=>{try{return document.queryCommandState(c);}catch(_){return false;}};
+  const state=()=>{
+    const s=getSelection(); if(!s.rangeCount||!ed.contains(s.anchorNode)) return;
+    saved=s.getRangeAt(0).cloneRange();
+    const st={b:qs('bold'),i:qs('italic'),s:qs('strikeThrough'),ul:qs('insertUnorderedList'),ol:qs('insertOrderedList'),code:!!inTag('CODE'),pre:!!inTag('PRE')};
+    box.querySelectorAll('.fmt .ib').forEach(b=>b.classList.toggle('on',!!st[b.dataset.c]));
+  };
+  document.addEventListener('selectionchange',state);
+  const ex=(c,v)=>{ed.focus();document.execCommand('styleWithCSS',false,false);document.execCommand(c,false,v);ed.dispatchEvent(new Event('input'));state();};
+  const doSend=async()=>{
+    if(busy) return; const text=serialize(ed); if(!text) return;
+    busy=true;refresh();
+    try{ const ok=await onSend(text); if(ok!==false){ed.innerHTML='';saved=null;} }
+    finally{busy=false;refresh();ed.focus();}
+  };
+  const cmd={
+    b:()=>ex('bold'),i:()=>ex('italic'),s:()=>ex('strikeThrough'),ul:()=>ex('insertUnorderedList'),ol:()=>ex('insertOrderedList'),
+    pre:()=>ex('formatBlock',inTag('PRE')?'<div>':'<pre>'),
+    code:()=>{restore();const c=inTag('CODE');
+      if(c){const t=document.createTextNode(c.textContent);c.replaceWith(t);ed.dispatchEvent(new Event('input'));return;}
+      const sel=getSelection().toString(); if(!sel) return;
+      document.execCommand('insertHTML',false,`<code>${esc(sel)}</code>&#8203;`);ed.dispatchEvent(new Event('input'));},
+    link:()=>{
+      const a=inTag('A'); const selText=saved?saved.toString():'';
+      openLink(a?a.textContent:selText,a?a.getAttribute('href'):'',(t,u)=>{restore();
+        if(a&&saved&&ed.contains(a)){a.setAttribute('href',u);a.textContent=t;}
+        else document.execCommand('insertHTML',false,`<a href="${esc(u)}">${esc(t)}</a>&#8203;`);
+        ed.dispatchEvent(new Event('input'));});},
+    clear:()=>{restore();document.execCommand('removeFormat');document.execCommand('unlink');
+      const s=getSelection();
+      ed.querySelectorAll('code').forEach(c=>{if(s.containsNode(c,true)) c.replaceWith(document.createTextNode(c.textContent));});
+      if(inTag('PRE')) document.execCommand('formatBlock',false,'<div>');
+      ed.dispatchEvent(new Event('input'));state();},
+    toggle:()=>{FMT_ON=!FMT_ON;try{localStorage.setItem('fmt',FMT_ON?'1':'0');}catch(_){}
+      box.classList.toggle('fmt-on',FMT_ON);box.querySelector('[data-c=toggle]').classList.toggle('on',FMT_ON);ed.focus();},
+    emoji:e=>openEmoji(e,em=>{restore();document.execCommand('insertText',false,em);ed.dispatchEvent(new Event('input'));}),
+    send:doSend
+  };
+  box.addEventListener('mousedown',e=>{if(e.target.closest('button')) e.preventDefault();});
+  box.addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b||b.disabled) return;
+    const f=cmd[b.dataset.c]; if(f) f(b);});
+  ed.addEventListener('input',()=>{
+    if(!has()&&!ed.querySelector('li,pre,img')&&ed.innerHTML!=='') ed.innerHTML='';
+    refresh();ed.scrollTop=ed.scrollTop;});
+  ed.addEventListener('keydown',e=>{
+    if(e.isComposing) return;
+    const mod=e.ctrlKey||e.metaKey, k=e.key.toLowerCase();
+    if(e.key==='Enter'&&!e.shiftKey){
+      if(mod||!inTag('LI')){e.preventDefault();doSend();}
+      return;}
+    if(mod&&k==='k'){e.preventDefault();cmd.link();}
+    else if(mod&&e.shiftKey&&k==='x'){e.preventDefault();cmd.s();}
+    else if(mod&&e.key==='\\'){e.preventDefault();cmd.clear();}
+  });
+  ed.addEventListener('paste',e=>{
+    e.preventDefault(); const t=(e.clipboardData||window.clipboardData).getData('text/plain'); if(!t) return;
+    const s=getSelection();
+    if(/^https?:\/\/\S+$/.test(t.trim())&&s.toString()){document.execCommand('createLink',false,t.trim());}
+    else document.execCommand('insertText',false,t);
+    ed.dispatchEvent(new Event('input'));});
+  ed.addEventListener('drop',e=>{e.preventDefault();const t=e.dataTransfer.getData('text/plain');if(t){ed.focus();document.execCommand('insertText',false,t);}});
+  return {focus:()=>ed.focus(),clear:()=>{ed.innerHTML='';refresh();}};
+}
+
+/* ---------- API ---------- */
 async function api(params){
   if(DEMO) return demo(params);
   const u = new URL(CONFIG.API_URL);
@@ -129,24 +405,28 @@ function demo(p){
   if(p.action==='spaces') return {spaces:[{name:'spaces/1',type:'SPACE',title:'צוות הפרויקט'},{name:'spaces/2',type:'SPACE',title:'הודעות כלליות'},{name:'spaces/3',type:'DIRECT_MESSAGE',title:'דוד כהן'},{name:'spaces/4',type:'GROUP_CHAT',title:'דוד, שרה'}]};
   return {messages:[
     {id:1,sender:'דוד כהן',text:'בוקר טוב לכולם!',thread:'t1',time:new Date(now-864e5).toISOString()},
-    {id:2,sender:'שרה לוי',text:'בוקר טוב, האתר מוכן לבדיקה.',time:new Date(now-36e5).toISOString()},
-    {id:3,sender:'שרה לוי',text:'שלחתי לכם את הקישור: https://example.com',time:new Date(now-35e5).toISOString()},
-    {id:4,sender:'דוד כהן',text:'מעולה, תודה רבה!',time:new Date(now-1e5).toISOString(),quote:{sender:'שרה לוי',text:'האתר מוכן לבדיקה.'}},{id:5,sender:'שרה לוי',text:'בשמחה 🙂',thread:'t1',reply:true,time:new Date(now-5e4).toISOString()}]};
+    {id:2,sender:'שרה לוי',text:'בוקר טוב, *האתר* מוכן לבדיקה.',time:new Date(now-36e5).toISOString()},
+    {id:3,sender:'שרה לוי',text:'שלחתי לכם את הקישור: https://example.com\n* פריט ראשון\n* פריט שני',time:new Date(now-35e5).toISOString()},
+    {id:4,sender:'דוד כהן',text:'מעולה, _תודה_ רבה!',time:new Date(now-1e5).toISOString(),quote:{sender:'שרה לוי',text:'האתר מוכן לבדיקה.'}},{id:5,sender:'שרה לוי',text:'בשמחה 🙂',thread:'t1',reply:true,time:new Date(now-5e4).toISOString()}]};
 }
-const esc = s => s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const linkify = s => esc(s).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-const fmtDay = d => d.toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'long'});
-const fmtTime = d => d.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+async function post(body){
+  if(DEMO) throw new Error('זמין לאחר חיבור ה-Apps Script');
+  const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body,token:TOKEN})});
+  const j=await r.json(); if(j.error){ if(j.error==='unauthorized') showLogin(); throw new Error(j.error); } return j;
+}
 
+/* ---------- רשימת שיחות ---------- */
 const SEC=[['INV','הזמנות'],['DIRECT_MESSAGE','שיחות אישיות'],['GROUP_CHAT','קבוצות'],['SPACE','מרחבים']];
-let invites={};
+let invites={}, collapsed={};
 function renderSpaces(filter=''){
   const box=$('spaces'); box.innerHTML='';
   const list=spaces.filter(s=>s.title.includes(filter));
   SEC.forEach(([k,label])=>{
     const items=list.filter(s=>k==='INV'?invites[s.name]:(!invites[s.name]&&(s.type||'SPACE')===k));
     if(!items.length) return;
-    box.insertAdjacentHTML('beforeend',`<h2>${label}</h2>`);
+    const h=document.createElement('h2'); h.className=collapsed[k]?'c':''; h.innerHTML=I.chev+esc(label);
+    h.onclick=()=>{collapsed[k]=!collapsed[k];renderSpaces($('q').value);}; box.appendChild(h);
+    if(collapsed[k]) return;
     items.forEach(s=>{
       const d=document.createElement('div'); d.className='space'+(cur&&cur.name===s.name?' on':'');
       d.innerHTML=`<div class="av" style="background:${colorOf(s.title)};${k==='SPACE'||k==='INV'?'border-radius:8px':''}">${esc([...s.title][0]||'?')}</div><div class="t">${esc(s.title)}</div>`;
@@ -155,11 +435,6 @@ function renderSpaces(filter=''){
     });
   });
   if(!box.children.length) box.innerHTML='<div class="note">אין שיחות להצגה.</div>';
-}
-async function post(body){
-  if(DEMO) throw new Error('זמין לאחר חיבור ה-Apps Script');
-  const r=await fetch(CONFIG.API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body,token:TOKEN})});
-  const j=await r.json(); if(j.error){ if(j.error==='unauthorized') showLogin(); throw new Error(j.error); } return j;
 }
 async function refreshSpaces(){ spaces=(await api({action:'spaces'})).spaces; renderSpaces($('q').value); }
 async function loadInvites(fresh){
@@ -178,8 +453,9 @@ function setMode(m){
   $('hint').textContent=m==='dm'?'הכנס כתובת אימייל של מי שתרצה לשוחח איתו.':'הדבק קישור למרחב. הוא ייפתח ב-Google Chat, ושם מאשרים את ההצטרפות.';
   $('inp').placeholder=m==='dm'?'name@example.com':'https://chat.google.com/room/AAAA…'; $('err').textContent=''; $('inp').value='';
 }
-$('new').onclick=()=>{setMode('dm');$('dlg').showModal();};
+$('new').onclick=()=>{setMode('dm');$('dlg').showModal();$('inp').focus();};
 $('tdm').onclick=()=>setMode('dm'); $('tjoin').onclick=()=>setMode('join'); $('cancel').onclick=()=>$('dlg').close();
+$('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('ok').click();}});
 $('ok').onclick=async()=>{
   const v=$('inp').value.trim(); if(!v) return; $('ok').disabled=true; $('err').textContent='';
   try{
@@ -197,15 +473,21 @@ $('ok').onclick=async()=>{
   }catch(e){ $('err').textContent=e.message; }
   $('ok').disabled=false;
 };
+
+/* ---------- שיחה והודעות ---------- */
+let curMsgs=[],byId={},quoteTo=null,panel=null;const mediaCache={};
+let mainC=null, threadC=null;
 async function openSpace(s){
-  cur=s; last=''; panel=null; $('tp').classList.remove('on'); clearQuote(); $('title').textContent=s.title; $('s').disabled=false;
-  $('app').classList.add('chat'); renderSpaces($('q').value);
+  cur=s; last=''; panel=null; $('tp').classList.remove('on'); clearQuote(); $('title').textContent=s.title;
+  const av=$('tav'); av.style.display='grid'; av.style.background=colorOf(s.title); av.style.borderRadius=(s.type||'SPACE')==='SPACE'?'10px':'50%'; av.textContent=[...s.title][0]||'?';
+  $('cwrap').style.display=''; $('app').classList.add('chat'); renderSpaces($('q').value);
   $('msgs').innerHTML='<div class="note">טוען…</div>';
   await load(true); clearInterval(timer); timer=setInterval(()=>load(false),CONFIG.REFRESH_MS);
+  if(mainC) mainC.focus();
 }
-let curMsgs=[],byId={},quoteTo=null,panel=null;const mediaCache={};
 const ico=t=>/image/.test(t||'')?'🖼️':/pdf/.test(t||'')?'📕':/video/.test(t||'')?'🎞️':'📎';
 function attHtml(m){return (m.att||[]).map(a=>{
+  if(a.res&&/image/.test(a.type||'')) return `<img class="ai" data-res="${esc(a.res)}" alt="${esc(a.file||'תמונה')}">`;
   const href=a.drive?`https://drive.google.com/file/d/${a.drive}/view`:(a.url||'#');
   return `<a class="file" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${ico(a.type)} <span>${esc(a.file||'קובץ')}</span></a>`;}).join('');}
 function quoteHtml(m){
@@ -213,17 +495,18 @@ function quoteHtml(m){
   const s=m.quote.sender||o.sender||'', t=m.quote.text||o.text||'';
   return `<div class="qt"><b>${esc(s)}</b>${esc(t.slice(0,160))}${t.length>160?'…':''}</div>`;}
 function msgHtml(m,cont,rep,mini){
-  const d=new Date(m.time);
-  const tl=rep&&rep.length?`<button class="tl" data-a="t">💬 ${rep.length} תגובות</button>`:'';
-  const acts=mini?'':'<div class="acts"><button data-a="q" title="ציטוט">↩</button><button data-a="t" title="שרשור">💬</button></div>';
-  return `<div class="m${cont?' cont':''}" data-id="${esc(m.id)}"><div class="av" style="background:${colorOf(m.sender)}">${esc([...m.sender][0]||'?')}</div><div class="b"><div class="h"><b>${esc(m.sender)}</b>${fmtTime(d)}</div>${m.text||m.quote?`<div class="x">${quoteHtml(m)}${linkify(m.text)}</div>`:''}${attHtml(m)}${tl}</div>${acts}</div>`;}
+  const d=new Date(m.time), sender=m.sender||'?';
+  const tl=rep&&rep.length?`<button class="tl" data-a="t">${I.thread}${rep.length} ${rep.length===1?'תגובה':'תגובות'}</button>`:'';
+  const acts=mini?'':`<div class="acts"><button class="ib" data-a="q" title="ציטוט" aria-label="ציטוט">${I.reply}</button><button class="ib" data-a="t" title="תגובה בשרשור" aria-label="תגובה בשרשור">${I.thread}</button></div>`;
+  const lead=cont?`<div class="ts">${fmtTime(d)}</div>`:`<div class="av" style="background:${colorOf(sender)}">${esc([...sender][0]||'?')}</div>`;
+  return `<div class="m${cont?' cont':''}" data-id="${esc(m.id)}">${lead}<div class="b"><div class="h"><b>${esc(sender)}</b>${fmtTime(d)}</div>${m.text||m.quote?`<div class="x">${quoteHtml(m)}${chatFmt(m.text)}</div>`:''}${attHtml(m)}${tl}</div>${acts}</div>`;}
 function renderList(box,msgs,collapse){
   box.innerHTML=''; let prev=null,prevDay='';
   const rep={}; if(collapse) msgs.forEach(m=>{if(m.reply&&m.thread)(rep[m.thread]=rep[m.thread]||[]).push(m);});
   const roots=new Set(msgs.filter(m=>!m.reply).map(m=>m.thread));
   (collapse?msgs.filter(m=>!m.reply||!roots.has(m.thread)):msgs).forEach(m=>{
     const d=new Date(m.time),day=fmtDay(d);
-    if(day!==prevDay){box.insertAdjacentHTML('beforeend',`<div class="day">${day}</div>`);prevDay=day;prev=null;}
+    if(day!==prevDay){box.insertAdjacentHTML('beforeend',`<div class="day">${esc(day)}</div>`);prevDay=day;prev=null;}
     const cont=prev===m.sender;prev=m.sender;
     box.insertAdjacentHTML('beforeend',msgHtml(m,cont,collapse?(rep[m.thread]||[]):null,!collapse));});
   box.querySelectorAll('img[data-res]').forEach(loadImg);}
@@ -247,21 +530,21 @@ async function load(scroll){
     $('status').textContent=DEMO?'מצב הדגמה':'עודכן '+fmtTime(new Date());
   }catch(e){ $('msgs').innerHTML=`<div class="note">שגיאה בטעינה: ${esc(e.message)}</div>`; }
 }
-function setQuote(m){quoteTo=m;$('qtxt').textContent='מצטט את '+m.sender+': '+m.text.slice(0,80);$('qbar').classList.add('on');$('t').focus();}
+function setQuote(m){quoteTo=m;$('qtxt').textContent='מצטט את '+m.sender+': '+(m.text||'').replace(/\s+/g,' ').slice(0,80);$('qbar').classList.add('on');if(mainC) mainC.focus();}
 function clearQuote(){quoteTo=null;$('qbar').classList.remove('on');}
 $('qx').onclick=clearQuote;
-function showPanel(t){$('tpt').textContent=t;$('tp').classList.add('on');$('tf').classList.remove('on');}
-async function openThread(m){panel={type:'thread',thread:m.thread};showPanel('שרשור');$('tf').classList.add('on');$('tb').innerHTML='<div class="note">טוען…</div>';await loadThread(true);}
+function showPanel(t){$('tpt').textContent=t;$('tp').classList.add('on');$('tcomp').style.display='none';}
+async function openThread(m){panel={type:'thread',thread:m.thread};showPanel('שרשור');$('tcomp').style.display='block';$('tb').innerHTML='<div class="note">טוען…</div>';await loadThread(true);if(threadC) threadC.focus();}
 async function loadThread(first){
   if(!panel||panel.type!=='thread') return;
   try{const {messages}=await api({action:'thread',space:cur.name,thread:panel.thread});renderList($('tb'),messages,false);if(first) $('tb').scrollTop=$('tb').scrollHeight;}
   catch(e){$('tb').innerHTML=`<div class="note">שגיאה: ${esc(e.message)}</div>`;}}
 function renderFiles(){
   const atts=[],links=new Set();
-  [...curMsgs].reverse().forEach(m=>{(m.att||[]).forEach(a=>atts.push({att:[a]}));(m.text.match(/https?:\/\/[^\s<]+/g)||[]).forEach(u=>links.add(u));});
+  [...curMsgs].reverse().forEach(m=>{(m.att||[]).forEach(a=>atts.push({att:[a]}));((m.text||'').match(/https?:\/\/[^\s<>|]+/g)||[]).forEach(u=>links.add(u));});
   let html='';
-  if(atts.length) html+='<div class="day">קבצים ותמונות</div>'+atts.map(attHtml).join('');
-  if(links.size) html+='<div class="day">קישורים</div>'+[...links].map(u=>`<a class="file" href="${esc(u)}" target="_blank" rel="noopener noreferrer">🔗 <span style="overflow:hidden;text-overflow:ellipsis">${esc(u)}</span></a>`).join('');
+  if(atts.length) html+='<div class="day">קבצים ותמונות</div><div style="padding:0 20px">'+atts.map(attHtml).join('')+'</div>';
+  if(links.size) html+='<div class="day">קישורים</div><div style="padding:0 20px">'+[...links].map(u=>`<a class="file" href="${esc(u)}" target="_blank" rel="noopener noreferrer">🔗 <span style="overflow:hidden;text-overflow:ellipsis;direction:ltr">${esc(u)}</span></a>`).join('')+'</div>';
   $('tb').innerHTML=html||'<div class="note">אין קבצים או קישורים בהודעות האחרונות.</div>';
   $('tb').querySelectorAll('img[data-res]').forEach(loadImg);}
 $('fb').onclick=()=>{if(!cur) return;panel={type:'files'};showPanel('משותף בשיחה');renderFiles();};
@@ -270,24 +553,26 @@ $('msgs').addEventListener('click',ev=>{
   const b=ev.target.closest('[data-a]'); if(!b) return;
   const m=byId[b.closest('.m').dataset.id]; if(!m) return;
   if(b.dataset.a==='q') setQuote(m); else if(m.thread) openThread(m);});
-$('tf').onsubmit=async e=>{
-  e.preventDefault(); const text=$('tt').value.trim(); if(!text||!panel||panel.type!=='thread') return;
-  try{await post({action:'send',space:cur.name,text,thread:panel.thread});$('tt').value='';await loadThread(true);last='';load(false);}
-  catch(err){$('status').textContent='השליחה נכשלה: '+err.message;}};
-$('f').onsubmit=async e=>{
-  e.preventDefault(); const text=$('t').value.trim(); if(!text||!cur) return;
-  if(DEMO){ $('status').textContent='שליחה זמינה לאחר חיבור ה-Apps Script'; return; }
-  $('s').disabled=true;
+$('tb').addEventListener('click',ev=>{const a=ev.target.closest('a.file');});
+
+mainC=Composer($('cmain'),{ph:'שליחת הודעה',onSend:async text=>{
+  if(!cur) return false;
+  if(DEMO){ $('status').textContent='שליחה זמינה לאחר חיבור ה-Apps Script'; return false; }
   try{
     await post({action:'send',space:cur.name,text,quote:quoteTo?{name:quoteTo.id,lastUpdateTime:quoteTo.upd}:undefined});
-    $('t').value='';$('t').style.height='auto';clearQuote();last='';await load(true);
-  }catch(err){ $('status').textContent='השליחה נכשלה: '+err.message; }
-  $('s').disabled=false;
-};
-$('t').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('f').requestSubmit();}});
-$('t').addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=e.target.scrollHeight+'px';});
+    clearQuote();last='';await load(true);return true;
+  }catch(err){ $('status').textContent='השליחה נכשלה: '+err.message; return false; }
+}});
+threadC=Composer($('tcomp'),{ph:'תגובה בשרשור',onSend:async text=>{
+  if(!panel||panel.type!=='thread') return false;
+  try{await post({action:'send',space:cur.name,text,thread:panel.thread});await loadThread(true);last='';load(false);return true;}
+  catch(err){$('status').textContent='השליחה נכשלה: '+err.message;return false;}
+}});
+
 $('q').oninput=e=>renderSpaces(e.target.value);
 $('back').onclick=()=>$('app').classList.remove('chat');
+
+/* ---------- כניסה ---------- */
 function showLogin(){
   TOKEN=''; try{localStorage.removeItem('tk');}catch(_){}
   clearInterval(timer); $('lg').style.display='grid'; $('pw').focus();
