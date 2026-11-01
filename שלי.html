@@ -68,10 +68,6 @@ main{flex:1;background:var(--panel);border-radius:16px;display:flex;flex-directi
 .m.mine .x{background:var(--mine)}
 .m:not(.cont):not(.mine) .x{border-start-start-radius:4px}
 .m.mine:not(.cont) .x{border-start-end-radius:4px}
-.nw{display:flex;align-items:center;gap:12px;color:var(--blue);font-size:12px;font-weight:500;margin:14px 20px 6px}
-.nw:before,.nw:after{content:"";flex:1;height:1px;background:var(--blue);opacity:.35}
-.space.unread .t{font-weight:700}
-.space .dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0}
 .x a,.m a{color:var(--blue)}
 .x ul,.x ol,.ed ul,.ed ol{margin:2px 0;padding-inline-start:24px}
 .x code,.ed code{font-family:"Roboto Mono",Consolas,monospace;font-size:13px;background:var(--code);padding:1px 5px;border-radius:4px}
@@ -156,11 +152,63 @@ dialog input.rtl{direction:rtl;text-align:right}
 #lgf input:focus{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue)}
 #lgf button{border:0;border-radius:20px;height:40px;background:var(--blue);color:var(--panel);font:inherit;font-weight:500;cursor:pointer}
 #lge{color:#d93025;font-size:13px;min-height:16px}
+/* ===== עיצוב יוקרתי ===== */
+:root{--mine:#d6e4fd;--mine2:#c3d8fb;--onblue:#fff;--e1:0 1px 2px rgba(60,64,67,.12),0 1px 3px rgba(60,64,67,.08);--e2:0 2px 6px rgba(60,64,67,.12),0 12px 32px rgba(60,64,67,.16)}
+@media (prefers-color-scheme:dark){:root{--mine:#0b57d0;--mine2:#0842a0;--onblue:#062e6f;--e1:0 1px 2px rgba(0,0,0,.45);--e2:0 2px 8px rgba(0,0,0,.45),0 14px 36px rgba(0,0,0,.5)}}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+*{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.35) transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(128,128,128,.32);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(128,128,128,.5);border:3px solid transparent;background-clip:padding-box}
+main,#tp{border-radius:22px;box-shadow:var(--e1)}
+.top{background:color-mix(in srgb,var(--panel) 88%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);position:relative;z-index:3}
+.new{border-radius:18px;background:linear-gradient(135deg,var(--newbtn),color-mix(in srgb,var(--newbtn) 80%,#fff));box-shadow:var(--e1);transition:box-shadow .2s,transform .2s}
+.new:hover{box-shadow:var(--e2);transform:translateY(-1px)}
+.space{transition:background .15s}
+.av{position:relative;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.22);font-weight:500}
+.av:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,0) 55%,rgba(0,0,0,.12));pointer-events:none}
+.m{padding:5px 18px}.m.cont{padding-top:1px;padding-bottom:1px}
+.m .h{margin:0 14px 3px}
+.x{padding:9px 15px;border-radius:20px;box-shadow:var(--e1);line-height:21px}
+.m:not(.cont):not(.mine) .x{border-start-start-radius:6px}
+.m.mine:not(.cont) .x{border-start-end-radius:6px}
+.m.mine .x{background:linear-gradient(135deg,var(--mine),var(--mine2))}
+.x.jumbo{box-shadow:none}
+.qt{border-radius:12px}
+.rc{box-shadow:var(--e1);transition:transform .12s}.rc:hover{transform:translateY(-1px)}
+.acts{border:0;border-radius:22px;box-shadow:var(--e2)}
+.ai{box-shadow:var(--e1);border-radius:16px}
+.file{border:0;border-radius:14px;background:var(--panel);box-shadow:var(--e1)}
+#emo,#rq{box-shadow:var(--e2)}
+.cmp{border:1px solid var(--line);border-radius:28px;background:var(--field);transition:background .2s,box-shadow .2s,border-color .2s}
+.cmp:focus-within{background:var(--panel);border-color:color-mix(in srgb,var(--blue) 55%,transparent);box-shadow:var(--e2)}
+.send:not(:disabled){background:var(--blue);color:var(--onblue)}
+.send:not(:disabled):hover{filter:brightness(1.08);background:var(--blue)}
+dialog{box-shadow:var(--e2)}
+dialog::backdrop{background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+/* רקעי שיחה */
+[data-tone]{color:var(--text)}
+[data-tone=light]{--text:#1f1f1f;--muted:#474c52;--bubble:rgba(255,255,255,.9);--mine:#d6e4fd;--mine2:#c3d8fb;--qbg:rgba(31,31,31,.07);--panel:#fff;--line:rgba(0,0,0,.12);--blue:#0b57d0;--hover:rgba(31,31,31,.08);--sel:#d3e3fd;--code:#eef2f8}
+[data-tone=dark]{--text:#f1f3f4;--muted:#c4c9ce;--bubble:rgba(34,35,38,.74);--mine:rgba(26,92,206,.94);--mine2:rgba(11,66,170,.94);--qbg:rgba(255,255,255,.12);--panel:#2a2b2e;--line:rgba(255,255,255,.18);--blue:#8ab4f8;--hover:rgba(255,255,255,.1);--sel:#0842a0;--code:rgba(255,255,255,.1)}
+[data-tone] .x{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+[data-tone] .x.jumbo{backdrop-filter:none}
+[data-tone] .m:hover{background:transparent}
+[data-tone] .day{display:table;margin:16px auto 8px;padding:3px 14px;border-radius:14px;background:var(--bubble);box-shadow:var(--e1)}
+[data-tone] .note{background:var(--bubble);border-radius:16px;margin:auto}
+#bggrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 12px;margin:14px 0 4px}
+.swi{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.swi small{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.sw{width:100%;aspect-ratio:1;border-radius:18px;border:2px solid var(--line);cursor:pointer;position:relative;padding:0;box-shadow:var(--e1);transition:transform .15s;overflow:hidden;background:var(--field)}
+.sw:hover{transform:scale(1.06)}
+.sw.none{background:repeating-linear-gradient(45deg,var(--field),var(--field) 8px,var(--panel) 8px,var(--panel) 16px)}
+.sw.on{border-color:var(--blue);box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 30%,transparent)}
+.sw .ck{position:absolute;inset:0;display:none;place-items:center;color:#fff;background:rgba(0,0,0,.3)}
+.sw.on .ck{display:grid}
 @media (max-width:760px){
   #tp.on{position:fixed;inset:0;width:auto;border-radius:0;z-index:5}
   aside{width:100%}.searchbox{max-width:none}header .brand{width:auto}header h1{display:none}
   main{display:none}.app.chat aside{display:none}.app.chat main{display:flex}#back{display:grid}.top .fb span{display:none}.top .fb{padding:0;width:36px;justify-content:center}
-  .app{padding:0 0 0}main,#tp{border-radius:0}
+  .app{padding:0 0 0}main,#tp{border-radius:0;box-shadow:none}
   .acts{display:flex;opacity:.0;pointer-events:none}.m:active .acts,.m:focus-within .acts{opacity:1;pointer-events:auto}
 }
 </style>
@@ -175,7 +223,7 @@ dialog input.rtl{direction:rtl;text-align:right}
 <div class="app" id="app">
   <aside><button class="new" id="new"><span data-i="add"></span>שיחה חדשה</button><div id="spaces"></div></aside>
   <main>
-    <div class="top"><button class="ib" id="back" aria-label="חזרה" data-i="back"></button><div class="av" id="tav"></div><div class="tt"><span id="title">בחר שיחה</span><small id="status"></small></div><button class="fb" id="fb"><span data-i="attach"></span><span>משותף</span></button></div>
+    <div class="top"><button class="ib" id="back" aria-label="חזרה" data-i="back"></button><div class="av" id="tav"></div><div class="tt"><span id="title">בחר שיחה</span><small id="status"></small></div><button class="fb" id="fb"><span data-i="attach"></span><span>משותף</span></button><button class="ib" id="bgb" title="רקע לשיחה" aria-label="רקע לשיחה" data-i="palette" style="display:none"></button></div>
     <div id="msgs"><div class="note">בחר שיחה מהרשימה כדי להתחיל.</div></div>
     <div id="cwrap" style="display:none">
       <div id="qbar"><div id="qtxt" style="flex:1;min-width:0"></div><button type="button" class="ib" id="qx" aria-label="ביטול ציטוט" data-i="close"></button></div>
@@ -197,6 +245,9 @@ dialog input.rtl{direction:rtl;text-align:right}
 <dialog id="dlg"><h3 id="dt">שיחה חדשה</h3><div class="tabs"><button id="tdm" class="on">שיחה אישית</button><button id="tjoin">הצטרפות למרחב</button></div>
 <p id="hint"></p><input id="inp" autocomplete="off"><p id="err" style="color:#d93025"></p>
 <div class="row"><button id="cancel">ביטול</button><button class="pri" id="ok">אישור</button></div></dialog>
+<dialog id="bgdlg"><h3>רקע לשיחה</h3><p id="bgname"></p><div id="bggrid"></div><p id="bgerr" style="color:#d93025;min-height:18px"></p>
+<input type="file" id="bgfile" accept="image/*" hidden>
+<div class="row" style="justify-content:space-between"><button type="button" id="bgup">העלאת תמונה</button><button class="pri" type="button" id="bgclose">סגירה</button></div></dialog>
 <dialog id="ldlg"><h3>הוספת קישור</h3>
 <input id="ltxt" class="rtl" placeholder="טקסט להצגה" autocomplete="off"><input id="lurl" placeholder="https://example.com" autocomplete="off">
 <div class="row"><button id="lcancel" type="button">ביטול</button><button class="pri" id="lok" type="button">הוספה</button></div></dialog>
@@ -213,7 +264,7 @@ let TOKEN=''; try{TOKEN=localStorage.getItem('tk')||'';}catch(_){}
 const colors = ['#1a73e8','#d93025','#188038','#e37400','#9334e6','#007b83','#c2185b'];
 const colorOf = s => colors[[...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)%colors.length];
 let spaces=[], cur=null, timer=null, last='';
-let UNREAD={},ME='',divSet=false,divAt='',unreadTimer=null,readTimer=null;const markedFor={};
+let ME='';
 
 /* ---------- אייקונים ---------- */
 const ic=d=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -238,6 +289,9 @@ const I={
  attach:ic('M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z'),
  logout:ic('M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z'),
  back:ic('M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'),
+ palette:ic('M12 3a9 9 0 0 0 0 18c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z'),
+ check:ic('M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'),
+ image:ic('M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'),
  chev:ic('M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z')
 };
 document.querySelectorAll('[data-i]').forEach(el=>{el.innerHTML=I[el.dataset.i];});
@@ -497,10 +551,8 @@ function renderSpaces(filter=''){
     h.onclick=()=>{collapsed[k]=!collapsed[k];renderSpaces($('q').value);}; box.appendChild(h);
     if(collapsed[k]) return;
     items.forEach(s=>{
-      const d=document.createElement('div'); const un=!!UNREAD[s.name]&&!(cur&&cur.name===s.name);
-      d.className='space'+(cur&&cur.name===s.name?' on':'')+(un?' unread':'');
+      const d=document.createElement('div'); d.className='space'+(cur&&cur.name===s.name?' on':'');
       d.innerHTML=`<div class="av" style="background:${colorOf(s.title)};${k==='SPACE'||k==='INV'?'border-radius:8px':''}">${esc([...s.title][0]||'?')}</div><div class="t">${esc(s.title)}</div>`;
-      if(un) d.insertAdjacentHTML('beforeend','<span class="dot" title="הודעות שלא נקראו"></span>');
       if(k==='INV'){const b=document.createElement('button');b.className='jb';b.textContent='הצטרף';b.onclick=ev=>{ev.stopPropagation();join(s.name);};d.appendChild(b);}
       d.onclick=()=>openSpace(s); box.appendChild(d);
     });
@@ -549,7 +601,7 @@ $('ok').onclick=async()=>{
 let curMsgs=[],byId={},quoteTo=null,panel=null;const mediaCache={};
 let mainC=null, threadC=null;
 async function openSpace(s){
-  cur=s; last=''; panel=null; divSet=false; divAt=''; $('tp').classList.remove('on'); clearQuote(); $('title').textContent=s.title;
+  cur=s; last=''; panel=null; applyBg(s.name); $('bgb').style.display=''; $('tp').classList.remove('on'); clearQuote(); $('title').textContent=s.title;
   const av=$('tav'); av.style.display='grid'; av.style.background=colorOf(s.title); av.style.borderRadius=(s.type||'SPACE')==='SPACE'?'10px':'50%'; av.textContent=[...s.title][0]||'?';
   $('cwrap').style.display=''; $('app').classList.add('chat'); renderSpaces($('q').value);
   $('msgs').innerHTML='<div class="note">טוען…</div>';
@@ -575,15 +627,13 @@ function msgHtml(m,cont,rep,mini){
   const lead=mine?'':(cont?`<div class="ts">${fmtTime(d)}</div>`:`<div class="av" style="background:${colorOf(sender)}">${esc([...sender][0]||'?')}</div>`);
   const bub=m.text||m.quote?`<div class="x${isJumbo(m.text)&&!m.quote?' jumbo':''}">${quoteHtml(m)}${chatFmt(m.text)}</div>`:'';
   return `<div class="m${cont?' cont':''}${mine?' mine':''}" data-id="${esc(m.id)}">${lead}<div class="b"><div class="h"><b>${esc(sender)}</b>${fmtTime(d)}</div><div class="bw">${bub}${acts}</div>${attHtml(m)}${rxHtml(m)}${tl}</div></div>`;}
-function renderList(box,msgs,collapse,div){
-  box.innerHTML=''; let prev=null,prevDay='',shown=false;
+function renderList(box,msgs,collapse){
+  box.innerHTML=''; let prev=null,prevDay='';
   const rep={}; if(collapse) msgs.forEach(m=>{if(m.reply&&m.thread)(rep[m.thread]=rep[m.thread]||[]).push(m);});
   const roots=new Set(msgs.filter(m=>!m.reply).map(m=>m.thread));
   (collapse?msgs.filter(m=>!m.reply||!roots.has(m.thread)):msgs).forEach(m=>{
     const d=new Date(m.time),day=fmtDay(d);
     if(day!==prevDay){box.insertAdjacentHTML('beforeend',`<div class="day">${esc(day)}</div>`);prevDay=day;prev=null;}
-    if(div&&!shown&&new Date(m.time)>new Date(div)&&!(ME&&m.senderId===ME)){shown=true;prev=null;
-      if(box.querySelector('.m')) box.insertAdjacentHTML('beforeend','<div class="nw"><span>הודעות חדשות</span></div>');}
     const cont=prev===m.sender;prev=m.sender;
     box.insertAdjacentHTML('beforeend',msgHtml(m,cont,collapse?(rep[m.thread]||[]):null,!collapse));});
   box.querySelectorAll('img[data-res]').forEach(loadImg);}
@@ -597,15 +647,14 @@ async function loadImg(el){
 async function load(scroll){
   if(!cur) return; loadThread();
   try{
-    const {messages,me,lastRead}=await api({action:'messages',space:cur.name});
-    if(me) ME=me; if(!divSet){divAt=lastRead||'';divSet=true;}
+    const {messages,me}=await api({action:'messages',space:cur.name});
+    if(me) ME=me;
     const sig=messages.map(m=>m.id+m.upd+JSON.stringify(m.reactions||'')).join(); if(sig===last) return; last=sig;
     const box=$('msgs'); const atEnd=scroll||box.scrollHeight-box.scrollTop-box.clientHeight<80;
     curMsgs=messages; byId={}; messages.forEach(m=>byId[m.id]=m);
-    if(!messages.length) box.innerHTML='<div class="note">אין הודעות בשיחה זו.</div>'; else renderList(box,messages,true,divAt);
+    if(!messages.length) box.innerHTML='<div class="note">אין הודעות בשיחה זו.</div>'; else renderList(box,messages,true);
     if(atEnd) box.scrollTop=box.scrollHeight;
     if(panel&&panel.type==='files') renderFiles();
-    markRead();
     $('status').textContent=DEMO?'מצב הדגמה':'עודכן '+fmtTime(new Date());
   }catch(e){ $('msgs').innerHTML=`<div class="note">שגיאה בטעינה: ${esc(e.message)}</div>`; }
 }
@@ -653,26 +702,69 @@ threadC=Composer($('tcomp'),{ph:'תגובה בשרשור',onSend:async text=>{
   catch(err){$('status').textContent='השליחה נכשלה: '+err.message;return false;}
 }});
 
-/* ---------- מצב קריאה (מסונכרן עם Google Chat) ---------- */
-function updateTitle(){const n=Object.keys(UNREAD).length;document.title=(n?`(${n}) `:'')+"צ'אט";}
-async function loadUnread(){
-  if(DEMO) return;
-  try{const j=await api({action:'unread'});UNREAD=j.unread||{};renderSpaces($('q').value);updateTitle();}catch(e){}
+/* ---------- רקע לכל שיחה (נשמר בדפדפן הזה) ---------- */
+const BGS=[
+ {id:'none',t:'רגיל'},
+ {id:'mist',t:'ערפל',tone:'light',css:'linear-gradient(160deg,#e8effb,#f5eefb)'},
+ {id:'sand',t:'חול',tone:'light',css:'linear-gradient(160deg,#f8f0e3,#efdfc8)'},
+ {id:'mint',t:'נענע',tone:'light',css:'linear-gradient(160deg,#e3f3ea,#d9ebf6)'},
+ {id:'rose',t:'ורד',tone:'light',css:'linear-gradient(160deg,#fbe8ef,#efe4fa)'},
+ {id:'dots',t:'נקודות',tone:'light',css:'radial-gradient(rgba(11,87,208,.16) 1.2px,transparent 1.7px) 0 0/20px 20px,linear-gradient(160deg,#f4f7fd,#eaf0fb)'},
+ {id:'midnight',t:'חצות',tone:'dark',css:'linear-gradient(160deg,#0e1a33,#1c2d52)'},
+ {id:'aurora',t:'זוהר',tone:'dark',css:'radial-gradient(circle at 18% 12%,rgba(80,200,170,.28),transparent 48%),linear-gradient(160deg,#08303a,#24184f)'},
+ {id:'ember',t:'גחלים',tone:'dark',css:'radial-gradient(circle at 85% 8%,rgba(255,140,80,.2),transparent 45%),linear-gradient(160deg,#3a1b1b,#150f20)'},
+ {id:'forest',t:'יער',tone:'dark',css:'linear-gradient(160deg,#0f2a20,#17311f)'},
+ {id:'graphite',t:'פחם',tone:'dark',css:'linear-gradient(160deg,#1c1e22,#2b2e35)'},
+ {id:'grid',t:'רשת',tone:'dark',css:'linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(160deg,#10131a,#1a2030)'}
+];
+const lsGet=k=>{try{return localStorage.getItem(k);}catch(_){return null;}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v);return true;}catch(_){return false;}};
+const lsDel=k=>{try{localStorage.removeItem(k);}catch(_){}};
+const bgOf=n=>lsGet('bg:'+n)||'none';
+function paintBg(el,id,name){
+  el.style.background=''; el.removeAttribute('data-tone');
+  if(id==='img'){
+    const d=lsGet('bgimg:'+name); if(!d) return;
+    el.style.background='url("'+d+'") center/cover no-repeat'; el.dataset.tone=lsGet('bgtone:'+name)||'dark'; return;
+  }
+  const b=BGS.find(x=>x.id===id); if(!b||!b.css) return;
+  el.style.background=b.css; el.dataset.tone=b.tone;
 }
-function markRead(){
-  clearTimeout(readTimer);
-  readTimer=setTimeout(async()=>{
-    if(!cur||DEMO||document.hidden) return;
-    const box=$('msgs'); if(box.scrollHeight-box.scrollTop-box.clientHeight>120) return;
-    const name=cur.name; if(markedFor[name]===last&&!UNREAD[name]) return;
-    const sig=last;
-    try{ await post({action:'read',space:name}); markedFor[name]=sig;
-      if(UNREAD[name]){delete UNREAD[name];renderSpaces($('q').value);updateTitle();} }catch(e){}
-  },700);
+function applyBg(name){const id=name?bgOf(name):'none';[$('msgs'),$('tb')].forEach(el=>paintBg(el,id,name));}
+function renderBgGrid(){
+  const sel=bgOf(cur.name), box=$('bggrid'); box.innerHTML='';
+  const items=BGS.slice(); const img=lsGet('bgimg:'+cur.name);
+  if(img) items.push({id:'img',t:'התמונה שלי',url:img});
+  items.forEach(b=>{
+    const w=document.createElement('div'); w.className='swi';
+    const bt=document.createElement('button'); bt.type='button'; bt.className='sw'+(sel===b.id?' on':'')+(b.id==='none'?' none':''); bt.title=b.t;
+    if(b.id==='img') bt.style.background='url("'+b.url+'") center/cover'; else if(b.css) bt.style.background=b.css;
+    bt.innerHTML='<span class="ck">'+I.check+'</span>';
+    bt.onclick=()=>{ if(b.id==='none') lsDel('bg:'+cur.name); else lsSet('bg:'+cur.name,b.id); applyBg(cur.name); renderBgGrid(); };
+    w.appendChild(bt); w.insertAdjacentHTML('beforeend','<small>'+esc(b.t)+'</small>'); box.appendChild(w);
+  });
 }
-document.addEventListener('visibilitychange',()=>{if(!document.hidden) markRead();});
-window.addEventListener('focus',markRead);
-$('msgs').addEventListener('scroll',markRead);
+$('bgb').onclick=()=>{ if(!cur) return; $('bgname').textContent=cur.title; $('bgerr').textContent=''; renderBgGrid(); $('bgdlg').showModal(); };
+$('bgclose').onclick=()=>$('bgdlg').close();
+$('bgup').onclick=()=>$('bgfile').click();
+$('bgfile').onchange=e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f||!cur) return;
+  const name=cur.name, url=URL.createObjectURL(f), img=new Image();
+  img.onload=()=>{
+    const s=Math.min(1,1600/Math.max(img.width,img.height)), c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(img.width*s)); c.height=Math.max(1,Math.round(img.height*s));
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    const t=document.createElement('canvas'); t.width=t.height=24; const tx=t.getContext('2d'); tx.drawImage(img,0,0,24,24);
+    const d=tx.getImageData(0,0,24,24).data; let L=0; for(let i=0;i<d.length;i+=4) L+=(0.2126*d[i]+0.7152*d[i+1]+0.0722*d[i+2])/255; L/=d.length/4;
+    let q=.82,data=c.toDataURL('image/jpeg',q); while(data.length>1400000&&q>.4){q-=.12;data=c.toDataURL('image/jpeg',q);}
+    URL.revokeObjectURL(url);
+    if(!lsSet('bgimg:'+name,data)){ $('bgerr').textContent='אין מקום לשמור את התמונה בדפדפן. נסה תמונה קטנה יותר או מחק רקע תמונה משיחה אחרת.'; return; }
+    lsSet('bgtone:'+name,L<.55?'dark':'light'); lsSet('bg:'+name,'img');
+    if(cur&&cur.name===name){applyBg(name);renderBgGrid();$('bgerr').textContent='';}
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);$('bgerr').textContent='לא ניתן לקרוא את הקובץ.';};
+  img.src=url;
+};
 
 $('q').oninput=e=>renderSpaces(e.target.value);
 $('back').onclick=()=>$('app').classList.remove('chat');
@@ -680,7 +772,7 @@ $('back').onclick=()=>$('app').classList.remove('chat');
 /* ---------- כניסה ---------- */
 function showLogin(){
   TOKEN=''; try{localStorage.removeItem('tk');}catch(_){}
-  clearInterval(timer); clearInterval(unreadTimer); $('lg').style.display='grid'; $('pw').focus();
+  clearInterval(timer); $('lg').style.display='grid'; $('pw').focus();
 }
 $('lgf').onsubmit=async e=>{
   e.preventDefault(); $('lge').textContent='';
@@ -694,7 +786,7 @@ $('lgf').onsubmit=async e=>{
 };
 $('lo').onclick=async()=>{ try{await post({action:'logout'});}catch(_){} showLogin(); location.reload(); };
 async function start(){
-  try{ const sr=await api({action:'spaces'}); spaces=sr.spaces; if(sr.me) ME=sr.me; renderSpaces(); loadInvites(); loadUnread(); clearInterval(unreadTimer); unreadTimer=setInterval(loadUnread,60000); if(DEMO) $('status').textContent='מצב הדגמה'; }
+  try{ const sr=await api({action:'spaces'}); spaces=sr.spaces; if(sr.me) ME=sr.me; renderSpaces(); loadInvites(); if(DEMO) $('status').textContent='מצב הדגמה'; }
   catch(e){ if(e.message!=='unauthorized') $('spaces').innerHTML=`<div class="note">שגיאה: ${esc(e.message)}</div>`; }
 }
 if(DEMO||TOKEN) start(); else showLogin();
