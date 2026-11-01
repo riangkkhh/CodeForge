@@ -9,7 +9,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#131314;--panel:#1e1f20;--hover:rgba(227,227,227,.1);--msgh:#232426;--sel:#0842a0;--text:#e3e3e3;--muted:#9aa0a6;--line:#37393b;--blue:#a8c7fa;--field:#2a2b2d;--code:#2b2c2e;--newbtn:#004a77;--onnew:#c2e7ff;--shadow:0 1px 3px rgba(0,0,0,.6),0 4px 8px 3px rgba(0,0,0,.4)}}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font-family:"Google Sans","Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;font-size:14px}
+body{font-family:"Google Sans","Segoe UI",Roboto,Arial,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;font-size:14px}
 svg{width:24px;height:24px;fill:currentColor;display:block}
 button{font-family:inherit}
 .ib{border:0;background:none;color:var(--muted);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer;flex-shrink:0;padding:0}
@@ -71,13 +71,31 @@ main{flex:1;background:var(--panel);border-radius:16px;display:flex;flex-directi
 .acts{display:none;position:absolute;top:-16px;inset-inline-end:20px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px;gap:0;z-index:2;box-shadow:0 1px 3px rgba(60,64,67,.2)}
 .m:hover .acts{display:flex}
 .acts .ib{width:32px;height:32px}
-.qt{border-inline-start:3px solid var(--blue);background:var(--code);padding:4px 10px;margin-bottom:6px;border-radius:4px;font-size:12px;color:var(--muted);white-space:pre-wrap}
-.qt b{display:block;color:var(--blue);font-weight:500}
+.qt{display:flex;gap:10px;margin:2px 0 6px;color:var(--muted);font-size:13px;line-height:18px;max-width:560px;cursor:default;text-align:start}
+.qt[data-q]{cursor:pointer}.qt[data-q]:hover .qtx{text-decoration:underline}
+.qt:before{content:"";width:3px;border-radius:2px;background:var(--qc,#9aa0a6);flex-shrink:0}
+.qt .qb{min-width:0}
+.qt b{display:block;color:var(--text);font-weight:500;font-size:13px}
+.qt .qtx{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.qt .qtx a{color:var(--muted)}
+.x.jumbo{font-size:32px;line-height:40px}
+.m.flash{animation:fl 1.6s}@keyframes fl{0%,60%{background:var(--sel)}100%{background:transparent}}
+.rx{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;align-items:center}.rx:empty{display:none}
+.rc{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border:1px solid var(--line);border-radius:14px;background:none;color:var(--text);font-size:13px;cursor:pointer}
+.rc:hover{background:var(--hover)}.rc.me{background:var(--sel);border-color:var(--blue);color:var(--text)}
+.rc .e{font-size:15px;line-height:1}
+.rc.add{padding:0 7px;color:var(--muted);opacity:0}.rc.add svg{width:16px;height:16px}
+.m:hover .rc.add,.rc.add:focus{opacity:1}
+#rq{position:fixed;display:none;z-index:41;background:var(--panel);border-radius:24px;box-shadow:var(--shadow);padding:4px;gap:2px;align-items:center}
+#rq.on{display:flex}
+#rq button{border:0;background:none;font-size:22px;width:40px;height:40px;border-radius:50%;cursor:pointer;color:var(--muted);display:grid;place-items:center;padding:0}
+#rq button:hover{background:var(--hover)}#rq svg{width:22px;height:22px}
 .ai{max-width:320px;max-height:240px;border-radius:12px;display:block;margin-top:6px;cursor:pointer;background:var(--hover);min-width:80px;min-height:60px}
 .file{display:flex;gap:8px;align-items:center;margin-top:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--text)!important;font-size:13px;max-width:320px}
 .file:hover{background:var(--hover)}
-.tl{margin-top:4px;color:var(--blue);cursor:pointer;background:none;border:0;padding:2px 0;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px}
-.tl svg{width:16px;height:16px}.tl:hover{text-decoration:underline}
+.tl{margin-top:6px;color:var(--blue);cursor:pointer;background:none;border:0;border-radius:8px;padding:4px 8px;font-size:12px;display:flex;align-items:center;gap:8px}
+.tl:hover{background:var(--hover)}.tl b{font-weight:500}.tl .tm{color:var(--muted)}
+.tl .tav{display:flex}.tl .tav i{width:20px;height:20px;border-radius:50%;color:#fff;font-style:normal;font-size:10px;display:grid;place-items:center;margin-inline-end:-6px;border:2px solid var(--panel);box-sizing:content-box}
 /* thread panel */
 #tp{width:360px;background:var(--panel);border-radius:16px;display:none;flex-direction:column;flex-shrink:0;overflow:hidden}
 #tp.on{display:flex}
@@ -87,7 +105,7 @@ main{flex:1;background:var(--panel);border-radius:16px;display:flex;flex-directi
 /* composer */
 .cw{margin:0 16px 16px}
 #tcomp{display:none;margin:0 10px 10px}
-#qbar{display:none;margin:0 16px 8px;padding:8px 12px;border-inline-start:3px solid var(--blue);background:var(--code);border-radius:8px;font-size:12px;color:var(--muted);justify-content:space-between;align-items:center;gap:8px}#qbar.on{display:flex}
+#qbar{display:none;margin:0 16px 8px;padding:8px 12px;background:var(--code);border-radius:12px;font-size:13px;color:var(--muted);justify-content:space-between;align-items:center;gap:8px}#qbar.on{display:flex}#qbar .qt{margin:0;max-width:none}
 #qbar .ib{width:28px;height:28px}
 .cmp{border:1px solid #c4c7c5;border-radius:24px;background:var(--panel);transition:border-color .15s,box-shadow .15s}
 @media (prefers-color-scheme:dark){.cmp{border-color:#5f6368}}
@@ -151,13 +169,14 @@ dialog input.rtl{direction:rtl;text-align:right}
     <div class="top"><button class="ib" id="back" aria-label="חזרה" data-i="back"></button><div class="av" id="tav"></div><div class="tt"><span id="title">בחר שיחה</span><small id="status"></small></div><button class="fb" id="fb"><span data-i="attach"></span><span>משותף</span></button></div>
     <div id="msgs"><div class="note">בחר שיחה מהרשימה כדי להתחיל.</div></div>
     <div id="cwrap" style="display:none">
-      <div id="qbar"><span id="qtxt"></span><button type="button" class="ib" id="qx" aria-label="ביטול ציטוט" data-i="close"></button></div>
+      <div id="qbar"><div id="qtxt" style="flex:1;min-width:0"></div><button type="button" class="ib" id="qx" aria-label="ביטול ציטוט" data-i="close"></button></div>
       <div id="cmain" class="cw"></div>
     </div>
   </main>
   <section id="tp"><div id="tph"><b id="tpt"></b><button class="ib" id="tclose" aria-label="סגירה" data-i="close"></button></div><div id="tb"></div><div id="tcomp"></div></section>
 </div>
 <div id="emo"></div>
+<div id="rq"></div>
 <div id="lg">
   <form id="lgf">
     <svg viewBox="0 0 36 36" style="width:56px;height:56px;margin:0 auto"><path fill="#00ac47" d="M6 6h24a3 3 0 0 1 3 3v17a3 3 0 0 1-3 3H15l-7.5 6V29H6a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z"/><path fill="#fff" d="M10 13h16v2.4H10zm0 5h11v2.4H10z"/></svg>
@@ -294,10 +313,50 @@ document.addEventListener('mousedown',e=>{if(!e.target.closest('#emo')&&!e.targe
 document.addEventListener('keydown',e=>{if(e.key==='Escape') emo.classList.remove('on');});
 function openEmoji(btn,pick){
   if(emo.classList.contains('on')){emo.classList.remove('on');return;}
-  emoPick=pick; emo.classList.add('on');
+  emoPick=pick; emo.classList.add('on'); placePop(emo,btn);
+}
+function placePop(el,btn){
   const r=btn.getBoundingClientRect();
-  emo.style.left=Math.max(8,Math.min(r.left,innerWidth-304))+'px';
-  emo.style.bottom=(innerHeight-r.top+8)+'px'; emo.style.top='auto';
+  el.style.left=Math.max(8,Math.min(r.right-el.offsetWidth,innerWidth-el.offsetWidth-8))+'px';
+  if(r.bottom+el.offsetHeight+12<innerHeight){el.style.top=(r.bottom+6)+'px';el.style.bottom='auto';}
+  else{el.style.bottom=(innerHeight-r.top+6)+'px';el.style.top='auto';}
+}
+const QUICK=['👍','❤️','😂','😮','😢','🙏'];
+const rq=$('rq'); let rqMsg=null;
+rq.innerHTML=QUICK.map(e=>`<button type="button" data-e="${e}">${e}</button>`).join('')+`<button type="button" data-more="1" title="עוד אימוג'ים" aria-label="עוד אימוג'ים">${I.add}</button>`;
+rq.addEventListener('mousedown',e=>e.preventDefault());
+rq.addEventListener('click',e=>{const b=e.target.closest('button');if(!b) return;
+  if(b.dataset.more){const m=rqMsg;openEmoji(b,em=>react(m,em));rq.classList.remove('on');return;}
+  rq.classList.remove('on');react(rqMsg,b.dataset.e);});
+document.addEventListener('mousedown',e=>{if(!e.target.closest('#rq')&&!e.target.closest('[data-a=r]')) rq.classList.remove('on');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') rq.classList.remove('on');});
+function openReact(btn,m){
+  if(rq.classList.contains('on')&&rqMsg===m){rq.classList.remove('on');return;}
+  rqMsg=m; emo.classList.remove('on'); rq.classList.add('on'); placePop(rq,btn);
+}
+const rxList=m=>(m.reactions||[]).map(r=>({e:r.emoji||r.e,n:r.count!=null?r.count:(r.n!=null?r.n:1),me:!!(r.me||r.mine||r.byMe)})).filter(r=>r.e);
+function rxHtml(m){
+  const l=rxList(m); if(!l.length) return '<div class="rx"></div>';
+  return '<div class="rx">'+l.map(r=>`<button class="rc${r.me?' me':''}" data-a="x" data-e="${esc(r.e)}" title="${r.me?'הסר את התגובה':'הוסף תגובה'}"><span class="e">${esc(r.e)}</span><span>${r.n}</span></button>`).join('')+`<button class="rc add" data-a="r" title="הוספת תגובת אימוג'י" aria-label="הוספת תגובת אימוג'י">${I.mood}</button></div>`;
+}
+function findMsgEls(id){return [...document.querySelectorAll('.m')].filter(e=>e.dataset.id===String(id));}
+function updateRx(m){findMsgEls(m.id).forEach(el=>{const o=el.querySelector('.rx');if(o) o.outerHTML=rxHtml(m);});}
+async function react(m,e){
+  if(!m||!e) return;
+  const snap=JSON.parse(JSON.stringify(m.reactions||[]));
+  const l=m.reactions=rxList(m).map(r=>({emoji:r.e,count:r.n,me:r.me}));
+  const ex=l.find(r=>r.emoji===e), had=!!(ex&&ex.me);
+  if(ex){ if(had){ex.count--;ex.me=false;if(ex.count<=0) l.splice(l.indexOf(ex),1);} else{ex.count++;ex.me=true;} }
+  else l.push({emoji:e,count:1,me:true});
+  updateRx(m);
+  try{ if(!DEMO) await post({action:had?'unreact':'react',space:cur.name,message:m.id,emoji:e}); last=''; if(!DEMO) load(false); }
+  catch(err){ m.reactions=snap; updateRx(m); $('status').textContent='תגובת האימוג׳י נכשלה: '+err.message; }
+}
+function isJumbo(t){
+  t=(t||'').trim(); if(!t||t.length>20) return false;
+  if(!/^[\p{Extended_Pictographic}\u200d\uFE0F\u{1F3FB}-\u{1F3FF}\s]+$/u.test(t)) return false;
+  const n=(typeof Intl!=='undefined'&&Intl.Segmenter)?[...new Intl.Segmenter().segment(t)].filter(x=>/\p{Extended_Pictographic}/u.test(x.segment)).length:1;
+  return n>=1&&n<=3;
 }
 let linkCb=null;
 function openLink(text,url,cb){
@@ -490,16 +549,18 @@ function attHtml(m){return (m.att||[]).map(a=>{
   if(a.res&&/image/.test(a.type||'')) return `<img class="ai" data-res="${esc(a.res)}" alt="${esc(a.file||'תמונה')}">`;
   const href=a.drive?`https://drive.google.com/file/d/${a.drive}/view`:(a.url||'#');
   return `<a class="file" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${ico(a.type)} <span>${esc(a.file||'קובץ')}</span></a>`;}).join('');}
+function quoteBlock(sender,text,id){
+  return `<div class="qt"${id?` data-q="${esc(id)}"`:''} style="--qc:${colorOf(sender||'?')}"><div class="qb"><b>${esc(sender)}</b><div class="qtx">${chatFmt((text||'').slice(0,300))}</div></div></div>`;}
 function quoteHtml(m){
   if(!m.quote) return ''; const o=byId[m.quote.name]||{};
-  const s=m.quote.sender||o.sender||'', t=m.quote.text||o.text||'';
-  return `<div class="qt"><b>${esc(s)}</b>${esc(t.slice(0,160))}${t.length>160?'…':''}</div>`;}
+  return quoteBlock(m.quote.sender||o.sender||'',m.quote.text||o.text||'',byId[m.quote.name]?m.quote.name:'');}
 function msgHtml(m,cont,rep,mini){
   const d=new Date(m.time), sender=m.sender||'?';
-  const tl=rep&&rep.length?`<button class="tl" data-a="t">${I.thread}${rep.length} ${rep.length===1?'תגובה':'תגובות'}</button>`:'';
-  const acts=mini?'':`<div class="acts"><button class="ib" data-a="q" title="ציטוט" aria-label="ציטוט">${I.reply}</button><button class="ib" data-a="t" title="תגובה בשרשור" aria-label="תגובה בשרשור">${I.thread}</button></div>`;
+  const tl=rep&&rep.length?(()=>{const names=[...new Set(rep.map(r=>r.sender||'?'))].slice(0,3);const lt=new Date(rep[rep.length-1].time);
+    return `<button class="tl" data-a="t"><span class="tav">${names.map(n=>`<i style="background:${colorOf(n)}">${esc([...n][0]||'?')}</i>`).join('')}</span><b>${rep.length} ${rep.length===1?'תגובה':'תגובות'}</b><span class="tm">תגובה אחרונה ${fmtTime(lt)}</span></button>`;})():'';
+  const acts=`<div class="acts"><button class="ib" data-a="r" title="הוספת תגובת אימוג'י" aria-label="הוספת תגובת אימוג'י">${I.mood}</button>`+(mini?'':`<button class="ib" data-a="q" title="ציטוט" aria-label="ציטוט">${I.reply}</button><button class="ib" data-a="t" title="תגובה בשרשור" aria-label="תגובה בשרשור">${I.thread}</button>`)+'</div>';
   const lead=cont?`<div class="ts">${fmtTime(d)}</div>`:`<div class="av" style="background:${colorOf(sender)}">${esc([...sender][0]||'?')}</div>`;
-  return `<div class="m${cont?' cont':''}" data-id="${esc(m.id)}">${lead}<div class="b"><div class="h"><b>${esc(sender)}</b>${fmtTime(d)}</div>${m.text||m.quote?`<div class="x">${quoteHtml(m)}${chatFmt(m.text)}</div>`:''}${attHtml(m)}${tl}</div>${acts}</div>`;}
+  return `<div class="m${cont?' cont':''}" data-id="${esc(m.id)}">${lead}<div class="b"><div class="h"><b>${esc(sender)}</b>${fmtTime(d)}</div>${m.text||m.quote?`<div class="x${isJumbo(m.text)&&!m.quote?' jumbo':''}">${quoteHtml(m)}${chatFmt(m.text)}</div>`:''}${attHtml(m)}${rxHtml(m)}${tl}</div>${acts}</div>`;}
 function renderList(box,msgs,collapse){
   box.innerHTML=''; let prev=null,prevDay='';
   const rep={}; if(collapse) msgs.forEach(m=>{if(m.reply&&m.thread)(rep[m.thread]=rep[m.thread]||[]).push(m);});
@@ -521,7 +582,7 @@ async function load(scroll){
   if(!cur) return; loadThread();
   try{
     const {messages}=await api({action:'messages',space:cur.name});
-    const sig=messages.map(m=>m.id+m.upd).join(); if(sig===last) return; last=sig;
+    const sig=messages.map(m=>m.id+m.upd+JSON.stringify(m.reactions||'')).join(); if(sig===last) return; last=sig;
     const box=$('msgs'); const atEnd=scroll||box.scrollHeight-box.scrollTop-box.clientHeight<80;
     curMsgs=messages; byId={}; messages.forEach(m=>byId[m.id]=m);
     if(!messages.length) box.innerHTML='<div class="note">אין הודעות בשיחה זו.</div>'; else renderList(box,messages,true);
@@ -530,14 +591,14 @@ async function load(scroll){
     $('status').textContent=DEMO?'מצב הדגמה':'עודכן '+fmtTime(new Date());
   }catch(e){ $('msgs').innerHTML=`<div class="note">שגיאה בטעינה: ${esc(e.message)}</div>`; }
 }
-function setQuote(m){quoteTo=m;$('qtxt').textContent='מצטט את '+m.sender+': '+(m.text||'').replace(/\s+/g,' ').slice(0,80);$('qbar').classList.add('on');if(mainC) mainC.focus();}
+function setQuote(m){quoteTo=m;$('qtxt').innerHTML=quoteBlock(m.sender,m.text,'');$('qbar').classList.add('on');if(mainC) mainC.focus();}
 function clearQuote(){quoteTo=null;$('qbar').classList.remove('on');}
 $('qx').onclick=clearQuote;
 function showPanel(t){$('tpt').textContent=t;$('tp').classList.add('on');$('tcomp').style.display='none';}
 async function openThread(m){panel={type:'thread',thread:m.thread};showPanel('שרשור');$('tcomp').style.display='block';$('tb').innerHTML='<div class="note">טוען…</div>';await loadThread(true);if(threadC) threadC.focus();}
 async function loadThread(first){
   if(!panel||panel.type!=='thread') return;
-  try{const {messages}=await api({action:'thread',space:cur.name,thread:panel.thread});renderList($('tb'),messages,false);if(first) $('tb').scrollTop=$('tb').scrollHeight;}
+  try{const {messages}=await api({action:'thread',space:cur.name,thread:panel.thread});messages.forEach(m=>{if(!byId[m.id]) byId[m.id]=m;});renderList($('tb'),messages,false);if(first) $('tb').scrollTop=$('tb').scrollHeight;}
   catch(e){$('tb').innerHTML=`<div class="note">שגיאה: ${esc(e.message)}</div>`;}}
 function renderFiles(){
   const atts=[],links=new Set();
@@ -549,11 +610,16 @@ function renderFiles(){
   $('tb').querySelectorAll('img[data-res]').forEach(loadImg);}
 $('fb').onclick=()=>{if(!cur) return;panel={type:'files'};showPanel('משותף בשיחה');renderFiles();};
 $('tclose').onclick=()=>{panel=null;$('tp').classList.remove('on');};
-$('msgs').addEventListener('click',ev=>{
+function onMsgClick(ev){
+  const qt=ev.target.closest('.qt[data-q]');
+  if(qt){const el=findMsgEls(qt.dataset.q)[0];
+    if(el){el.scrollIntoView({block:'center',behavior:'smooth'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700);} return;}
   const b=ev.target.closest('[data-a]'); if(!b) return;
-  const m=byId[b.closest('.m').dataset.id]; if(!m) return;
-  if(b.dataset.a==='q') setQuote(m); else if(m.thread) openThread(m);});
-$('tb').addEventListener('click',ev=>{const a=ev.target.closest('a.file');});
+  const el=b.closest('.m'); const m=el&&byId[el.dataset.id]; if(!m) return;
+  const a=b.dataset.a;
+  if(a==='q') setQuote(m); else if(a==='r') openReact(b,m); else if(a==='x') react(m,b.dataset.e); else if(a==='t'&&m.thread) openThread(m);
+}
+$('msgs').addEventListener('click',onMsgClick); $('tb').addEventListener('click',onMsgClick);
 
 mainC=Composer($('cmain'),{ph:'שליחת הודעה',onSend:async text=>{
   if(!cur) return false;
