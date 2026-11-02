@@ -368,7 +368,7 @@ $('#aok').disabled=false;$('#apw').value='';if(!r){$('#aer').textContent='סיס
 $('#aok').onclick=doLogin;$('#apw').onkeydown=e=>{if(e.key==='Enter')doLogin()};setTimeout(()=>$('#apw').focus(),50);
 function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;(function nx(){if(window.Peer)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
 const NETS=6,ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:'turn:eu-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:'turn:us-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turns:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}];
-function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}net.slot=0;net.ds=0;netReg();if(!net.iv)net.iv=setInterval(netDial,3000)})}
+function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}net.slot=0;net.ds=0;netReg();if(!net.iv)net.iv=setInterval(netDial,3000);setTimeout(()=>{if(!net.conn)relayStart()},6000)})}
 function netReg(){const me='vxc'+NETR+'p'+net.role+'s'+net.slot,other='vxc'+NETR+'p'+(3-net.role)+'s',pr=new Peer(me,{config:{iceServers:ICE,sdpSemantics:'unified-plan'}});net.peer=pr;
 pr.on('open',()=>{if(pr!==net.peer)return;net.st='wait';net.msg='';net.diag='מחובר לשרת התיווך';pvpUI()});
 pr.on('connection',c=>{if(c.peer.indexOf(other)!==0){c.close();return}net.diag='התקבלה פנייה מהשחקן השני — מקים חיבור...';pvpUI();netAttach(c)});
@@ -379,6 +379,25 @@ net.st='err';net.msg='שגיאת רשת ('+e.type+')';pvpUI()});
 pr.on('disconnected',()=>{try{pr.reconnect()}catch(x){}})}
 function netDial(){if(net.role!==1||!net.peer||!net.peer.open||net.conn)return;const now=Date.now();if(net.pend&&!net.pend.open){if(now-net.pendT<15000)return;try{net.pend.close()}catch(e){}net.pend=null;net.ds=(net.ds+1)%NETS}
 net.tries=(net.tries||0)+1;net.pendT=now;net.pend=net.peer.connect('vxc'+NETR+'p2s'+net.ds,{reliable:true,serialization:'json'});net.diag='מנסה להתחבר (ניסיון '+net.tries+')...';pvpUI();netAttach(net.pend)}
+/*RELAY*/
+const MQU=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081','wss://mqtt.eclipseprojects.io:443/mqtt'];
+const rl={cl:[],ok:new Set(),sh:new Set(),seq:0,seen:new Set(),last:0,on:false,iv:null};
+const rlConn={open:true,relay:true,send(m){rlSend(m)},close(){}};
+function needMqtt(cb){if(window.mqtt)return cb(true);const U=['https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js','https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js','https://cdnjs.cloudflare.com/ajax/libs/mqtt/5.3.4/mqtt.min.js'];let i=0;(function nx(){if(window.mqtt)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
+function rlPub(str,qos,all){const th='vxc/'+NETR+'/to'+(3-net.role);const pick=all?null:[...rl.sh].filter(i=>rl.ok.has(i)).sort()[0];for(const i of rl.ok){if(pick!==undefined&&pick!==null&&i!==pick)continue;try{rl.cl[i].publish(th,str,{qos})}catch(e){}}}
+function rlSend(m){rlPub(JSON.stringify({i:++rl.seq,s:net.role,m}),m.t==='s'?0:1,rl.sh.size===0)}
+function rlRecv(w,i){if(!w||!w.m||w.s===undefined)return;const k=w.s+':'+w.i;if(rl.seen.has(k))return;rl.seen.add(k);if(rl.seen.size>3000)rl.seen=new Set([...rl.seen].slice(-1500));rl.sh.add(i);rl.last=Date.now();const m=w.m;
+if(m.t==='rh'){if(m.r===net.role){net.msg='אותה סיסמה בשני המחשבים — אי אפשר לשחק';pvpUI();return}
+if(!net.conn){net.conn=rlConn;net.st='link';net.diag='';rlSend({t:'rh',r:net.role});netData({t:'h',r:m.r})}else if(net.conn===rlConn){const n=Date.now();if(n-(rl.ack||0)>3000){rl.ack=n;rlSend({t:'rh',r:net.role})}}return}
+if(m.t==='hb')return;if(net.conn===rlConn)netData(m)}
+function rlTick(){if(!net.role)return;if(!net.conn){rlPub(JSON.stringify({i:++rl.seq,s:net.role,m:{t:'rh',r:net.role}}),0,true);if(rl.ok.size)net.diag='מחפש את השחקן השני דרך שרתי גיבוי ('+rl.ok.size+' מחוברים)...'}
+else if(net.conn===rlConn){rlSend({t:'hb'});if(Date.now()-rl.last>12000){net.conn=null;net.st='wait';net.waiting=false;rl.sh.clear();pvpUI();if(play&&play.net)pvpEnd('השחקן השני התנתק')}}}
+function relayStart(){if(rl.on||!net.role)return;rl.on=true;needMqtt(ok=>{if(!ok){net.diag='ספריית הגיבוי (MQTT) לא נטענה';pvpUI();return}const mine='vxc/'+NETR+'/to'+net.role;
+MQU.forEach((u,i)=>{let c;try{c=mqtt.connect(u,{clientId:'vx'+Math.random().toString(36).slice(2,10),connectTimeout:8000,reconnectPeriod:4000,keepalive:30})}catch(e){return}rl.cl[i]=c;
+c.on('connect',()=>{rl.ok.add(i);c.subscribe(mine,{qos:1});pvpUI()});c.on('close',()=>{rl.ok.delete(i);rl.sh.delete(i)});c.on('error',()=>{});
+c.on('message',(t,p)=>{let w;try{w=JSON.parse(p.toString())}catch(e){return}rlRecv(w,i)})});
+if(!rl.iv)rl.iv=setInterval(rlTick,2000)})}
+/*ENDRELAY*/
 function netReset(){try{if(net.peer)net.peer.destroy()}catch(e){}net.peer=null;net.conn=null;net.pend=null;net.tries=0;net.slot=0;net.ds=0;net.st='off';net.msg='';net.diag='מתחבר מחדש...';pvpUI();netReg()}
 function netAttach(c){const op=()=>{if(net.conn===c)return;if(net.conn&&net.conn.open){c.close();return}net.conn=c;net.st='link';net.msg='';net.diag='';c.send({t:'h',r:net.role});pvpUI()};c.on('open',op);if(c.open)op();c.on('data',netData);
 c.on('iceStateChanged',st=>{net.diag='מצב חיבור: '+st;if(st==='failed'||st==='closed'||st==='disconnected'){if(net.pend===c)net.pend=null;if(st==='failed')net.msg='החיבור הישיר נכשל — ייתכן שהרשת או הסינון חוסמים WebRTC'}pvpUI()});
@@ -397,7 +416,7 @@ function netTry(){if(play&&play.net)return;if(net.asInv){if(net.oc&&net.out)pvpG
 function netData(m){if(!m||!m.t)return;
 if(m.t==='h'){if(m.r===net.role){net.msg='אותה סיסמה בשני המחשבים — אי אפשר לשחק';if(net.conn)net.conn.close();pvpUI()}else{net.st='on';net.msg='';pvpUI()}return}
 if(m.t==='inv'){net.inv=m;net.mode=m.mo||'pvp';net.arena=!!m.ar;$('#invt').textContent='השחקן השני מזמין אותך ל'+(m.mo==='coop'?'משחק משותף מול בוטים':'משחק 1 על 1')+' במפה "'+m.n+'"';$('#inv').style.display='flex';return}
-if(m.t==='acc'){clearTimeout(net.tm);net.waiting=false;net.msg='מעביר את המפה...';pvpUI();net.oc=null;netBig('ch',JSON.stringify((P.chars[selc]||P.chars[0]).parts));if(!net.arena)netBig('map',netEnc(net.out.map));return}
+if(m.t==='acc'){clearTimeout(net.tm);net.waiting=false;net.msg='מעביר את המפה...';pvpUI();netBig('ch',JSON.stringify((P.chars[selc]||P.chars[0]).parts));if(!net.arena)netBig('map',netEnc(net.out.map));return}
 if(m.t==='dec'){clearTimeout(net.tm);net.waiting=false;net.msg='השחקן השני סירב';pvpUI();return}
 if(m.t==='bg'){netBg(m);return}
 if(!play||!play.net)return;const e=play.opp;
