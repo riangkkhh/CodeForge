@@ -367,16 +367,19 @@ async function doLogin(){const pw=$('#apw').value;if(!pw)return;$('#aok').disabl
 $('#aok').disabled=false;$('#apw').value='';if(!r){$('#aer').textContent='סיסמה שגויה';return}$('#auth').style.display='none';net.role=r;netInit();pvpUI()}
 $('#aok').onclick=doLogin;$('#apw').onkeydown=e=>{if(e.key==='Enter')doLogin()};setTimeout(()=>$('#apw').focus(),50);
 function needPeer(cb){if(window.Peer)return cb(true);const U=['https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js','https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;(function nx(){if(window.Peer)return cb(true);if(i>=U.length)return cb(false);const e=document.createElement('script');e.src=U[i++];e.onload=nx;e.onerror=nx;document.head.appendChild(e)})()}
-function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}
-net.peer=new Peer('vxc'+NETR+'p'+net.role,{config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:'turn:eu-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:'turn:us-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turns:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}],sdpSemantics:'unified-plan'}});
-net.peer.on('open',()=>{net.st='wait';net.msg='';net.diag='מחובר לשרת התיווך';pvpUI()});
-net.peer.on('connection',c=>{if(c.peer!=='vxc'+NETR+'p'+(3-net.role)){c.close();return}net.diag='התקבלה פנייה מהשחקן השני — מקים חיבור...';pvpUI();netAttach(c)});
-net.peer.on('error',e=>{if(e.type==='peer-unavailable'){net.pend=null;net.diag='השחקן השני עדיין לא מחובר לשרת התיווך';pvpUI();return}net.st='err';net.msg=e.type==='unavailable-id'?'הסיסמה הזאת כבר מחוברת (אולי בלשונית אחרת). נסה "התחבר מחדש" אחרי כמה שניות':'שגיאת רשת ('+e.type+')';pvpUI()});
-net.peer.on('disconnected',()=>{try{net.peer.reconnect()}catch(e){}});
-if(!net.iv)net.iv=setInterval(netDial,3000)})}
-function netDial(){if(net.role!==1||!net.peer||!net.peer.open||net.conn)return;const now=Date.now();if(net.pend&&!net.pend.open&&now-net.pendT<30000)return;try{if(net.pend)net.pend.close()}catch(e){}
-net.tries=(net.tries||0)+1;net.pendT=now;net.pend=net.peer.connect('vxc'+NETR+'p2',{reliable:true,serialization:'json'});net.diag='מנסה להתחבר (ניסיון '+net.tries+')...';pvpUI();netAttach(net.pend)}
-function netReset(){try{if(net.peer)net.peer.destroy()}catch(e){}net.peer=null;net.conn=null;net.pend=null;net.tries=0;net.st='off';net.msg='';net.diag='מתחבר מחדש...';pvpUI();netInit()}
+const NETS=6,ICE=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'},{urls:'turn:eu-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:'turn:us-0.turn.peerjs.com:3478',username:'peerjs',credential:'peerjsp'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turns:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}];
+function netInit(){needPeer(ok=>{if(!ok){net.st='err';net.msg='לא ניתן לטעון את ספריית החיבור (בדוק אינטרנט או סינון)';pvpUI();return}net.slot=0;net.ds=0;netReg();if(!net.iv)net.iv=setInterval(netDial,3000)})}
+function netReg(){const me='vxc'+NETR+'p'+net.role+'s'+net.slot,other='vxc'+NETR+'p'+(3-net.role)+'s',pr=new Peer(me,{config:{iceServers:ICE,sdpSemantics:'unified-plan'}});net.peer=pr;
+pr.on('open',()=>{if(pr!==net.peer)return;net.st='wait';net.msg='';net.diag='מחובר לשרת התיווך';pvpUI()});
+pr.on('connection',c=>{if(c.peer.indexOf(other)!==0){c.close();return}net.diag='התקבלה פנייה מהשחקן השני — מקים חיבור...';pvpUI();netAttach(c)});
+pr.on('error',e=>{if(pr!==net.peer)return;
+if(e.type==='unavailable-id'){try{pr.destroy()}catch(x){}net.slot++;if(net.slot<NETS){net.diag='המזהה תפוס (חיבור קודם שלא שוחרר בשרת) — מנסה מזהה אחר...';pvpUI();netReg()}else{net.st='err';net.msg='כל המזהים תפוסים. נסה "התחבר מחדש" בעוד דקה';pvpUI()}return}
+if(e.type==='peer-unavailable'){net.pend=null;net.ds++;if(net.ds>=NETS)net.ds=0;else setTimeout(netDial,250);net.diag='השחקן השני עדיין לא מחובר לשרת התיווך';pvpUI();return}
+net.st='err';net.msg='שגיאת רשת ('+e.type+')';pvpUI()});
+pr.on('disconnected',()=>{try{pr.reconnect()}catch(x){}})}
+function netDial(){if(net.role!==1||!net.peer||!net.peer.open||net.conn)return;const now=Date.now();if(net.pend&&!net.pend.open){if(now-net.pendT<15000)return;try{net.pend.close()}catch(e){}net.pend=null;net.ds=(net.ds+1)%NETS}
+net.tries=(net.tries||0)+1;net.pendT=now;net.pend=net.peer.connect('vxc'+NETR+'p2s'+net.ds,{reliable:true,serialization:'json'});net.diag='מנסה להתחבר (ניסיון '+net.tries+')...';pvpUI();netAttach(net.pend)}
+function netReset(){try{if(net.peer)net.peer.destroy()}catch(e){}net.peer=null;net.conn=null;net.pend=null;net.tries=0;net.slot=0;net.ds=0;net.st='off';net.msg='';net.diag='מתחבר מחדש...';pvpUI();netReg()}
 function netAttach(c){const op=()=>{if(net.conn===c)return;if(net.conn&&net.conn.open){c.close();return}net.conn=c;net.st='link';net.msg='';net.diag='';c.send({t:'h',r:net.role});pvpUI()};c.on('open',op);if(c.open)op();c.on('data',netData);
 c.on('iceStateChanged',st=>{net.diag='מצב חיבור: '+st;if(st==='failed'||st==='closed'||st==='disconnected'){if(net.pend===c)net.pend=null;if(st==='failed')net.msg='החיבור הישיר נכשל — ייתכן שהרשת או הסינון חוסמים WebRTC'}pvpUI()});
 c.on('close',()=>{if(net.pend===c)net.pend=null;if(net.conn===c){net.conn=null;net.st='wait';net.waiting=false;pvpUI();if(play&&play.net)pvpEnd('השחקן השני התנתק')}});
