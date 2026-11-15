@@ -1,0 +1,1049 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>כור האותיות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Karantina:wght@700&family=Secular+One&display=swap">
+<style>
+/* פריסה: שולחן עבודה. עמודת בקרות לצד במה גדולה, ובטלפון הבמה עולה למעלה */
+:root{
+  --bg:#0e0c14;--panel:#16131f;--panel2:#1e1a2a;--line:#2d2740;--fg:#efeaf8;--muted:#9c94b1;
+  --accent:#ff6a2b;--accent-fg:#1a0a02;--stage:#0a0910;--chk1:#1b1726;--chk2:#13101b;
+  --f-ui:"Rubik","Heebo",system-ui,sans-serif;--f-display:"Karantina","Secular One","Rubik",sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#f3f0f8;--panel:#ffffff;--panel2:#f0ecf7;--line:#d9d2e6;--fg:#1b1726;--muted:#6b6380;
+  --accent:#e5470f;--accent-fg:#ffffff;--stage:#ece8f3;--chk1:#e2dcee;--chk2:#f3f0f8;color-scheme:light}}
+:root[data-theme="light"]{
+  --bg:#f3f0f8;--panel:#ffffff;--panel2:#f0ecf7;--line:#d9d2e6;--fg:#1b1726;--muted:#6b6380;
+  --accent:#e5470f;--accent-fg:#ffffff;--stage:#ece8f3;--chk1:#e2dcee;--chk2:#f3f0f8;color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.55 var(--f-ui);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#app{max-width:1320px;margin:0 auto;padding-block:22px 56px;display:grid;gap:22px}
+.top{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px}
+h1{margin:0;font:700 clamp(46px,8vw,78px)/.9 var(--f-display);letter-spacing:.01em}
+.sub{margin:8px 0 0;color:var(--muted);max-width:58ch}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.badges li{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;color:var(--muted)}
+.bench{display:grid;grid-template-columns:minmax(300px,392px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}.work{order:-1}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:14px;min-width:0}
+.work{display:grid;gap:14px;min-width:0}
+label,.lbl{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+textarea,input[type=text],select{width:100%;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit}
+textarea{resize:vertical;min-height:66px;font-size:21px;line-height:1.3}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>input{flex:1 1 180px;width:auto}
+.btn{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--fg);padding:9px 14px;border-radius:10px}
+.btn:hover{border-color:var(--muted)}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:transparent;font-weight:500}
+.btn[disabled]{opacity:.55;cursor:progress}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;cursor:pointer;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--fg)}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:26px;font-size:12px;color:var(--muted)}
+.tag{padding:2px 9px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--fg)}
+.hint{font-size:12px;color:var(--muted);margin:0}
+details.grp{border-top:1px solid var(--line);padding-top:10px}
+details.grp>summary{cursor:pointer;font-weight:500;list-style:none;display:flex;justify-content:space-between;padding:4px 0}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::after{content:"+";color:var(--muted)}
+details.grp[open]>summary::after{content:"−"}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px 16px;margin-top:10px}
+.ctl{min-width:0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 8px}
+.ctl label{margin:0}
+.ctl output{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent)}
+.colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+.colors label{font-size:11px;text-align:center;margin-bottom:4px}
+.colors input{width:100%;height:36px;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fg);margin:0}
+.chk input{accent-color:var(--accent);width:16px;height:16px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.seg button{font:inherit;font-size:13px;cursor:pointer;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--fg)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.stage{position:relative;border-radius:16px;border:1px solid var(--line);min-height:clamp(260px,46vh,540px);display:grid;place-items:center;padding:22px;overflow:hidden;
+  background-color:var(--stage);background-image:conic-gradient(var(--chk1) 25%,var(--chk2) 0 50%,var(--chk1) 0 75%,var(--chk2) 0);background-size:24px 24px}
+.stage svg{display:block;width:100%;height:auto;max-height:560px;max-width:100%}
+.stage.busy::after{content:"מצייר…";position:absolute;top:10px;inset-inline-start:14px;font-size:12px;color:var(--muted)}
+.exportbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.exportbar .sz{display:flex;gap:6px;align-items:center;margin-inline-start:auto;font-size:13px;color:var(--muted)}
+.exportbar select{width:auto;padding:8px 10px}
+.result[hidden]{display:none}
+.result{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.result .thumb{width:min(220px,100%);max-height:160px;object-fit:contain;border-radius:8px;
+  background-color:var(--stage);background-image:conic-gradient(var(--chk1) 25%,var(--chk2) 0 50%,var(--chk1) 0 75%,var(--chk2) 0);background-size:16px 16px}
+.result .meta{display:grid;gap:6px;min-width:0;flex:1 1 220px}
+.result .dim{color:var(--muted);font-size:13px;margin:0}
+.result textarea{font-size:12px;min-height:90px;direction:ltr;font-family:ui-monospace,monospace}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{font:inherit;font-weight:500;cursor:pointer;padding:9px 18px;border-radius:99px;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.bench[hidden]{display:none}
+.pv{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;place-items:center;min-height:200px;min-width:0}
+.pv svg{display:block;width:100%;height:auto;max-height:520px;fill:var(--fg)}
+.glyphsec h3{font-size:13px;font-weight:500;color:var(--muted);margin:16px 0 8px}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px}
+.gc{font:inherit;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px}
+.gc:hover{border-color:var(--accent)}
+.gc svg{display:block;width:100%;height:auto;fill:var(--fg)}
+.toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin:auto;width:fit-content;max-width:90vw;background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+<div id="app" dir="rtl" lang="he">
+  <header class="top">
+    <div>
+      <h1>כור האותיות</h1>
+      <p class="sub">מעצבים גופן משלכם מאפס ומורידים אותו כקובץ TTF, או כותבים טקסט, מתארים סגנון במילים ומורידים אותיות כ-SVG או PNG. הכול קורה כאן בדפדפן.</p>
+    </div>
+    <ul class="badges" id="badges"></ul>
+  </header>
+  <nav class="tabs" aria-label="מצבי עבודה"><button type="button" data-tab="fx" aria-pressed="true">אפקטים על טקסט</button><button type="button" data-tab="studio" aria-pressed="false">סטודיו גופן</button></nav>
+  <main class="bench" id="fx">
+    <section class="panel" aria-label="בקרות">
+      <div>
+        <label for="txt">הטקסט</label>
+        <textarea id="txt" dir="auto" maxlength="80" rows="2" placeholder="מה לכתוב?">הרפתקה</textarea>
+      </div>
+      <div>
+        <label for="prm">תיאור הסגנון</label>
+        <div class="row">
+          <input type="text" id="prm" dir="auto" autocomplete="off" placeholder="למשל: זהב תלת מימד נצנוצים" value="זהב תלת מימד נצנוצים">
+          <button class="btn pri" id="go" type="button">עצבו</button>
+          <button class="btn" id="rnd" type="button">הפתעה</button>
+        </div>
+        <p class="hint" style="margin-top:8px">המנוע מזהה מילים בעברית ובאנגלית: חומרים (זהב, אש, קרח), אפקטים (תלת מימד, ניאון, גליץ'), צורות (קשת, גל, נטוי) וצבעים.</p>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="tags" id="tags" aria-live="polite"></div>
+      <div id="groups"></div>
+    </section>
+    <section class="work">
+      <div class="stage" id="stage"></div>
+      <div class="exportbar">
+        <button class="btn pri" id="exPng" type="button">הורד PNG</button>
+        <button class="btn" id="exImg" type="button">העתק תמונה</button>
+        <button class="btn" id="exSvg" type="button">הורד SVG</button>
+        <button class="btn" id="exCopy" type="button">העתק קוד SVG</button>
+        <span class="sz"><label for="pngSize" style="margin:0">גודל PNG</label>
+          <select id="pngSize"><option value="1024">1024 פיקסלים</option><option value="2048" selected>2048 פיקסלים</option><option value="4096">4096 פיקסלים</option></select></span>
+      </div>
+      <div class="result" id="result" hidden></div>
+    </section>
+  </main>
+  <main class="bench" id="studio" hidden></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/*PURE-START*/
+function hash(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return h>>>0;}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return[(n>>16)&255,(n>>8)&255,n&255];}
+function rgb2hex(r,g,b){return'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');}
+function mix(a,b,t){const A=hex2rgb(a),B=hex2rgb(b);return rgb2hex(A[0]+(B[0]-A[0])*t,A[1]+(B[1]-A[1])*t,A[2]+(B[2]-A[2])*t);}
+function hslHex(h,s,l){s/=100;l/=100;const k=n=>(n+h/30)%12,a=s*Math.min(l,1-l);const f=n=>l-a*Math.max(-1,Math.min(k(n)-3,Math.min(9-k(n),1)));return rgb2hex(f(0)*255,f(8)*255,f(4)*255);}
+function midColor(st){return st[Math.floor(st.length/2)][1];}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* מעקב קווי מתאר: marching squares עם אינטרפולציה תת-פיקסלית */
+function traceMask(data,W,H){
+  const v=new Float32Array(W*H);
+  for(let i=0,n=W*H;i<n;i++)v[i]=data[i*4+3]/255;
+  const idx=new Map(),X=[],Y=[],A1=[],A2=[],t=.5;
+  function node(key,px,py){let id=idx.get(key);if(id===undefined){id=X.length;idx.set(key,id);X.push(px);Y.push(py);A1.push(-1);A2.push(-1);}return id;}
+  function link(a,b){if(A1[a]<0)A1[a]=b;else A2[a]=b;if(A1[b]<0)A1[b]=a;else A2[b]=a;}
+  for(let y=0;y<H-1;y++){for(let x=0;x<W-1;x++){
+    const i=y*W+x,va=v[i],vb=v[i+1],vc=v[i+W+1],vd=v[i+W];
+    const c=(va>=t?8:0)|(vb>=t?4:0)|(vc>=t?2:0)|(vd>=t?1:0);
+    if(c===0||c===15)continue;
+    const kT=(y*W+x)*2,kB=((y+1)*W+x)*2,kL=(y*W+x)*2+1,kR=(y*W+x+1)*2+1;
+    const T=()=>node(kT,x+(t-va)/(vb-va),y),R=()=>node(kR,x+1,y+(t-vb)/(vc-vb));
+    const B=()=>node(kB,x+(t-vd)/(vc-vd),y+1),L=()=>node(kL,x,y+(t-va)/(vd-va));
+    switch(c){
+      case 1:link(L(),B());break;case 2:link(B(),R());break;case 3:link(L(),R());break;case 4:link(T(),R());break;
+      case 5:if((va+vb+vc+vd)/4>=t){link(T(),L());link(B(),R());}else{link(T(),R());link(L(),B());}break;
+      case 6:link(T(),B());break;case 7:link(T(),L());break;case 8:link(T(),L());break;case 9:link(T(),B());break;
+      case 10:if((va+vb+vc+vd)/4>=t){link(T(),R());link(L(),B());}else{link(T(),L());link(B(),R());}break;
+      case 11:link(T(),R());break;case 12:link(L(),R());break;case 13:link(B(),R());break;case 14:link(L(),B());break;
+    }
+  }}
+  const seen=new Uint8Array(X.length),loops=[];
+  for(let s=0;s<X.length;s++){
+    if(seen[s])continue;
+    const loop=[];let prev=-1,cur=s;
+    while(cur>=0&&!seen[cur]){seen[cur]=1;loop.push([X[cur],Y[cur],0]);const n=(A1[cur]!==prev)?A1[cur]:A2[cur];prev=cur;cur=n;}
+    if(loop.length>=8)loops.push(loop);
+  }
+  return loops;
+}
+function dp(p,eps){
+  const keep=new Uint8Array(p.length);keep[0]=keep[p.length-1]=1;const st=[[0,p.length-1]];
+  while(st.length){const[s,e]=st.pop();let md=0,mi=-1;const x1=p[s][0],y1=p[s][1],dx=p[e][0]-x1,dy=p[e][1]-y1,L=Math.hypot(dx,dy)||1e-9;
+    for(let i=s+1;i<e;i++){const d=Math.abs((p[i][0]-x1)*dy-(p[i][1]-y1)*dx)/L;if(d>md){md=d;mi=i;}}
+    if(md>eps){keep[mi]=1;st.push([s,mi],[mi,e]);}}
+  return p.filter((_,i)=>keep[i]);
+}
+function simplify(p,eps){
+  const n=p.length;if(n<8)return p;let fi=0,fd=-1;
+  for(let i=1;i<n;i++){const d=(p[i][0]-p[0][0])**2+(p[i][1]-p[0][1])**2;if(d>fd){fd=d;fi=i;}}
+  const a=dp(p.slice(0,fi+1),eps),b=dp(p.slice(fi).concat([p[0]]),eps);
+  return a.slice(0,-1).concat(b.slice(0,-1));
+}
+function markCorners(l,lim){
+  const n=l.length;
+  for(let i=0;i<n;i++){const a=l[(i+n-1)%n],b=l[i],c=l[(i+1)%n];
+    const d1=Math.hypot(b[0]-a[0],b[1]-a[1]),d2=Math.hypot(c[0]-b[0],c[1]-b[1]);
+    let d=Math.abs(Math.atan2(c[1]-b[1],c[0]-b[0])-Math.atan2(b[1]-a[1],b[0]-a[0]));if(d>Math.PI)d=2*Math.PI-d;
+    b[2]=(d>.75&&Math.max(d1,d2)>lim)?1:0;}
+}
+function densify(l,maxLen){
+  const o=[],n=l.length;
+  for(let i=0;i<n;i++){const a=l[i],b=l[(i+1)%n];o.push([a[0],a[1],a[2]]);
+    const k=Math.floor(Math.hypot(b[0]-a[0],b[1]-a[1])/maxLen);
+    for(let j=1;j<=k;j++){const t=j/(k+1);o.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,0]);}}
+  return o;
+}
+function loopPath(p){
+  const n=p.length;if(n<3)return'';const f=v=>Math.round(v*10)/10;
+  const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+  const m0=mid(p[n-1],p[0]);let s='M'+f(m0[0])+' '+f(m0[1]);
+  for(let i=0;i<n;i++){const m=mid(p[i],p[(i+1)%n]);
+    if(p[i][2])s+='L'+f(p[i][0])+' '+f(p[i][1])+'L'+f(m[0])+' '+f(m[1]);
+    else s+='Q'+f(p[i][0])+' '+f(p[i][1])+' '+f(m[0])+' '+f(m[1]);}
+  return s+'Z';
+}
+function bboxOf(loops){
+  let x0=1e12,y0=1e12,x1=-1e12,y1=-1e12;
+  for(const l of loops)for(const p of l){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}
+  return{x:x0,y:y0,w:x1-x0,h:y1-y0};
+}
+
+/* גיאומטריה: הטיה ועיוות על הנקודות עצמן, ואז בניית נתיב חלק */
+function geometry(base,spec){
+  if(base.pixel){
+    const k=Math.max(3,Math.round(240/base.FS));let d='',x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;const pts=[];
+    for(const r of base.runs){const X=r[0]*k,Y=r[1]*k,Wd=r[2]*k;d+='M'+X+' '+Y+'h'+Wd+'v'+k+'h'+(-Wd)+'z';
+      if(X<x0)x0=X;if(X+Wd>x1)x1=X+Wd;if(Y<y0)y0=Y;if(Y+k>y1)y1=Y+k;if(pts.length<500&&(r[0]+r[1])%3===0)pts.push([X,Y]);}
+    return{d,bbox:{x:x0,y:y0,w:x1-x0,h:y1-y0},em:base.FS*k,pts,pixel:true,k,lines:base.nLines};
+  }
+  let loops=base.loops.map(l=>l.map(p=>[p[0],p[1],p[2]]));
+  const wt=spec.warpType,A=spec.warpAmt/100,warp=wt!=='none'&&A!==0;
+  if(warp)loops=loops.map(l=>densify(l,base.FS*.035));
+  const b=bboxOf(loops),cx=b.x+b.w/2,cy=b.y+b.h/2,w=Math.max(b.w,1),h=Math.max(b.h,1);
+  const tn=Math.tan(spec.slant*Math.PI/180),Th=A*2.6,R=w/Math.max(Math.abs(Th),1e-6);
+  for(const l of loops)for(const p of l){
+    let x=p[0],y=p[1];
+    if(tn)x+=(cy-y)*tn;
+    if(warp){const u=(x-cx)/(w/2);
+      if(wt==='arc'){const th=(x-cx)/R;if(Th>0){const r=R+(cy-y);x=cx+r*Math.sin(th);y=cy+R-r*Math.cos(th);}else{const r=R-(cy-y);x=cx+r*Math.sin(th);y=cy-R+r*Math.cos(th);}}
+      else if(wt==='wave')y+=h*.3*A*Math.sin((x-cx)/w*Math.PI*2.5);
+      else if(wt==='flag')y+=h*.3*A*(.35+.65*(u+1)/2)*Math.sin((x-cx)/w*Math.PI*3.2);
+      else if(wt==='bulge')y=cy+(y-cy)*(1+A*.8*(1-u*u));
+      else if(wt==='persp')y=cy+(y-cy)*(1+A*.6*u);}
+    p[0]=x;p[1]=y;}
+  const bb=bboxOf(loops),pts=[],all=[];
+  for(const l of loops)for(const p of l)all.push(p);
+  const st=Math.max(1,Math.floor(all.length/600));for(let i=0;i<all.length;i+=st)pts.push(all[i]);
+  return{d:loops.map(loopPath).join(''),bbox:bb,em:base.FS,pts,pixel:false,lines:base.nLines};
+}
+
+/* בניית ה-SVG: נתיב אחד, ושכבות use עליו */
+const STAR='M0,-1C.08,-.2 .2,-.08 1,0C.2,.08 .08,.2 0,1C-.08,.2 -.2,.08 -1,0C-.2,-.08 -.08,-.2 0,-1Z';
+function buildSVG(g,s,opt){
+  opt=opt||{};
+  const em=g.em,sc=em/260,bb=g.bbox,fx=n=>Math.round(n*100)/100;
+  const D=s.depth/100*.32*em,dx=Math.SQRT1_2,dy=Math.SQRT1_2;
+  const ow=s.outlineW*sc,fat=s.fat*sc,gr=s.glowR*sc,neon=!!s.neon,lj=g.pixel?'miter':'round';
+  const m=gr*1.7+ow+fat+16*sc+s.distort*1.4*sc+(neon?4*sc:0);
+  const x0=bb.x-m,y0=bb.y-m,x1=bb.x+bb.w+m+D*dx,y1=bb.y+bb.h+m+D*dy,VW=x1-x0,VH=y1-y0;
+  const rnd=rng32(opt.seed||1);
+  const cx=bb.x+bb.w/2,cy=bb.y+bb.h/2,ang=s.angle*Math.PI/180,ux=Math.sin(ang),uy=Math.cos(ang);
+  const half=(Math.abs(ux)*bb.w+Math.abs(uy)*bb.h)/2;
+  const stops=s.stops.map(a=>'<stop offset="'+a[0]+'" stop-color="'+a[1]+'"/>').join('');
+  const fr='filterUnits="userSpaceOnUse" x="'+fx(x0)+'" y="'+fx(y0)+'" width="'+fx(VW)+'" height="'+fx(VH)+'"';
+  let defs='<path id="kh-g" d="'+g.d+'" fill-rule="evenodd" clip-rule="evenodd"/>'
+    +'<linearGradient id="kh-f" gradientUnits="userSpaceOnUse" x1="'+fx(cx-ux*half)+'" y1="'+fx(cy-uy*half)+'" x2="'+fx(cx+ux*half)+'" y2="'+fx(cy+uy*half)+'">'+stops+'</linearGradient>'
+    +'<clipPath id="kh-c"><use xlink:href="#kh-g"/></clipPath>';
+  let body='';
+  const rect=(fill,extra)=>'<rect x="'+fx(x0)+'" y="'+fx(y0)+'" width="'+fx(VW)+'" height="'+fx(VH)+'" fill="'+fill+'" '+(extra||'')+'/>';
+  if(s.bg==='dark')body+=rect('#0b0912');
+  else if(s.bg==='light')body+=rect('#f5f2ec');
+  else if(s.bg==='grad'){const c=(neon||s.glowR>0)?s.glowC:midColor(s.stops);
+    defs+='<radialGradient id="kh-bg" cx="50%" cy="46%" r="75%"><stop offset="0" stop-color="'+mix(c,'#000000',.68)+'"/><stop offset="1" stop-color="#07060c"/></radialGradient>';body+=rect('url(#kh-bg)');}
+  if(gr>0){defs+='<filter id="kh-b1" '+fr+'><feGaussianBlur stdDeviation="'+fx(gr)+'"/></filter><filter id="kh-b2" '+fr+'><feGaussianBlur stdDeviation="'+fx(gr*.4)+'"/></filter>';
+    const sw=ow*2+fat*2+gr*.5,C=s.glowC,ox=fx(dx*D*.5),oy=fx(dy*D*.5);
+    body+='<use xlink:href="#kh-g" x="'+ox+'" y="'+oy+'" fill="'+C+'" stroke="'+C+'" stroke-width="'+fx(sw)+'" stroke-linejoin="round" filter="url(#kh-b1)" opacity=".9"/>'
+      +'<use xlink:href="#kh-g" x="'+ox+'" y="'+oy+'" fill="'+C+'" stroke="'+C+'" stroke-width="'+fx(sw*.5)+'" stroke-linejoin="round" filter="url(#kh-b2)" opacity=".75"/>';}
+  if(s.shadow){defs+='<filter id="kh-sh" '+fr+'><feGaussianBlur stdDeviation="'+fx(5*sc)+'"/></filter>';
+    body+='<use xlink:href="#kh-g" x="'+fx(dx*(D+7*sc))+'" y="'+fx(dy*(D+7*sc))+'" fill="#000" fill-opacity=".5" stroke="#000" stroke-opacity=".5" stroke-width="'+fx(ow*2+fat*2)+'" stroke-linejoin="round" filter="url(#kh-sh)"/>';}
+  if(s.distort>0){const bf=.018*260/em;
+    defs+='<filter id="kh-dw" '+fr+'><feTurbulence type="fractalNoise" baseFrequency="'+bf.toFixed(4)+' '+(bf*2).toFixed(4)+'" numOctaves="2" seed="'+(hash(String(opt.seed||1))%90+1)+'" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="'+fx(s.distort*2.4*sc)+'" xChannelSelector="R" yChannelSelector="G"/></filter>';}
+  body+='<g'+(s.distort>0?' filter="url(#kh-dw)"':'')+'>';
+  if(D>.5){const N=Math.min(90,Math.max(2,Math.ceil(D/(g.pixel?g.k*.5:1.5))));
+    for(let i=N;i>=1;i--){const t=i/N,col=mix(s.depthA,s.depthB,t),sw=Math.max(ow*2+fat*2,D/N*1.7);
+      body+='<use xlink:href="#kh-g" x="'+fx(dx*D*t)+'" y="'+fx(dy*D*t)+'" fill="'+col+'" stroke="'+col+'" stroke-width="'+fx(sw)+'" stroke-linejoin="'+lj+'"/>';}}
+  if(s.glitch)body+='<use xlink:href="#kh-g" x="'+fx(-5*sc)+'" fill="#00f0ff" opacity=".85"/><use xlink:href="#kh-g" x="'+fx(5*sc)+'" fill="#ff0055" opacity=".85"/>';
+  if(neon){const c=s.glowC,core=mix(c,'#ffffff',.82);
+    body+='<use xlink:href="#kh-g" fill="'+c+'" fill-opacity=".10" stroke="'+c+'" stroke-width="'+fx(5*sc)+'" stroke-linejoin="'+lj+'"/>'
+      +'<use xlink:href="#kh-g" fill="none" stroke="'+core+'" stroke-width="'+fx(1.8*sc)+'" stroke-linejoin="'+lj+'"/>';}
+  else{
+    if(ow>0)body+='<use xlink:href="#kh-g" fill="none" stroke="'+s.outlineC+'" stroke-width="'+fx(ow*2+fat*2)+'" stroke-linejoin="'+lj+'"/>';
+    if(!s.hollow)body+='<use xlink:href="#kh-g" fill="url(#kh-f)" stroke="url(#kh-f)" stroke-width="'+fx(fat*2)+'" stroke-linejoin="'+lj+'"/>';
+    else if(ow<=0)body+='<use xlink:href="#kh-g" fill="none" stroke="'+midColor(s.stops)+'" stroke-width="'+fx(6*sc)+'" stroke-linejoin="'+lj+'"/>';
+    if(!s.hollow){
+      if(s.gloss){defs+='<linearGradient id="kh-gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>';
+        let gl='';const L=Math.max(1,g.lines||1),lh=bb.h/L;
+        for(let i=0;i<L;i++)gl+='<rect x="'+fx(bb.x)+'" y="'+fx(bb.y+i*lh)+'" width="'+fx(bb.w)+'" height="'+fx(lh*.5)+'" fill="url(#kh-gl)"/>';
+        body+='<g clip-path="url(#kh-c)"><use xlink:href="#kh-g" x="'+fx(-1.6*sc)+'" y="'+fx(-1.6*sc)+'" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="'+fx(3*sc)+'"/><use xlink:href="#kh-g" x="'+fx(1.6*sc)+'" y="'+fx(1.6*sc)+'" fill="none" stroke="#000" stroke-opacity=".28" stroke-width="'+fx(3*sc)+'"/>'+gl+'</g>';}
+      if(s.scan){const wood=s.scan==='wood',gap=(wood?9:5)*sc,lw=(wood?2:1.6)*sc;
+        defs+='<pattern id="kh-l" patternUnits="userSpaceOnUse" width="'+fx(gap)+'" height="'+fx(gap)+'"'+(wood?' patternTransform="rotate(-3)"':'')+'><rect width="'+fx(gap)+'" height="'+fx(lw)+'" fill="'+(wood?'#3a1c08':'#000')+'" opacity="'+(wood?.25:.3)+'"/></pattern>';
+        body+=rect('url(#kh-l)','clip-path="url(#kh-c)"');}
+      if(s.grain>0){defs+='<filter id="kh-gr" '+fr+'><feTurbulence type="fractalNoise" baseFrequency="'+(.9*260/em).toFixed(3)+'" numOctaves="2" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.35"/></filter>';
+        body+=rect('#000','filter="url(#kh-gr)" opacity="'+fx(s.grain/100*.7)+'" clip-path="url(#kh-c)"');}
+    }
+  }
+  if(s.glitch){for(let i=0;i<4;i++){const yy=bb.y+rnd()*bb.h*.9,hh=bb.h*(.04+rnd()*.1),ds=(rnd()-.5)*30*sc;
+    defs+='<clipPath id="kh-s'+i+'"><rect x="'+fx(x0)+'" y="'+fx(yy)+'" width="'+fx(VW)+'" height="'+fx(hh)+'"/></clipPath>';
+    body+='<g clip-path="url(#kh-s'+i+')"><use xlink:href="#kh-g" x="'+fx(ds)+'" fill="'+(neon?s.glowC:'url(#kh-f)')+'"/></g>';}}
+  body+='</g>';
+  if(s.sparkle>0&&g.pts.length){defs+='<filter id="kh-sp" '+fr+'><feGaussianBlur in="SourceGraphic" stdDeviation="'+fx(3*sc)+'" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+    let st='';for(let i=0;i<s.sparkle;i++){const p=g.pts[Math.floor(rnd()*g.pts.length)],r=(5+rnd()*rnd()*26)*sc;
+      st+='<path d="'+STAR+'" transform="translate('+fx(p[0]+(rnd()-.5)*14*sc)+' '+fx(p[1]+(rnd()-.5)*14*sc)+') scale('+fx(r)+')"/>';}
+    body+='<g fill="#fffbe8" stroke="'+s.glowC+'" stroke-width=".1" filter="url(#kh-sp)">'+st+'</g>';}
+  let size='';if(opt.long){const k=opt.long/Math.max(VW,VH);size=' width="'+Math.round(VW*k)+'" height="'+Math.round(VH*k)+'"';}
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="'+fx(x0)+' '+fx(y0)+' '+fx(VW)+' '+fx(VH)+'"'+size+(g.pixel?' shape-rendering="crispEdges"':'')+'>'+(opt.title?'<title>'+esc(opt.title)+'</title>':'')+'<defs>'+defs+'</defs>'+body+'</svg>';
+  return{svg,vw:VW,vh:VH};
+}
+/*PURE-END*/
+/*RULES-START*/
+const FONTS=[
+ {n:'Secular One',w:400,l:'סקולר',g:'he',base:1},{n:'Rubik',w:900,l:'רוביק שמנמן',g:'he',base:1},{n:'Karantina',w:700,l:'קרנטינה צרה',g:'he',base:1},
+ {n:'Heebo',w:900,l:'היבו כבד',g:'he',q:'Heebo:wght@900'},{n:'Suez One',w:400,l:'סואץ',g:'he',q:'Suez+One'},
+ {n:'Frank Ruhl Libre',w:900,l:'פרנק רוהל',g:'he',q:'Frank+Ruhl+Libre:wght@900'},{n:'Amatic SC',w:700,l:'אמטיק כתב יד',g:'he',q:'Amatic+SC:wght@700'},
+ {n:'Alef',w:700,l:'אלף',g:'he',q:'Alef:wght@700'},{n:'Miriam Libre',w:700,l:'מרים',g:'he',q:'Miriam+Libre:wght@700'},
+ {n:'David Libre',w:700,l:'דוד',g:'he',q:'David+Libre:wght@700'},{n:'Varela Round',w:400,l:'וראלה מעוגל',g:'he',q:'Varela+Round'},
+ {n:'Assistant',w:800,l:'אסיסטנט כבד',g:'he',q:'Assistant:wght@800'},{n:'Bellefair',w:400,l:'בלפייר',g:'he',q:'Bellefair'},
+ {n:'Rubik Glitch',w:400,l:'רוביק גליץ׳',g:'he',q:'Rubik+Glitch'},{n:'Rubik Wet Paint',w:400,l:'רוביק צבע רטוב',g:'he',q:'Rubik+Wet+Paint'},
+ {n:'Rubik Dirt',w:400,l:'רוביק מלוכלך',g:'he',q:'Rubik+Dirt'},{n:'Rubik Spray Paint',w:400,l:'רוביק ספריי',g:'he',q:'Rubik+Spray+Paint'},
+ {n:'Rubik Puddles',w:400,l:'רוביק שלוליות',g:'he',q:'Rubik+Puddles'},{n:'Rubik Maze',w:400,l:'רוביק מבוך',g:'he',q:'Rubik+Maze'},
+ {n:'Rubik Burned',w:400,l:'רוביק שרוף',g:'he',q:'Rubik+Burned'},{n:'Rubik Distressed',w:400,l:'רוביק בלוי',g:'he',q:'Rubik+Distressed'},
+ {n:'Rubik Beastly',w:400,l:'רוביק חיה',g:'he',q:'Rubik+Beastly'},{n:'Rubik Vinyl',w:400,l:'רוביק ויניל',g:'he',q:'Rubik+Vinyl'},
+ {n:'Rubik Bubbles',w:400,l:'רוביק בועות',g:'he',q:'Rubik+Bubbles'},{n:'Rubik Microbe',w:400,l:'רוביק חיידק',g:'he',q:'Rubik+Microbe'},
+ {n:'Rubik Moonrocks',w:400,l:'רוביק סלעי ירח',g:'he',q:'Rubik+Moonrocks'},{n:'Rubik Gemstones',w:400,l:'רוביק אבני חן',g:'he',q:'Rubik+Gemstones'},
+ {n:'Rubik Doodle Shadow',w:400,l:'רוביק דודל צל',g:'he',q:'Rubik+Doodle+Shadow'},{n:'Rubik Scribble',w:400,l:'רוביק שרבוט',g:'he',q:'Rubik+Scribble'},
+ {n:'Rubik Storm',w:400,l:'רוביק סערה',g:'he',q:'Rubik+Storm'},{n:'Rubik 80s Fade',w:400,l:'רוביק שנות ה-80',g:'he',q:'Rubik+80s+Fade'},
+ {n:'Bebas Neue',w:400,l:'Bebas Neue',g:'en',q:'Bebas+Neue'},{n:'Anton',w:400,l:'Anton',g:'en',q:'Anton'},{n:'Russo One',w:400,l:'Russo One',g:'en',q:'Russo+One'},
+ {n:'Bungee',w:400,l:'Bungee',g:'en',q:'Bungee'},{n:'Bungee Shade',w:400,l:'Bungee Shade',g:'en',q:'Bungee+Shade'},{n:'Bungee Inline',w:400,l:'Bungee Inline',g:'en',q:'Bungee+Inline'},
+ {n:'Rubik Mono One',w:400,l:'Rubik Mono One',g:'en',q:'Rubik+Mono+One'},{n:'Chango',w:400,l:'Chango',g:'en',q:'Chango'},{n:'Titan One',w:400,l:'Titan One',g:'en',q:'Titan+One'},
+ {n:'Luckiest Guy',w:400,l:'Luckiest Guy',g:'en',q:'Luckiest+Guy'},{n:'Lilita One',w:400,l:'Lilita One',g:'en',q:'Lilita+One'},{n:'Sigmar One',w:400,l:'Sigmar One',g:'en',q:'Sigmar+One'},
+ {n:'Carter One',w:400,l:'Carter One',g:'en',q:'Carter+One'},{n:'Passion One',w:900,l:'Passion One',g:'en',q:'Passion+One:wght@900'},{n:'Fredoka',w:700,l:'Fredoka',g:'en',q:'Fredoka:wght@700'},
+ {n:'Righteous',w:400,l:'Righteous',g:'en',q:'Righteous'},{n:'Shrikhand',w:400,l:'Shrikhand',g:'en',q:'Shrikhand'},{n:'Lobster',w:400,l:'Lobster',g:'en',q:'Lobster'},
+ {n:'Pacifico',w:400,l:'Pacifico',g:'en',q:'Pacifico'},{n:'Bangers',w:400,l:'Bangers',g:'en',q:'Bangers'},{n:'Permanent Marker',w:400,l:'Permanent Marker',g:'en',q:'Permanent+Marker'},
+ {n:'Alfa Slab One',w:400,l:'Alfa Slab One',g:'en',q:'Alfa+Slab+One'},{n:'Abril Fatface',w:400,l:'Abril Fatface',g:'en',q:'Abril+Fatface'},{n:'Playfair Display',w:900,l:'Playfair Display',g:'en',q:'Playfair+Display:wght@900'},
+ {n:'Rye',w:400,l:'Rye',g:'en',q:'Rye'},{n:'Special Elite',w:400,l:'Special Elite',g:'en',q:'Special+Elite'},{n:'Monoton',w:400,l:'Monoton',g:'en',q:'Monoton'},
+ {n:'Faster One',w:400,l:'Faster One',g:'en',q:'Faster+One'},{n:'Fascinate Inline',w:400,l:'Fascinate Inline',g:'en',q:'Fascinate+Inline'},{n:'Wallpoet',w:400,l:'Wallpoet',g:'en',q:'Wallpoet'},
+ {n:'Black Ops One',w:400,l:'Black Ops One',g:'en',q:'Black+Ops+One'},{n:'Orbitron',w:900,l:'Orbitron',g:'en',q:'Orbitron:wght@900'},{n:'Audiowide',w:400,l:'Audiowide',g:'en',q:'Audiowide'},
+ {n:'Michroma',w:400,l:'Michroma',g:'en',q:'Michroma'},{n:'Syncopate',w:700,l:'Syncopate',g:'en',q:'Syncopate:wght@700'},{n:'Teko',w:700,l:'Teko',g:'en',q:'Teko:wght@700'},
+ {n:'Stalinist One',w:400,l:'Stalinist One',g:'en',q:'Stalinist+One'},{n:'Gugi',w:400,l:'Gugi',g:'en',q:'Gugi'},{n:'Dela Gothic One',w:400,l:'Dela Gothic One',g:'en',q:'Dela+Gothic+One'},
+ {n:'VT323',w:400,l:'VT323 (טרמינל)',g:'en',q:'VT323'},{n:'Press Start 2P',w:400,l:'Press Start 2P',g:'en',q:'Press+Start+2P'},
+ {n:'Cinzel Decorative',w:900,l:'Cinzel Decorative',g:'en',q:'Cinzel+Decorative:wght@900'},{n:'Pirata One',w:400,l:'Pirata One',g:'en',q:'Pirata+One'},
+ {n:'UnifrakturCook',w:700,l:'UnifrakturCook',g:'en',q:'UnifrakturCook:wght@700'},{n:'Grenze Gotisch',w:900,l:'Grenze Gotisch',g:'en',q:'Grenze+Gotisch:wght@900'},
+ {n:'New Rocker',w:400,l:'New Rocker',g:'en',q:'New+Rocker'},{n:'Metal Mania',w:400,l:'Metal Mania',g:'en',q:'Metal+Mania'},{n:'Creepster',w:400,l:'Creepster',g:'en',q:'Creepster'},
+ {n:'Nosifer',w:400,l:'Nosifer',g:'en',q:'Nosifer'},{n:'Eater',w:400,l:'Eater',g:'en',q:'Eater'},{n:'Butcherman',w:400,l:'Butcherman',g:'en',q:'Butcherman'},
+ {n:'Caesar Dressing',w:400,l:'Caesar Dressing',g:'en',q:'Caesar+Dressing'},{n:'Frijole',w:400,l:'Frijole',g:'en',q:'Frijole'}
+];
+const BASE={font:'Secular One',stops:[[0,'#ffffff'],[1,'#d8d2ee']],angle:0,outlineW:0,outlineC:'#1a1230',depth:0,depthA:'#9a8fc0',depthB:'#2a2240',
+ glowR:0,glowC:'#ffffff',shadow:0,slant:0,warpType:'none',warpAmt:50,track:0,fat:0,sparkle:0,distort:0,grain:0,gloss:false,scan:0,glitch:false,pixel:0,hollow:false,neon:false,bg:'grad'};
+const RULES=[
+{l:'ניאון',k:'mat',w:['ניאון','נאון','neon*'],p:{neon:true,glowR:22,glowC:'#ff2bd6',outlineW:0,depth:0,gloss:false,shadow:0,stops:[[0,'#ffffff'],[1,'#ffffff']]}},
+{l:'זהב',k:'mat',w:['זהב*','זהוב*','מוזהב*','gold*'],p:{stops:[[0,'#fff7c9'],[.38,'#ffd24d'],[.5,'#b77a12'],[.62,'#f2c14e'],[1,'#fff0a6']],outlineW:3,outlineC:'#4a2c00',depth:46,depthA:'#c58a1b',depthB:'#4a2c00',gloss:true}},
+{l:'כרום',k:'mat',w:['כרום','כסף','כסוף*','מתכת*','מתכתי*','פלדה','chrome*','silver*','metallic*','steel*'],p:{stops:[[0,'#ffffff'],[.4,'#b9c3d1'],[.5,'#3b4252'],[.62,'#aab4c3'],[1,'#f5f8fc']],outlineW:2.5,outlineC:'#0b0d12',depth:36,depthA:'#8793a6',depthB:'#1d222c',gloss:true}},
+{l:'אש',k:'mat',w:['אש','להבה','להבות','בוער*','לבה','fire*','flame*','lava*','inferno'],p:{stops:[[0,'#c1150a'],[.4,'#ff5a00'],[.75,'#ffb100'],[1,'#fff2a8']],outlineW:2,outlineC:'#3a0500',glowR:18,glowC:'#ff5a00',distort:5,depth:14,depthA:'#9a2000',depthB:'#2a0400'}},
+{l:'קרח',k:'mat',w:['קרח*','כפור*','שלג*','קפוא*','ice*','frost*','snow*','frozen'],p:{stops:[[0,'#ffffff'],[.5,'#aee6ff'],[1,'#4aa8e8']],outlineW:2.5,outlineC:'#0d4f8a',glowR:14,glowC:'#8fdcff',gloss:true,sparkle:14,depth:14,depthA:'#7cc8f0',depthB:'#1f6aa8'}},
+{l:'רעל',k:'mat',w:['רעל*','רדיואקטיב*','ארס*','זומבי*','ריר','toxic*','radioactive*','acid*','slime*'],p:{stops:[[0,'#f4ff7a'],[.5,'#8dff00'],[1,'#1d9a00']],outlineW:3,outlineC:'#0a3300',glowR:18,glowC:'#7dff00',distort:3,depth:20,depthA:'#2e7d00',depthB:'#0a2a00'}},
+{l:'אימה',k:'mat',w:['דם','אימה','מפחיד*','מצמרר*','רצח*','horror*','blood*','scary','creepy'],p:{font:'Creepster',stops:[[0,'#e0101f'],[1,'#4a0006']],outlineW:2,outlineC:'#120002',glowR:10,glowC:'#ff0014',distort:4,depth:16,depthA:'#5a0009',depthB:'#150002'}},
+{l:'פנטזיה',k:'mat',w:['פנטזי*','קסו*','קסמ*','מכושף*','קוסם*','אגדה','אגדי*','אבירים','fantasy*','magic*','wizard*','medieval*','enchanted*'],p:{font:'Cinzel Decorative',stops:[[0,'#fff1c1'],[.5,'#e8b84a'],[1,'#8a5a14']],outlineW:2.5,outlineC:'#2a0f4a',depth:32,depthA:'#6a3fb8',depthB:'#1d0b3a',glowR:20,glowC:'#9b6bff',sparkle:18,gloss:true}},
+{l:'דרקון',k:'mat',w:['דרקון*','דרקונים','dragon*'],p:{font:'Pirata One',stops:[[0,'#ffd36b'],[.5,'#e8431a'],[1,'#4d0a00']],outlineW:2.5,outlineC:'#1a0300',glowR:16,glowC:'#ff4a14',depth:28,depthA:'#7a1a05',depthB:'#240500',sparkle:8,distort:3}},
+{l:'פיקסלים',k:'mat',w:['פיקסל*','ארקייד*','8bit','pixel*','arcade*'],p:{font:'Press Start 2P',pixel:16,stops:[[0,'#ffee58'],[.5,'#ff9800'],[1,'#e53935']],outlineW:0,depth:30,depthA:'#b71c1c',depthB:'#4a0d0d'}},
+{l:'גיימינג',k:'mat',w:['גיימינג','גיימר*','משחק*','אסטרטגיה','טורניר*','game*','gaming','gamer*','esports'],p:{font:'Black Ops One',stops:[[0,'#ffffff'],[.5,'#43e0ff'],[1,'#1b6cff']],outlineW:3,outlineC:'#07102b',depth:26,depthA:'#1b50d6',depthB:'#071a4d',glowR:14,glowC:'#2fb4ff',slant:10,gloss:true}},
+{l:'סייבר',k:'mat',w:['סייבר*','עתיד*','עתידני*','טכנולוג*','רובוט*','הולוגרמ*','cyber*','futur*','scifi','tech*','robot*','hologram*'],p:{font:'Orbitron',stops:[[0,'#00f0ff'],[1,'#b400ff']],angle:90,outlineW:1.5,outlineC:'#0a0030',glowR:14,glowC:'#00e5ff',scan:'scan',glitch:true,depth:10,depthA:'#5b00a8',depthB:'#14003a'}},
+{l:'ממתק',k:'mat',w:['ממתק*','סוכריה','סוכריות','מתוק*','חמוד*','בועות','בועה','ילדותי*','candy','sweet*','cute','bubblegum','kawaii'],p:{font:'Rubik',stops:[[0,'#ffd6f2'],[.5,'#ff7ac8'],[1,'#ff3d9a']],outlineW:6,outlineC:'#ffffff',depth:22,depthA:'#e0287f',depthB:'#8a1049',shadow:1,gloss:true,sparkle:6}},
+{l:'גלקסיה',k:'mat',w:['גלקסי*','חלל','קוסמי*','כוכבים','כוכב','יקום','galaxy*','space','cosmic*','stars','nebula*','universe'],p:{stops:[[0,'#ff6ad5'],[.4,'#8a5cff'],[.8,'#3a7bff'],[1,'#12e2ff']],outlineW:2,outlineC:'#0b0630',glowR:18,glowC:'#7a5cff',sparkle:24,depth:14,depthA:'#3b2a9a',depthB:'#0b0630'}},
+{l:'קשת בענן',k:'mat',w:['בענן','צבעוני*','צבעים','רבגוני*','rainbow*','prism*','פריזמה'],p:{stops:[[0,'#ff3b3b'],[.17,'#ff9f1a'],[.34,'#ffe14d'],[.5,'#3ddc84'],[.67,'#2fb4ff'],[.84,'#6a5cff'],[1,'#c04dff']],angle:90,outlineW:3,outlineC:'#1a1030',depth:18,depthA:'#6a3fb8',depthB:'#1a1030',gloss:true}},
+{l:'ים',k:'mat',w:['ים','מים','אוקיינוס*','ocean*','sea','water*','aqua*'],p:{stops:[[0,'#e8fcff'],[.45,'#35c8ff'],[1,'#0a4fb0']],outlineW:2.5,outlineC:'#032a5c',depth:18,depthA:'#1b7fd1',depthB:'#052a5c',gloss:true,warpType:'wave',warpAmt:40,glowR:10,glowC:'#3ac6ff'}},
+{l:'שקיעה',k:'mat',w:['שקיעה','שקיעת','זריחה','sunset*','sunrise*'],p:{stops:[[0,'#ffe27a'],[.45,'#ff7a59'],[1,'#7b2ff7']],outlineW:2,outlineC:'#2b0a4d',depth:14,depthA:'#b0396b',depthB:'#2b0a4d',gloss:true}},
+{l:'אבן',k:'mat',w:['אבן','אבנים','סלע*','stone*','rock*','granite'],p:{stops:[[0,'#c9c4bb'],[.5,'#8b867d'],[1,'#4f4b45']],outlineW:2.5,outlineC:'#1d1b18',depth:40,depthA:'#6d6860',depthB:'#24221f',grain:55}},
+{l:'עץ',k:'mat',w:['עץ','עצים','wood*','wooden'],p:{stops:[[0,'#c98e55'],[1,'#7a4a21']],outlineW:2.5,outlineC:'#2a1507',depth:30,depthA:'#8a5527',depthB:'#2f1a09',scan:'wood',grain:30}},
+{l:'קומיקס',k:'mat',w:['קומיקס','קריקטורה','comic*','cartoon*','pop'],p:{font:'Bangers',stops:[[0,'#fff04a'],[1,'#ffd400']],outlineW:5,outlineC:'#111111',depth:14,depthA:'#e02020',depthB:'#e02020',slant:8}},
+{l:'גרפיטי',k:'mat',w:['גרפיטי','ספריי','סטריט','graffiti*','spray*','street*'],p:{font:'Permanent Marker',stops:[[0,'#ff7a1a'],[.5,'#ff2a8a'],[1,'#7a2cff']],angle:70,outlineW:5,outlineC:'#ffffff',depth:16,depthA:'#222222',depthB:'#000000',slant:4,shadow:1}},
+{l:"וינטג'",k:'mat',w:['וינטג*','וינטאג*','ויקטוריאני*','רטרו','עתיק*','vintage*','retro*'],p:{font:'Rye',stops:[[0,'#fff4d6'],[1,'#f3dcaa']],outlineW:4,outlineC:'#b3261e',depth:26,depthA:'#b3261e',depthB:'#5a0f0b',shadow:1}},
+{l:'מטאל',k:'mat',w:['מטאל','גותי*','הבי','metal','gothic*','heavy'],p:{font:'Metal Mania',stops:[[0,'#f2f2f2'],[.5,'#9a9a9a'],[1,'#2a2a2a']],outlineW:2.5,outlineC:'#000000',depth:22,depthA:'#555555',depthB:'#050505',distort:2}},
+{l:'אלגנטי',k:'mat',w:['אלגנט*','יוקרתי*','יוקרה','קלאסי*','elegant*','luxur*','classic*'],p:{font:'Frank Ruhl Libre',stops:[[0,'#fff7d6'],[.5,'#e3b94f'],[1,'#8f6414']],outlineW:1.5,outlineC:'#2b1a00',depth:6,depthA:'#b58a2c',depthB:'#3a2606',gloss:true}},
+{l:'נקי',k:'mat',w:['מינימלי*','פשוט*','נקי*','minimal*','clean','simple','plain'],p:{font:'Heebo',stops:[[0,'#16121f'],[1,'#16121f']],bg:'light'}},
+{l:'ברונזה',k:'mat',w:['ברונזה','נחושת','bronze*','copper*'],p:{stops:[[0,'#f6c9a0'],[.45,'#cd7f32'],[.55,'#7a3f12'],[1,'#e6a36a']],outlineW:2.5,outlineC:'#2a1204',depth:34,depthA:'#9a5a22',depthB:'#2a1204',gloss:true}},
+{l:'קריסטל',k:'mat',w:['יהלום*','קריסטל*','זכוכית','זכוכיתי*','diamond*','crystal*','glass*','gem*'],p:{font:'Rubik Gemstones',stops:[[0,'#ffffff'],[.4,'#c9f1ff'],[.7,'#e8d4ff'],[1,'#8fd0ff']],angle:35,outlineW:2,outlineC:'#4a6fb8',glowR:12,glowC:'#aee6ff',gloss:true,sparkle:20,depth:12,depthA:'#9ac8ee',depthB:'#2a4a8a'}},
+{l:'חשמל',k:'mat',w:['חשמל*','ברק','ברקים','סערה','electric*','lightning*','thunder*','storm*'],p:{stops:[[0,'#ffffff'],[.5,'#fff27a'],[1,'#ffd400']],outlineW:2.5,outlineC:'#2a2a8a',glowR:20,glowC:'#59d0ff',distort:3,glitch:true,sparkle:10,depth:10,depthA:'#3a4ad0',depthB:'#0a0a40'}},
+{l:'שוקולד',k:'mat',w:['שוקולד*','קפה','קרמל*','chocolate*','coffee*','caramel*'],p:{font:'Lobster',stops:[[0,'#8a5a3a'],[.5,'#4a2614'],[1,'#2a120a']],outlineW:3,outlineC:'#ffd9b0',depth:22,depthA:'#3a1c0e',depthB:'#150805',gloss:true,shadow:1}},
+{l:'מדבר',k:'mat',w:['חול','מדבר','מדברי*','desert*','sand*'],p:{stops:[[0,'#fff0c2'],[.5,'#e9bf74'],[1,'#b9833a']],outlineW:2.5,outlineC:'#4a2e0e',depth:26,depthA:'#c69446',depthB:'#4a2e0e',grain:40}},
+{l:'ג׳ונגל',k:'mat',w:['גונגל','יער','טבע','עלים','jungle*','forest*','nature*','leaf*'],p:{font:'Rubik Dirt',stops:[[0,'#d7ff8a'],[.5,'#46b832'],[1,'#0e5a1c']],outlineW:3,outlineC:'#052a0c',depth:22,depthA:'#1c7a24',depthB:'#052a0c',grain:30}},
+{l:'פיראטים',k:'mat',w:['פיראט*','פיראטים','ספינה','אוצר','pirate*','treasure*'],p:{font:'Pirata One',stops:[[0,'#fff1c9'],[.5,'#d6a45a'],[1,'#7a4a1a']],outlineW:3,outlineC:'#1a0d03',depth:28,depthA:'#5a3410',depthB:'#1a0d03',grain:25}},
+{l:'מערבון',k:'mat',w:['מערבון','קאובוי*','בוקרים','western*','cowboy*','wanted'],p:{font:'Rye',stops:[[0,'#ffd9a0'],[1,'#c4651a']],outlineW:3.5,outlineC:'#2a1004',depth:24,depthA:'#7a3a0e',depthB:'#2a1004',grain:30,shadow:1}},
+{l:'נינג׳ה',k:'mat',w:['נינגה','סמוראי*','יפן','יפני*','ninja*','samurai*','japan*'],p:{font:'Dela Gothic One',stops:[[0,'#ffffff'],[.5,'#e8e8e8'],[1,'#9a9a9a']],outlineW:3,outlineC:'#c40018',depth:24,depthA:'#c40018',depthB:'#400008',slant:6,shadow:1}},
+{l:'סינתווייב',k:'mat',w:['סינתווייב','וייפורווייב','שמונים','synthwave*','vaporwave*','outrun','80s','retrowave'],p:{font:'Audiowide',stops:[[0,'#fff36b'],[.45,'#ff4fb8'],[1,'#7a2bff']],outlineW:2,outlineC:'#1a0545',glowR:18,glowC:'#ff2bd6',scan:'scan',slant:8,depth:14,depthA:'#5a1bb0',depthB:'#12033a'}},
+{l:'טרמינל',k:'mat',w:['טרמינל','מטריקס','האקר*','האקרים','matrix','hacker*','terminal*','console'],p:{font:'VT323',stops:[[0,'#b8ffc2'],[1,'#27d44a']],outlineW:0,glowR:14,glowC:'#27ff5a',scan:'scan',glitch:true,depth:0,bg:'dark'}},
+{l:'פיצוץ',k:'mat',w:['פיצוץ*','נפץ','בום','פיצוצים','explosion*','boom','blast*','bang'],p:{font:'Bangers',stops:[[0,'#ffffff'],[.3,'#fff04a'],[.65,'#ff8a00'],[1,'#e02010']],outlineW:5,outlineC:'#140400',depth:30,depthA:'#8a1000',depthB:'#200400',slant:8,sparkle:12,distort:3,glowR:12,glowC:'#ff7a00'}},
+{l:'סטיקר',k:'mat',w:['סטיקר*','מדבקה','מדבקות','sticker*'],p:{font:'Lilita One',stops:[[0,'#ffe86a'],[1,'#ff9a3d']],outlineW:12,outlineC:'#ffffff',shadow:1,gloss:true,depth:0,bg:'dark'}},
+{l:'פסטל',k:'mat',w:['פסטל*','רך','רכה','pastel*','soft'],p:{font:'Fredoka',stops:[[0,'#ffd6e8'],[.5,'#cfe6ff'],[1,'#d8ffe6']],angle:90,outlineW:5,outlineC:'#ffffff',depth:14,depthA:'#e6b4d6',depthB:'#a58ac0',shadow:1,gloss:true}},
+{l:'מונוכרום',k:'mat',w:['מונוכרום*','אפור*','גריי','שחור*','mono*','grayscale','black','grey','gray'],p:{stops:[[0,'#ffffff'],[.5,'#bdbdbd'],[1,'#5a5a5a']],outlineW:3,outlineC:'#0a0a0a',depth:30,depthA:'#6a6a6a',depthB:'#0a0a0a',gloss:true}},
+{l:'תלת מימד',k:'mod',w:['תלת*','תלתי*','3d','עומק','עמוק*'],f:s=>{s.depth=Math.max(s.depth,52);}},
+{l:'שטוח',k:'mod',w:['שטוח*','flat'],f:s=>{s.depth=0;s.shadow=0;}},
+{l:'מתאר',k:'mod',w:['מתאר','קווי*','קונטור','חלול*','outline*','stroke*','hollow','wire*'],f:s=>{s.hollow=true;s.outlineW=Math.max(s.outlineW,3.5);s.outlineC=midColor(s.stops);}},
+{l:'זוהר',k:'mod',w:['זוהר*','זורח*','הילה','glow*'],f:s=>{s.glowR=Math.max(s.glowR,20);if(s.glowC==='#ffffff')s.glowC=midColor(s.stops);}},
+{l:'נטוי',k:'mod',w:['נטוי*','מוטה','הטיה','italic*','slant*'],f:s=>{s.slant=14;}},
+{l:'קשת',k:'mod',w:['קשת','קשתי*','מקושת*','arch*','arc','curved'],f:s=>{s.warpType='arc';s.warpAmt=55;}},
+{l:'גל',k:'mod',w:['גל','גלי','גלים','wave*','wavy'],f:s=>{s.warpType='wave';s.warpAmt=55;}},
+{l:'דגל',k:'mod',w:['דגל','מתנופף*','flag*'],f:s=>{s.warpType='flag';s.warpAmt=60;}},
+{l:'ניפוח',k:'mod',w:['מנופח*','מתנפח*','נפוח*','בלון','bulge*','inflated','puffy','balloon*'],f:s=>{s.warpType='bulge';s.warpAmt=60;}},
+{l:'פרספקטיבה',k:'mod',w:['פרספקטיבה','perspective*'],f:s=>{s.warpType='persp';s.warpAmt=50;}},
+{l:'נצנוצים',k:'mod',w:['נצנוץ','נצנוצים','ניצוץ','ניצוצות','נוצץ*','בלינג','sparkle*','glitter*','bling'],f:s=>{s.sparkle=Math.max(s.sparkle,22);s.gloss=true;}},
+{l:'רועד',k:'mod',w:['רועד','רטט','נמס','נימס','זולג','wobbly','shaky','melt*','drip*'],f:s=>{s.distort=Math.max(s.distort,9);}},
+{l:'צפוף',k:'mod',w:['צפוף*','צמוד*','tight','condensed'],f:s=>{s.track=-10;}},
+{l:'מרווח',k:'mod',w:['מרווח*','רחב*','spaced','wide','airy'],f:s=>{s.track=34;}},
+{l:'צל',k:'mod',w:['צל','צללית','shadow*'],f:s=>{s.shadow=1;}},
+{l:'קווי סריקה',k:'mod',w:['סריקה','crt','scanline*','vhs'],f:s=>{s.scan='scan';}},
+{l:'גרגירי',k:'mod',w:['גרגירי*','רעש','grain*','noise*'],f:s=>{s.grain=45;}},
+{l:'עבה',k:'mod',w:['עבה','עבים','שמן','ענק*','bold*','thick*','fat','chunky'],f:s=>{s.fat=Math.max(s.fat,6);}},
+{l:"גליץ'",k:'mod',w:['גליץ','שיבוש*','תקלה','glitch*'],f:s=>{s.glitch=true;}}
+];
+const TINTS=[[['חום','חומה','חומים','brown*'],'#8a4b1f','חום'],[['טורקיז*','turquoise*','teal*'],'#1de9b6','טורקיז'],[['ורוד*','pink*','מגנטה'],'#ff2bd6','ורוד'],[['כחול*','תכלת*','blue*','cyan*'],'#27d3ff','כחול'],[['ירוק*','green*','לימון*'],'#39ff6a','ירוק'],
+ [['אדום*','red*'],'#ff3b3b','אדום'],[['סגול*','purple*','violet*'],'#a65bff','סגול'],[['כתום*','orange*'],'#ff8a1f','כתום'],[['צהוב*','yellow*'],'#ffe94d','צהוב'],[['לבן*','white*'],'#ffffff','לבן']];
+function tokenize(s){return s.toLowerCase().replace(/[֑-ׇ]/g,'').replace(/['’׳"״`]/g,'').split(/[^\p{L}\p{N}]+/u).filter(Boolean);}
+function cands(t){const c=[t],P='והבלמכש';if(t.length>=3&&P.includes(t[0]))c.push(t.slice(1));if(t.length>=4&&P.includes(t[0])&&P.includes(t[1]))c.push(t.slice(2));return c;}
+function wm(c,w){return w.endsWith('*')?c.startsWith(w.slice(0,-1)):c===w;}
+function firstHit(toks,words){for(let i=0;i<toks.length;i++){const cs=cands(toks[i]);if(words.some(w=>cs.some(c=>wm(c,w))))return i;}return -1;}
+function parsePrompt(prompt){
+  const toks=tokenize(prompt),found=[];
+  for(const r of RULES){const at=firstHit(toks,r.w);if(at>=0)found.push({at,r});}
+  found.sort((a,b)=>a.at-b.at);
+  const s=JSON.parse(JSON.stringify(BASE));let mat=false;const tags=[];
+  for(const f of found)if(f.r.k==='mat'){Object.assign(s,JSON.parse(JSON.stringify(f.r.p)));mat=true;tags.push(f.r.l);}
+  for(const f of found)if(f.r.k==='mod'){f.r.f(s);tags.push(f.r.l);}
+  let tint=null;for(const t of TINTS){const at=firstHit(toks,t[0]);if(at>=0&&(!tint||at<tint.at))tint={at,c:t[1],n:t[2]};}
+  if(tint){tags.push(tint.n);
+    if(s.neon)s.glowC=tint.c;
+    else if(!mat){s.stops=[[0,mix(tint.c,'#ffffff',.55)],[.5,tint.c],[1,mix(tint.c,'#000000',.5)]];s.outlineW=3;s.outlineC=mix(tint.c,'#000000',.85);s.depth=s.depth||24;s.depthA=mix(tint.c,'#000000',.25);s.depthB=mix(tint.c,'#000000',.8);s.gloss=true;mat=true;}
+    else{s.glowC=tint.c;if(s.glowR<=0)s.glowR=14;}}
+  let auto=false;
+  if(!mat){auto=true;const hue=toks.length?hash(toks.join(' '))%360:24,hx=(h,a,b)=>hslHex((h+360)%360,a,b);
+    s.stops=[[0,hx(hue,92,76)],[.5,hx(hue+22,92,58)],[1,hx(hue+55,85,38)]];s.outlineW=3;s.outlineC=hx(hue,55,12);s.depth=s.depth||24;s.depthA=hx(hue+10,60,42);s.depthB=hx(hue+20,60,14);s.gloss=true;}
+  return{spec:s,tags,auto,empty:!toks.length};
+}
+/*RULES-END*/
+/*UI-START*/
+const $=id=>document.getElementById(id);
+function h(tag,props,...kids){const e=document.createElement(tag);
+  for(const k in(props||{})){const v=props[k];if(k==='class')e.className=v;else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);else if(v===true)e.setAttribute(k,'');else if(v!==false&&v!=null)e.setAttribute(k,v);}
+  for(const c of kids.flat())e.append(c&&c.nodeType?c:document.createTextNode(c));return e;}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let spec=JSON.parse(JSON.stringify(BASE)),tok=0,cur=null,cache={key:'',val:null},toastT=0,resUrl=null;
+const txtEl=$('txt'),prmEl=$('prm'),stage=$('stage'),result=$('result'),tagsEl=$('tags');
+const getText=()=>txtEl.value.replace(/\r/g,'').trim()||'כור';
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* גופן -> מסכת פיקסלים -> קווי מתאר */
+function linkFont(f){
+  if(!f.q||f.linked)return Promise.resolve();f.linked=true;
+  return new Promise(res=>{const l=h('link',{rel:'stylesheet',href:'https://fonts.googleapis.com/css2?family='+f.q+'&display=swap'});
+    l.onload=l.onerror=()=>res();document.head.append(l);setTimeout(res,3500);});
+}
+async function loadFont(f,text){
+  await linkFont(f);
+  const jobs=[document.fonts.load(f.w+' 100px "'+f.n+'"',text),document.fonts.load('400 100px "Secular One"',text)];
+  try{await Promise.race([Promise.all(jobs),sleep(4500)]);}catch(e){}
+}
+async function getBase(text,sp){
+  const key=[text,sp.font,sp.track,sp.pixel].join('\u0001');
+  if(cache.key===key)return cache.val;
+  const f=FONTS.find(x=>x.n===sp.font)||FONTS[0];
+  await loadFont(f,text);
+  const lines=text.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,3);
+  const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
+  const rtl=l=>/[֐-ۿ]/.test(l);
+  let FS=sp.pixel||260;
+  const setF=fs=>{x.font=f.w+' '+fs+'px "'+f.n+'","Secular One",Rubik,Arial,sans-serif';if('letterSpacing' in x)x.letterSpacing=(sp.track*fs/260).toFixed(2)+'px';};
+  const widest=()=>Math.max(...lines.map(l=>{x.direction=rtl(l)?'rtl':'ltr';return x.measureText(l).width;}));
+  setF(FS);let maxW=widest();
+  if(!sp.pixel&&maxW>2400){FS=FS*2400/maxW;setF(FS);maxW=widest();}
+  const pad=Math.ceil(FS*.25)+3,lh=FS*1.3,W=Math.ceil(maxW+pad*2+FS*.2),H=Math.ceil(lines.length*lh+pad*2);
+  c.width=W;c.height=H;setF(FS);
+  x.fillStyle='#000';x.textAlign='center';x.textBaseline='alphabetic';
+  lines.forEach((l,i)=>{x.direction=rtl(l)?'rtl':'ltr';x.fillText(l,W/2,pad+FS*.98+i*lh);});
+  const data=x.getImageData(0,0,W,H).data;let val;
+  if(sp.pixel){const runs=[];
+    for(let y=0;y<H;y++){let x0=-1;for(let xx=0;xx<=W;xx++){const on=xx<W&&data[(y*W+xx)*4+3]>=128;if(on&&x0<0)x0=xx;else if(!on&&x0>=0){runs.push([x0,y,xx-x0]);x0=-1;}}}
+    val={pixel:true,runs,FS,nLines:lines.length};}
+  else{const eps=Math.max(.35,.5*FS/260),lim=FS*.05;
+    const loops=traceMask(data,W,H).map(l=>simplify(l,eps)).filter(l=>l.length>=3);
+    loops.forEach(l=>markCorners(l,lim));
+    val={pixel:false,loops,FS,nLines:lines.length};}
+  cache={key,val};return val;
+}
+
+/* רינדור */
+let pend=0;
+function schedule(){if(pend)return;pend=requestAnimationFrame(()=>{pend=0;render();});}
+async function render(){
+  const my=++tok;stage.classList.add('busy');
+  let base;try{base=await getBase(getText(),spec);}catch(e){console.error(e);stage.classList.remove('busy');toast('הציור נכשל, נסו טקסט או גופן אחר');return;}
+  if(my!==tok)return;
+  const g=geometry(base,spec),seed=hash(getText()+'|'+prmEl.value);
+  const out=buildSVG(g,spec,{seed});
+  cur={g,s:JSON.parse(JSON.stringify(spec)),seed,text:getText()};
+  stage.innerHTML=out.svg;stage.classList.remove('busy');
+}
+function regen(){
+  const r=parsePrompt(prmEl.value);spec=r.spec;if(window.__kf)spec.font=window.__kf;
+  tagsEl.replaceChildren(...(r.tags.length?[h('span',{},'זוהה:'),...r.tags.map(t=>h('span',{class:'tag'},t))]:[]),
+    ...(r.auto?[h('span',{},r.empty?'כתבו תיאור כדי לעצב. עד אז מוצג סגנון בסיס.':'לא זוהו מילות מפתח, נבנתה פלטה מהמילים שלכם.')]:[]));
+  syncAll();render();
+}
+
+/* בקרות */
+const SYNC=[];const syncAll=()=>SYNC.forEach(f=>f());
+function slider(k,label,min,max,step,unit){
+  unit=unit||'';const id='c-'+k,out=h('output',{for:id}),inp=h('input',{type:'range',id,min,max,step});
+  inp.addEventListener('input',()=>{spec[k]=+inp.value;out.textContent=inp.value+unit;schedule();});
+  SYNC.push(()=>{inp.value=spec[k];out.textContent=spec[k]+unit;});
+  return h('div',{class:'ctl'},h('label',{for:id},label),out,inp);
+}
+function check(id,label,read,write,extra){
+  const inp=h('input',{type:'checkbox',id});
+  inp.addEventListener('change',()=>{write(inp.checked);if(extra)extra();schedule();});
+  SYNC.push(()=>{inp.checked=!!read();});
+  return h('label',{class:'chk',for:id},inp,label);
+}
+function colorPick(id,label,read,write){
+  const inp=h('input',{type:'color',id});
+  inp.addEventListener('input',()=>{write(inp.value);schedule();});
+  SYNC.push(()=>{inp.value=read();});
+  return h('div',{},h('label',{for:id},label),inp);
+}
+function group(title,open,...kids){return h('details',{class:'grp',open:open},h('summary',{},title),...kids);}
+function buildUI(){
+  const opts=g=>FONTS.filter(f=>f.g===g).map(f=>h('option',{value:f.n},f.l));
+  const fontSel=h('select',{id:'fontSel'},h('optgroup',{label:'עברית ואנגלית'},...opts('he')),h('optgroup',{label:'אנגלית בלבד (עברית תוצג בסקולר)'},...opts('en')));
+  fontSel.addEventListener('change',()=>{spec.font=fontSel.value;schedule();});
+  SYNC.push(()=>{fontSel.value=spec.font;});
+  const warpSel=h('select',{id:'warpSel'},[['none','ללא'],['arc','קשת'],['wave','גל'],['flag','דגל'],['bulge','ניפוח'],['persp','פרספקטיבה']].map(a=>h('option',{value:a[0]},a[1])));
+  warpSel.addEventListener('change',()=>{spec.warpType=warpSel.value;schedule();});
+  SYNC.push(()=>{warpSel.value=spec.warpType;});
+  const pxCtl=slider('pixel','פיקסלים לגובה אות',8,48,1);
+  SYNC.push(()=>{pxCtl.hidden=!spec.pixel;});
+  const colors=h('div',{class:'colors'},
+    colorPick('cA','מילוי עליון',()=>spec.stops[0][1],v=>{spec.stops=[[0,v],[1,spec.stops[spec.stops.length-1][1]]];}),
+    colorPick('cB','מילוי תחתון',()=>spec.stops[spec.stops.length-1][1],v=>{spec.stops=[[0,spec.stops[0][1]],[1,v]];}),
+    colorPick('cO','מתאר',()=>spec.outlineC,v=>{spec.outlineC=v;if(spec.outlineW<=0)spec.outlineW=3;syncAll();}),
+    colorPick('cG','זוהר',()=>spec.glowC,v=>{spec.glowC=v;if(spec.glowR<=0)spec.glowR=14;syncAll();}),
+    colorPick('cD','עומק',()=>spec.depthB,v=>{spec.depthB=v;spec.depthA=mix(v,'#ffffff',.38);if(spec.depth<=0)spec.depth=30;syncAll();}));
+  const bgSeg=h('div',{class:'seg',role:'group','aria-label':'רקע'},[['none','שקוף'],['dark','כהה'],['light','בהיר'],['grad','הילה']].map(a=>{
+    const b=h('button',{type:'button','data-bg':a[0]},a[1]);b.addEventListener('click',()=>{spec.bg=a[0];syncAll();schedule();});return b;}));
+  SYNC.push(()=>bgSeg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===spec.bg))));
+  $('groups').replaceChildren(
+    group('גופן וצבעים',true,h('div',{style:'margin-top:10px'},h('label',{for:'fontSel'},'גופן'),fontSel),colors,h('div',{class:'grid2'},slider('fat','עובי אות',0,16,1))),
+    group('עומק, מתאר וזוהר',true,h('div',{class:'grid2'},slider('depth','עומק תלת-ממד',0,100,1),slider('outlineW','עובי מתאר',0,14,.5),slider('glowR','עוצמת זוהר',0,60,1),
+      check('kSh','צל נופל',()=>spec.shadow,v=>{spec.shadow=v?1:0;}),check('kNe','ניאון',()=>spec.neon,v=>{spec.neon=v;if(v&&spec.glowR<10)spec.glowR=22;},syncAll),check('kHo','מתאר בלבד',()=>spec.hollow,v=>{spec.hollow=v;if(v&&spec.outlineW<2)spec.outlineW=3.5;},syncAll))),
+    group('צורה ועיוות',false,h('div',{style:'margin-top:10px'},h('label',{for:'warpSel'},'עיוות'),warpSel),h('div',{class:'grid2'},slider('warpAmt','עוצמת עיוות',-100,100,1),slider('slant','הטיה',-25,25,1,'°'),slider('track','מרווח אותיות',-20,60,1))),
+    group('אפקטים',false,h('div',{class:'grid2'},slider('sparkle','נצנוצים',0,40,1),slider('distort','תנודת להבה',0,12,.5),slider('grain','גרגירים',0,100,1),
+      check('kGl','ברק וקווי מתאר פנימיים',()=>spec.gloss,v=>{spec.gloss=v;}),check('kSc','קווי סריקה',()=>spec.scan,v=>{spec.scan=v?'scan':0;}),check('kGt',"גליץ'",()=>spec.glitch,v=>{spec.glitch=v;}),
+      check('kPx','מצב פיקסלים',()=>spec.pixel,v=>{spec.pixel=v?16:0;},syncAll),pxCtl)),
+    group('רקע',false,bgSeg));
+  const chips=['זהב תלת מימד נצנוצים','ניאון ורוד','אש דרקון','קרח כפור','פיקסלים ארקייד',"סייבר גליץ'",'פנטזיה קסומה','קומיקס','גרפיטי','רעל רדיואקטיבי','ממתק מתוק','גלקסיה','קשת בענן','ים גלים',"וינטג'",'כרום מתכת תלת מימד','סינתווייב','פיראטים זהב','קריסטל יהלום','שוקולד','נינג׳ה','פיצוץ בום','סטיקר','טרמינל האקר','חשמל ברק','מדבר חול','ג׳ונגל','פסטל'];
+  $('chips').replaceChildren(...chips.map(c=>{const b=h('button',{class:'chip',type:'button'},c);b.addEventListener('click',()=>{prmEl.value=c;regen();});return b;}));
+  const nm=RULES.filter(r=>r.k==='mat').length,ne=RULES.length-nm;
+  $('badges').replaceChildren(...['בלי שרת','בלי AI',FONTS.length+' גופנים',nm+' חומרים ו-'+ne+' אפקטים','עיצוב גופן וקובץ TTF','ייצוא SVG ו-PNG'].map(t=>h('li',{},t)));
+}
+
+/* ייצוא */
+const fmtSize=n=>n>1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
+const slug=()=>(getText().replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'').slice(0,24)||'text');
+const dlP=(window.claude&&window.claude.use)?window.claude.use('downloads').catch(()=>null):Promise.resolve(null);
+async function saveFile(blob,name){
+  const dl=await dlP;
+  if(dl){try{await dl.save({filename:name,data:blob});toast('נשמר: '+name);return;}catch(e){if(e&&e.code==='declined'){toast('השמירה בוטלה');return;}}}
+  const u=URL.createObjectURL(blob),a=h('a',{href:u,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);
+}
+function showResult(kind,blob,name,code){
+  if(resUrl)URL.revokeObjectURL(resUrl);resUrl=URL.createObjectURL(blob);result.hidden=false;
+  const meta=h('div',{class:'meta'},h('strong',{},name),h('p',{class:'dim'},kind.toUpperCase()+' · '+fmtSize(blob.size)),
+    h('p',{class:'dim'},'אם ההורדה לא התחילה, לחצו קליק ימני או לחיצה ארוכה על התמונה ושמרו אותה.'),
+    h('div',{class:'row'},h('button',{class:'btn',type:'button',onclick:()=>saveFile(blob,name)},'שמרו שוב')));
+  if(code){const ta=h('textarea',{readonly:true,'aria-label':'קוד SVG'});ta.value=code;meta.append(ta);}
+  result.replaceChildren(h('img',{class:'thumb',src:resUrl,alt:'תצוגה מקדימה של הקובץ'}),meta);
+}
+function svgNow(long){if(!cur)return null;return buildSVG(cur.g,cur.s,{seed:cur.seed,long,title:cur.text});}
+async function toPng(long){
+  const o=svgNow(long),m=o.svg.match(/width="(\d+)" height="(\d+)"/),w=+m[1],hh=+m[2];
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=()=>rej(new Error('img'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(o.svg);});
+  const cv=document.createElement('canvas');cv.width=w;cv.height=hh;cv.getContext('2d').drawImage(img,0,0,w,hh);
+  return new Promise(res=>cv.toBlob(res,'image/png'));
+}
+async function doExport(kind){
+  if(!cur){toast('אין עדיין תוצאה לייצוא');return;}
+  const btns=['exPng','exImg','exSvg','exCopy'].map($);btns.forEach(b=>b.disabled=true);
+  try{
+    if(kind==='img'){const size=Math.min(2048,+$('pngSize').value);
+      try{if(!(navigator.clipboard&&window.ClipboardItem))throw new Error('noclip');
+        await navigator.clipboard.write([new ClipboardItem({'image/png':toPng(size).then(b=>{if(!b)throw new Error('png');return b;})})]);toast('התמונה הועתקה, אפשר להדביק');}
+      catch(e){const b=await toPng(size);if(b){showResult('png',b,slug()+'.png');toast('הדפדפן חסם העתקה. לחצו קליק ימני או לחיצה ארוכה על התמונה למטה');}else toast('הייצוא נכשל');}}
+    else if(kind==='png'){const b=await toPng(+$('pngSize').value);if(!b)throw new Error('png');const n=slug()+'.png';showResult('png',b,n);await saveFile(b,n);}
+    else{const code='<?xml version="1.0" encoding="UTF-8"?>\n'+svgNow(1600).svg;const b=new Blob([code],{type:'image/svg+xml'});
+      if(kind==='copy'){try{await navigator.clipboard.writeText(code);toast('קוד ה-SVG הועתק');}catch(e){showResult('svg',b,slug()+'.svg',code);toast('ההעתקה נחסמה, הקוד מוצג למטה');}}
+      else{const n=slug()+'.svg';showResult('svg',b,n);await saveFile(b,n);}}
+  }catch(e){console.error(e);toast('הייצוא נכשל');}
+  finally{btns.forEach(b=>b.disabled=false);}
+}
+
+/* חיבור */
+const SURP=[['זהב','כרום','אש','קרח','רעל','דרקון','פיקסלים','סייבר','פנטזיה','ממתק','גלקסיה','קשת בענן','ים','שקיעה','גרפיטי','קומיקס','וינטג׳','אבן'],['תלת מימד','נצנוצים','גל','נטוי','זוהר','צל','קשת','ניפוח'],['','','ורוד','כחול','סגול','כתום','ירוק']];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function init(){
+  buildUI();
+  let t1=0,t2=0;
+  prmEl.addEventListener('input',()=>{clearTimeout(t1);t1=setTimeout(regen,380);});
+  prmEl.addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(t1);regen();}});
+  txtEl.addEventListener('input',()=>{clearTimeout(t2);t2=setTimeout(render,160);});
+  $('go').addEventListener('click',regen);
+  $('rnd').addEventListener('click',()=>{prmEl.value=[pick(SURP[0]),pick(SURP[1]),pick(SURP[2])].filter(Boolean).join(' ');regen();});
+  $('exPng').addEventListener('click',()=>doExport('png'));
+  $('exImg').addEventListener('click',()=>doExport('img'));
+  $('exSvg').addEventListener('click',()=>doExport('svg'));
+  $('exCopy').addEventListener('click',()=>doExport('copy'));
+  regen();
+}
+/*UI-END*/
+/*GLYPH-START*/
+/* שלדי אותיות. רשת: קו בסיס 0, גובה אות קטנה 10, גובה אות גדולה 14, ירידה עד -4.
+   M x,y = התחלת קו. L x,y = המשך בקו ישר. A cx,cy,rx,ry,זווית1,זווית2 = קשת אליפטית (מעלות, נגד כיוון השעון).
+   | מפריד בין קווים נפרדים. k: C גדולה, L קטנה (מושפעת מגובה אות קטנה), D ספרה וסימן, H עברית */
+const TABLE=[
+['A','C','M0,0 L5,14 L10,0 | M2,5 L8,5'],
+['B','C','M1,14 L5,14 A5,10.5,3.5,3.5,90,-90 L1,7 L5.5,7 A5.5,3.5,3.5,3.5,90,-90 L1,0 L1,14'],
+['C','C','A5.5,7,5,7,40,320'],
+['D','C','M1,0 L1,14 L4,14 A4,7,6,7,90,-90 L1,0'],
+['E','C','M9,14 L1,14 L1,0 L9,0 | M1,7 L7.5,7'],
+['F','C','M9,14 L1,14 L1,0 | M1,7 L7.5,7'],
+['G','C','A5.5,7,5,7,40,360 L6,7'],
+['H','C','M1,0 L1,14 | M9,0 L9,14 | M1,7 L9,7'],
+['I','C','M1,0 L1,14'],
+['J','C','M7,14 L7,4 A3.5,4,3.5,4,0,-180'],
+['K','C','M1,0 L1,14 | M9,14 L1,5 | M3.8,7.9 L9.5,0'],
+['L','C','M1,14 L1,0 L8.5,0'],
+['M','C','M1,0 L1,14 L6,4 L11,14 L11,0'],
+['N','C','M1,0 L1,14 L9,0 L9,14'],
+['O','C','A5.5,7,5,7,0,360'],
+['P','C','M1,0 L1,14 L5.5,14 A5.5,10.2,3.8,3.8,90,-90 L1,6.4'],
+['Q','C','A5.5,7,5,7,0,360 | M6,4 L10.5,-1'],
+['R','C','M1,0 L1,14 L5.5,14 A5.5,10.2,3.8,3.8,90,-90 L1,6.4 | M4.5,6.4 L9.5,0'],
+['S','C','A5,10.5,4,3.5,20,270 A5,3.5,4.5,3.5,90,-160'],
+['T','C','M0,14 L10,14 | M5,14 L5,0'],
+['U','C','M1,14 L1,5 A5,5,4,5,180,360 L9,14'],
+['V','C','M0,14 L5,0 L10,14'],
+['W','C','M0,14 L3,0 L6,10 L9,0 L12,14'],
+['X','C','M0,0 L10,14 | M0,14 L10,0'],
+['Y','C','M0,14 L5,7 L10,14 | M5,7 L5,0'],
+['Z','C','M0,14 L9,14 L0,0 L9,0'],
+['a','L','A4.5,5,4,5,0,360 | M8.5,10 L8.5,0'],
+['b','L','M1,14 L1,0 | A5,5,4,5,0,360'],
+['c','L','A4.5,5,4,5,40,320'],
+['d','L','M9,14 L9,0 | A5,5,4,5,0,360'],
+['e','L','M1,5 L9,5 A5,5,4,5,0,320'],
+['f','L','M3,0 L3,11 A6,11,3,3,180,60 | M0.5,10 L6,10'],
+['g','L','A4.5,5,4,5,0,360 | M8.5,10 L8.5,-0.5 A4.5,-0.5,4,3.5,0,-160'],
+['h','L','M1,14 L1,0 | M1,6 A5,6,4,4,180,0 L9,0'],
+['i','L','M1,0 L1,10 | M1,13 L1,13.01'],
+['j','L','M2,10 L2,-1 A-0.5,-1,2.5,3,0,-130 | M2,13 L2,13.01'],
+['k','L','M1,14 L1,0 | M8,10 L1,3.8 | M3.2,5.8 L8.5,0'],
+['l','L','M1,14 L1,0'],
+['m','L','M1,10 L1,0 | M1,6 A3.5,6,2.5,4,180,0 L6,0 | M6,6 A8.5,6,2.5,4,180,0 L11,0'],
+['n','L','M1,10 L1,0 | M1,6 A5,6,4,4,180,0 L9,0'],
+['o','L','A5,5,4.5,5,0,360'],
+['p','L','M1,10 L1,-4 | A5,5,4,5,0,360'],
+['q','L','M9,10 L9,-4 | A5,5,4,5,0,360'],
+['r','L','M1,10 L1,0 | M1,5.5 A4.5,5.5,3.5,4.5,180,40'],
+['s','L','A4.5,7.6,3.3,2.4,25,270 A4.5,2.8,3.8,2.4,90,-155'],
+['t','L','M3,13 L3,2.5 A5.5,2.5,2.5,2.5,180,300 | M0.5,10 L6.5,10'],
+['u','L','M1,10 L1,4 A5,4,4,4,180,360 | M9,10 L9,0'],
+['v','L','M0,10 L4.5,0 L9,10'],
+['w','L','M0,10 L3,0 L6,8 L9,0 L12,10'],
+['x','L','M0,0 L9,10 | M0,10 L9,0'],
+['y','L','M0,10 L4.5,0 | M9,10 L2.5,-4'],
+['z','L','M0.5,10 L8.5,10 L0.5,0 L8.5,0'],
+['0','D','A5,7,4.5,7,0,360'],
+['1','D','M1,11 L4,14 L4,0'],
+['2','D','A5,9.5,4.3,4.5,160,-40 L0.5,0 L9.5,0'],
+['3','D','A5,10.5,3.8,3.5,150,-90 A5,3.6,4.4,3.6,90,-150'],
+['4','D','M7,0 L7,14 L0,4.5 L10,4.5'],
+['5','D','M8.5,14 L1.5,14 L1.5,8 A5,4.8,4.4,4.8,125,-150'],
+['6','D','A5,5,4.4,5,0,360 | M0.6,5 L0.6,8.5 A5,8.5,4.4,5.5,180,60'],
+['7','D','M0,14 L9,14 L3.5,0'],
+['8','D','A5,10.5,3.8,3.5,0,360 | A5,3.6,4.5,3.6,0,360'],
+['9','D','A5,9,4.4,5,0,360 | M9.4,9 L9.4,5.5 A5,5.5,4.4,5.5,0,-120'],
+['.','D','M1,0 L1,0.01'],
+[',','D','M1.2,0.5 L0.2,-3'],
+['!','D','M1,14 L1,4 | M1,0 L1,0.01'],
+['?','D','A5,10.3,3.8,3.7,160,-70 L5,4.5 | M5,0 L5,0.01'],
+['-','D','M0.5,5 L6,5'],
+[':','D','M1,9 L1,9.01 | M1,0 L1,0.01'],
+[';','D','M1,9 L1,9.01 | M1.2,0.5 L0.2,-3'],
+[String.fromCharCode(39),'D','M1,14 L1,10'],
+[String.fromCharCode(34),'D','M1,14 L1,10 | M4,14 L4,10'],
+['(','D','A5,5,3,9,115,245'],
+[')','D','A-1,5,3,9,-65,65'],
+['/','D','M0,-1 L6,14'],
+['+','D','M0.5,6 L8.5,6 | M4.5,2 L4.5,10'],
+['=','D','M0.5,4.5 L8.5,4.5 | M0.5,8.5 L8.5,8.5'],
+['_','D','M0,-2 L9,-2'],
+['א','H','M8,13 L2,0 | M1,13 L1,9.2 L5.2,6.4 | M9,0 L9,3.6 L4.8,6.6'],
+['ב','H','M1,13 L8,13 L8,0 L0,0'],
+['ג','H','M1.5,13 L7,13 L7,0 | M7,7 L1.5,0'],
+['ד','H','M0,13 L8.5,13 L8.5,0'],
+['ה','H','M0,13 L9,13 | M8.5,13 L8.5,0 | M1.5,8.5 L1.5,0'],
+['ו','H','M0,13 L2,13 L2,0'],
+['ז','H','M0,13 L5,13 | M2.5,13 L2.5,0'],
+['ח','H','M0,13 L9,13 | M1,13 L1,0 | M8,13 L8,0'],
+['ט','H','M1,13 L1,4 A5,4,4,4,180,360 L9,8 L6,8'],
+['י','H','M0,13 L2.5,13 L1.5,7.5'],
+['כ','H','M8,13 L3.5,13 A3.5,9.5,2.5,3.5,90,180 L1,3.5 A3.5,3.5,2.5,3.5,180,270 L8,0'],
+['ך','H','M0,13 L4,13 A4,9.5,2.5,3.5,90,0 L6.5,-4'],
+['ל','H','M1.5,17 L1.5,11.5 L8,11.5 L8,6 L2.5,0'],
+['מ','H','M8.5,0 L8.5,13 L1,13 L1,6.5 L4.5,0 L8.5,0'],
+['ם','H','M0.5,13 L8.5,13 L8.5,0 L0.5,0 L0.5,13'],
+['נ','H','M0.5,13 L5.5,13 A5.5,9.5,1.5,3.5,90,0 L7,3 A4.5,3,2.5,3,0,-90 L0,0'],
+['ן','H','M0,13 L2.5,13 L2.5,-4'],
+['ס','H','A5,6.5,4.5,6.5,0,360'],
+['ע','H','M1,13 L1,8 L6,0 | M8.5,13 L4.9,2'],
+['פ','H','M8,13 L3.5,13 A3.5,9.5,2.5,3.5,90,180 L1,3.5 A3.5,3.5,2.5,3.5,180,270 L8,0 | M1,7.5 L5,7.5'],
+['ף','H','M8,13 L3,13 A3,9.5,2,3.5,90,180 L1,6 L5.5,6 | M8,13 L8,-4'],
+['צ','H','M1,13 L1,9.5 L5.5,6.5 | M9,13 L9,6.5 L4,2.5 L9,0'],
+['ץ','H','M1,13 L1,9.5 L5.5,6.5 | M9,13 L9,6 L5.5,3 L5.5,-4'],
+['ק','H','M0,13 L8.5,13 L8.5,7 L3,7 L3,-4'],
+['ר','H','M0,13 L5,13 A5,8.5,3.5,4.5,90,0 L8.5,0'],
+['ש','H','M0.5,13 L0.5,3 A5,3,4.5,3,180,360 L9.5,13 | M5,13 L5,2.6'],
+['ת','H','M0,13 L9,13 | M8,13 L8,0 | M1.5,13 L1.5,0 L0,0'],
+[String.fromCharCode(0x5BE),'D','M0,5 L6,5']
+];
+const GROUPS=[['עברית','אבגדהוזחטיכךלמםנןסעפףצץקרשת'+String.fromCharCode(0x5BE)],['אותיות גדולות','ABCDEFGHIJKLMNOPQRSTUVWXYZ'],['אותיות קטנות','abcdefghijklmnopqrstuvwxyz'],['ספרות וסימנים','0123456789.,!?-:;'+String.fromCharCode(39,34)+'()/+=_']];
+const SKEL={};
+function parseSkel(s){
+  const strokes=[];
+  for(const part of s.split('|')){
+    let cur=null;const re=/([MLA])\s*([-\d.,\s]+)/g;let m;
+    while((m=re.exec(part))){
+      const op=m[1],a=m[2].split(/[\s,]+/).filter(Boolean).map(Number);
+      if(op==='M'){cur=[[a[0],a[1]]];strokes.push(cur);}
+      else if(op==='L'){if(!cur){cur=[[a[0],a[1]]];strokes.push(cur);}else cur.push([a[0],a[1]]);}
+      else{const cx=a[0],cy=a[1],rx=a[2],ry=a[3],a0=a[4],a1=a[5],n=Math.max(8,Math.ceil(Math.abs(a1-a0)/11));
+        if(!cur){cur=[];strokes.push(cur);}
+        for(let i=0;i<=n;i++){const t=(a0+(a1-a0)*i/n)*Math.PI/180;cur.push([cx+rx*Math.cos(t),cy+ry*Math.sin(t)]);}}
+    }
+  }
+  return strokes.filter(s=>s.length);
+}
+for(const e of TABLE)SKEL[e[0]]={k:e[1],st:parseSkel(e[2])};
+
+/* עט: מצולע קמור. צורה, עובי, ניגודיות וזווית */
+function penPoly(P){
+  const w=P.weight,hh=Math.max(10,w*(1-P.contrast)),a=P.angle*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a);
+  let pts=[];
+  if(P.pen==='square')pts=[[-w/2,-hh/2],[w/2,-hh/2],[w/2,hh/2],[-w/2,hh/2]];
+  else if(P.pen==='diamond')pts=[[-w/2,0],[0,-hh/2],[w/2,0],[0,hh/2]];
+  else if(P.pen==='flat'){const t=Math.max(10,w*.22);pts=[[-w/2,-t/2],[w/2,-t/2],[w/2,t/2],[-w/2,t/2]];}
+  else{for(let i=0;i<12;i++){const t=i/12*Math.PI*2;pts.push([Math.cos(t)*w/2,Math.sin(t)*hh/2]);}}
+  return pts.map(p=>[p[0]*ca-p[1]*sa,p[0]*sa+p[1]*ca]);
+}
+function hullCW(P){
+  P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+  const lo=[];for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
+  const up=[];for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}
+  up.pop();lo.pop();return lo.concat(up).reverse();
+}
+function resampleLine(st,maxLen){
+  const o=[st[0]];
+  for(let i=1;i<st.length;i++){const a=st[i-1],b=st[i],n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/maxLen));
+    for(let j=1;j<=n;j++)o.push([a[0]+(b[0]-a[0])*j/n,a[1]+(b[1]-a[1])*j/n]);}
+  return o;
+}
+const GU=50;
+function makeGlyph(ch,P,pen){
+  const d=SKEL[ch],tn=Math.tan(P.slant*Math.PI/180),ws=P.width/100,xh=P.xh,r=rng32(hash(ch)+P.seed*7919);
+  const raw=[];
+  for(const st0 of d.st){
+    const st=P.rough>0?resampleLine(st0,1.5):st0;
+    raw.push(st.map(p=>{
+      let X=p[0]*ws,Y=p[1];
+      if(d.k==='L')Y=Y<=0?Y:(Y<=10?Y*xh/10:xh+(Y-10)*(14-xh)/4);
+      if(P.rough>0){X+=(r()-.5)*P.rough;Y+=(r()-.5)*P.rough;}
+      X+=Y*tn;return[X*GU,Y*GU];}));
+  }
+  let cont=[];
+  for(const pts of raw){
+    const seg=pts.length===1?[[pts[0],pts[0]]]:pts.slice(1).map((b,i)=>[pts[i],b]);
+    for(const s of seg){
+      const q=pen.map(p=>[p[0]+s[0][0],p[1]+s[0][1]]).concat(pen.map(p=>[p[0]+s[1][0],p[1]+s[1][1]]));
+      cont.push(hullCW(q));
+    }
+  }
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  for(const c of cont)for(const p of c){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}
+  const sh=P.sb-x0;
+  cont=cont.map(c=>{const o=[];for(const p of c){const q=[Math.round(p[0]+sh),Math.round(p[1])];const l=o[o.length-1];if(!l||l[0]!==q[0]||l[1]!==q[1])o.push(q);}
+    if(o.length>1&&o[0][0]===o[o.length-1][0]&&o[0][1]===o[o.length-1][1])o.pop();return o;}).filter(c=>c.length>=3);
+  const adv=Math.round(x1-x0+2*P.sb);
+  return{ch,cp:ch.codePointAt(0),contours:cont,adv,y0:Math.round(y0),y1:Math.round(y1)};
+}
+function makeAll(P){
+  const pen=penPoly(P),out=[];
+  out.push({ch:' ',cp:32,contours:[],adv:Math.round(300+P.sb),y0:0,y1:0});
+  for(const e of TABLE)out.push(makeGlyph(e[0],P,pen));
+  return out;
+}
+function glyphPath(g){
+  let s='';
+  for(const c of g.contours){s+='M'+c[0][0]+' '+c[0][1];for(let i=1;i<c.length;i++)s+='L'+c[i][0]+' '+c[i][1];s+='Z';}
+  return s;
+}
+/*GLYPH-END*/
+/*TTF-START*/
+function mkB(){return{a:[],u8(v){this.a.push(v&255);return this;},u16(v){this.a.push((v>>8)&255,v&255);return this;},i16(v){return this.u16(v&0xffff);},
+  u32(v){this.a.push((v>>>24)&255,(v>>>16)&255,(v>>>8)&255,v&255);return this;},tag(s){for(const c of s)this.a.push(c.charCodeAt(0));return this;},
+  bytes(b){for(const x of b)this.a.push(x);return this;},pad(){while(this.a.length%4)this.a.push(0);return this;},get u(){return Uint8Array.from(this.a);}};}
+function sumWords(u8){let s=0;for(let i=0;i<u8.length;i+=4){s=(s+(((u8[i]<<24)|(u8[i+1]<<16)|(u8[i+2]<<8)|u8[i+3])>>>0))>>>0;}return s;}
+function ps(name){return (name||'Font').replace(/[^A-Za-z0-9]/g,'')||'KorFont';}
+function utf16be(s){const b=[];for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);b.push(c>>8,c&255);}return b;}
+
+function buildTTF(glyphs,opt){
+  const notdef={cp:null,contours:[[[50,0],[50,700],[450,700],[450,0]],[[100,50],[400,50],[400,650],[100,650]]],adv:500,y0:0,y1:700};
+  const list=[notdef].concat(glyphs.slice().sort((a,b)=>a.cp-b.cp));
+  const n=list.length;
+  let gx0=1e9,gx1=-1e9,gy0=1e9,gy1=-1e9,maxPts=0,maxCont=0,advMax=0,minLsb=1e9,minRsb=1e9,xMaxExt=-1e9;
+  const gdata=[],loca=[],hm=[];
+  for(const g of list){
+    loca.push(gdata.reduce((s,x)=>s+x.length,0));
+    let bytes=new Uint8Array(0),lsb=0,xmax=0;
+    if(g.contours.length){
+      let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,np=0;
+      for(const c of g.contours){np+=c.length;for(const p of c){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}}
+      const b=mkB();b.i16(g.contours.length).i16(x0).i16(y0).i16(x1).i16(y1);
+      let e=-1;for(const c of g.contours){e+=c.length;b.u16(e);}
+      b.u16(0);
+      for(let i=0;i<np;i++)b.u8(1);
+      let px=0;for(const c of g.contours)for(const p of c){b.i16(p[0]-px);px=p[0];}
+      let py=0;for(const c of g.contours)for(const p of c){b.i16(p[1]-py);py=p[1];}
+      b.pad();bytes=b.u;lsb=x0;xmax=x1;
+      if(np>maxPts)maxPts=np;if(g.contours.length>maxCont)maxCont=g.contours.length;
+      if(x0<gx0)gx0=x0;if(x1>gx1)gx1=x1;if(y0<gy0)gy0=y0;if(y1>gy1)gy1=y1;
+      if(lsb<minLsb)minLsb=lsb;if(g.adv-xmax<minRsb)minRsb=g.adv-xmax;if(xmax>xMaxExt)xMaxExt=xmax;
+    }
+    gdata.push(bytes);hm.push([g.adv,lsb]);if(g.adv>advMax)advMax=g.adv;
+  }
+  const glyfLen=gdata.reduce((s,x)=>s+x.length,0);loca.push(glyfLen);
+  const glyf=new Uint8Array(glyfLen);{let o=0;for(const x of gdata){glyf.set(x,o);o+=x.length;}}
+  const locaT=mkB();for(const o of loca)locaT.u32(o);
+  const hmtx=mkB();for(const m of hm)hmtx.u16(m[0]).i16(m[1]);
+  if(gx0>1e8){gx0=gy0=0;gx1=gy1=500;minLsb=minRsb=0;xMaxExt=500;}
+  const asc=Math.max(800,Math.ceil(gy1)),dsc=Math.max(250,Math.ceil(-Math.min(0,gy0)));
+  const now=Math.floor(Date.now()/1000)+2082844800,hi=Math.floor(now/4294967296),lo=now>>>0;
+  const head=mkB().u32(0x00010000).u32(0x00010000).u32(0).u32(0x5F0F3CF5).u16(3).u16(1000).u32(hi).u32(lo).u32(hi).u32(lo)
+    .i16(gx0).i16(Math.min(gy0,-200)).i16(gx1).i16(gy1).u16(0).u16(8).i16(2).i16(1).i16(0);
+  const hhea=mkB().u32(0x00010000).i16(asc).i16(-dsc).i16(0).u16(advMax).i16(minLsb).i16(minRsb).i16(xMaxExt).i16(1).i16(0).i16(0).i16(0).i16(0).i16(0).i16(0).i16(0).u16(n);
+  const maxp=mkB().u32(0x00010000).u16(n).u16(maxPts).u16(maxCont).u16(0).u16(0).u16(2).u16(0).u16(0).u16(0).u16(0).u16(0).u16(0).u16(0).u16(0);
+  /* cmap פורמט 4 */
+  const cps=[];for(let i=1;i<n;i++)cps.push([list[i].cp,i]);
+  const segs=[];for(const c of cps){const l=segs[segs.length-1];if(l&&c[0]===l.e+1&&c[1]===l.g+(l.e-l.s)+1){l.e=c[0];}else segs.push({s:c[0],e:c[0],g:c[1]});}
+  segs.push({s:0xFFFF,e:0xFFFF,g:0,last:true});
+  const sc=segs.length,p2=Math.pow(2,Math.floor(Math.log2(sc))),sr=2*p2,es=Math.floor(Math.log2(sc)),rs=2*sc-sr;
+  const f4=mkB().u16(4).u16(16+8*sc).u16(0).u16(sc*2).u16(sr).u16(es).u16(rs);
+  for(const s of segs)f4.u16(s.e);f4.u16(0);
+  for(const s of segs)f4.u16(s.s);
+  for(const s of segs)f4.u16(s.last?1:((s.g-s.s)&0xFFFF));
+  for(const s of segs)f4.u16(0);
+  const cmap=mkB().u16(0).u16(2).u16(0).u16(3).u32(20).u16(3).u16(1).u32(20).bytes(f4.a);
+  /* name */
+  const fam=opt.family||'Kor Font',psn=ps(fam),strs=[[1,fam],[2,'Regular'],[3,psn+';'+new Date().getFullYear()],[4,fam],[5,'Version 1.000'],[6,psn]];
+  const nm=mkB().u16(0).u16(strs.length).u16(6+12*strs.length);const store=[];
+  for(const s of strs){const u=utf16be(s[1]);nm.u16(3).u16(1).u16(0x409).u16(s[0]).u16(u.length).u16(store.length);store.push(...u);}
+  nm.bytes(store);
+  /* OS/2 */
+  const avg=Math.round(list.reduce((s,g)=>s+g.adv,0)/n),wc=Math.max(100,Math.min(900,Math.round((100+(opt.weight-20)/200*800)/100)*100));
+  const lastCp=Math.min(0xFFFF,cps[cps.length-1][0]),firstCp=cps[0][0];
+  const os2=mkB().u16(4).i16(avg).u16(wc).u16(5).u16(0).i16(650).i16(600).i16(0).i16(75).i16(650).i16(600).i16(0).i16(350).i16(50).i16(300).i16(0)
+    .bytes(new Array(10).fill(0)).u32(1|(1<<11)).u32(0).u32(0).u32(0).tag('KORF').u16(0xC0).u16(firstCp).u16(lastCp)
+    .i16(asc).i16(-dsc).i16(0).u16(asc).u16(dsc).u32(1|(1<<5)).u32(0).i16(Math.round(opt.xh*GU)).i16(700).u16(0).u16(32).u16(1);
+  const post=mkB().u32(0x00030000).u32(0).i16(-100).i16(50).u32(0).u32(0).u32(0).u32(0).u32(0);
+  const tabs=[['OS/2',os2.u],['cmap',cmap.u],['glyf',glyf],['head',head.u],['hhea',hhea.u],['hmtx',hmtx.u],['loca',locaT.u],['maxp',maxp.u],['name',nm.u],['post',post.u]];
+  const nt=tabs.length,hdrLen=12+16*nt;let off=hdrLen;const recs=[];
+  for(const t of tabs){const len=t[1].length,pl=(len+3)&~3;const padded=new Uint8Array(pl);padded.set(t[1]);recs.push({tag:t[0],d:padded,len,off,sum:sumWords(padded)});off+=pl;}
+  const out=new Uint8Array(off),dv=new DataView(out.buffer);
+  dv.setUint32(0,0x00010000);dv.setUint16(4,nt);dv.setUint16(6,128);dv.setUint16(8,3);dv.setUint16(10,nt*16-128);
+  recs.forEach((r,i)=>{const o=12+16*i;for(let k=0;k<4;k++)out[o+k]=r.tag.charCodeAt(k);dv.setUint32(o+4,r.sum);dv.setUint32(o+8,r.off);dv.setUint32(o+12,r.len);out.set(r.d,r.off);});
+  const hr=recs.find(r=>r.tag==='head');
+  dv.setUint32(hr.off+8,((0xB1B0AFBA-sumWords(out))>>>0));
+  return out;
+}
+/*TTF-END*/
+/*STUDIO-START*/
+const DEFP={name:'הגופן שלי',weight:84,contrast:.2,angle:0,pen:'round',width:100,xh:10,slant:0,sb:46,rough:0,seed:1};
+let SP=Object.assign({},DEFP),GL=[],GMAP={},gridCells={},stPend=0,customN=0;
+const PRESETS=[
+ ['קלאסי',{weight:70,contrast:.4,angle:0,pen:'round',width:100,xh:10,slant:0,sb:44,rough:0}],
+ ['עגול ושמנמן',{weight:170,contrast:0,angle:0,pen:'round',width:110,xh:10.5,slant:0,sb:60,rough:0}],
+ ['קליגרפי',{weight:110,contrast:.75,angle:32,pen:'flat',width:100,xh:10,slant:0,sb:46,rough:.1}],
+ ['ארקייד',{weight:110,contrast:0,angle:0,pen:'square',width:96,xh:10,slant:0,sb:50,rough:0}],
+ ['דק וחד',{weight:34,contrast:0,angle:0,pen:'diamond',width:104,xh:10,slant:6,sb:40,rough:0}],
+ ['צר וגבוה',{weight:76,contrast:.15,angle:0,pen:'round',width:70,xh:11.5,slant:0,sb:36,rough:0}],
+ ['כתב יד',{weight:80,contrast:.25,angle:10,pen:'round',width:100,xh:10,slant:9,sb:48,rough:.9}],
+ ['כבד ונטוי',{weight:200,contrast:.1,angle:0,pen:'square',width:100,xh:10,slant:14,sb:52,rough:0}]
+];
+const CTLS=[['weight','עובי קו',20,220,2,''],['contrast','ניגודיות עט',0,.85,.01,''],['angle','זווית עט',-60,60,1,'°'],['width','רוחב אותיות',60,150,1,'%'],
+ ['xh','גובה אותיות קטנות',8,12,.1,''],['slant','הטיה',-20,25,1,'°'],['sb','ריווח',10,140,2,''],['rough','רעידות יד',0,1.6,.05,'']];
+const PENS=[['round','עגול'],['square','ריבועי'],['diamond','יהלום'],['flat','קליגרפי']];
+const sStud=()=>$('studio');
+function schedStudio(){if(stPend)return;stPend=requestAnimationFrame(()=>{stPend=0;updateStudio();});}
+
+function lineOrder(line){
+  const ch=[...line],first=ch.find(c=>/\p{L}/u.test(c)),isHe=c=>/[֐-׿]/.test(c);
+  if(!(first&&isHe(first)))return ch;
+  const runs=[];let cur=null;
+  for(const c of ch){const t=isHe(c)?'h':(/[A-Za-z0-9]/.test(c)?'l':'n'),k=t==='n'?(cur?cur.k:'h'):t;
+    if(cur&&cur.k===k)cur.s.push(c);else{cur={k,s:[c]};runs.push(cur);}}
+  return runs.reverse().flatMap(r=>r.k==='h'?r.s.slice().reverse():r.s);
+}
+function previewSVG(text){
+  const lines=text.split('\n').slice(0,4),LH=1150,pad=120;let W=400,parts='';
+  lines.forEach((ln,i)=>{
+    const ord=lineOrder(ln);let x=pad;const base=pad+870+i*LH;
+    for(const c of ord){const g=GMAP[c];if(!g){x+=420;continue;}
+      if(g.contours.length)parts+='<path transform="translate('+x+' '+base+') scale(1 -1)" d="'+g.d+'"/>';x+=g.adv;}
+    if(x+pad>W)W=x+pad;});
+  const H=pad*2+870+(lines.length-1)*LH+330;
+  return'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="תצוגה של הגופן">'+parts+'</svg>';
+}
+function buildGrid(){
+  const host=$('glyphGrid');host.replaceChildren();gridCells={};
+  for(const grp of GROUPS){
+    const gg=h('div',{class:'gg',dir:grp===GROUPS[0]?'rtl':'ltr'});
+    for(const c of grp[1]){
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','-40 -880 840 1200');
+      const gr=document.createElementNS('http://www.w3.org/2000/svg','g');gr.setAttribute('transform','scale(1 -1)');gr.append(p);s.append(gr);
+      const cell=h('button',{class:'gc',type:'button',title:c,'aria-label':'הוסף '+c+' לטקסט'},s);
+      cell.addEventListener('click',()=>{const t=$('pvText');t.value+=c;schedStudio();});
+      gridCells[c]={p,s};gg.append(cell);
+    }
+    host.append(h('section',{class:'glyphsec'},h('h3',{},grp[0]),gg));
+  }
+}
+function updateStudio(){
+  GL=makeAll(SP);GMAP={};for(const g of GL){g.d=glyphPath(g);GMAP[g.ch]=g;}
+  $('pvBox').innerHTML=previewSVG($('pvText').value||' ');
+  for(const c in gridCells){const g=GMAP[c];if(!g)continue;gridCells[c].p.setAttribute('d',g.d);}
+  $('stInfo').textContent=GL.length+' אותיות וסימנים · עברית ולטינית';
+}
+function syncStudioUI(){STSYNC.forEach(f=>f());}
+const STSYNC=[];
+function stSlider(k,label,min,max,step,unit){
+  const id='s-'+k,out=h('output',{for:id}),inp=h('input',{type:'range',id,min,max,step});
+  inp.addEventListener('input',()=>{SP[k]=+inp.value;out.textContent=(+inp.value).toFixed(step<1?(step<.1?2:1):0)+unit;schedStudio();});
+  STSYNC.push(()=>{inp.value=SP[k];out.textContent=(+SP[k]).toFixed(step<1?(step<.1?2:1):0)+unit;});
+  return h('div',{class:'ctl'},h('label',{for:id},label),out,inp);
+}
+async function makeFontBytes(){
+  GL=makeAll(SP);
+  return buildTTF(GL,{family:SP.name||'Kor Font',weight:SP.weight,xh:SP.xh});
+}
+function fileSlug(){return (SP.name||'font').replace(/[^\p{L}\p{N}]+/gu,'-').replace(/^-|-$/g,'')||'font';}
+async function dlFont(){
+  const btn=$('dlTtf');btn.disabled=true;
+  try{const bytes=await makeFontBytes(),blob=new Blob([bytes],{type:'font/ttf'}),name=fileSlug()+'.ttf';
+    await saveFile(blob,name);}
+  catch(e){console.error(e);toast('יצירת הגופן נכשלה');}
+  finally{btn.disabled=false;}
+}
+async function useInFx(){
+  const btn=$('useFx');btn.disabled=true;
+  try{const bytes=await makeFontBytes(),fam='KorUser'+(++customN),ff=new FontFace(fam,bytes.buffer.slice(0));
+    await ff.load();document.fonts.add(ff);
+    FONTS.push({n:fam,w:400,l:(SP.name||'הגופן שלי')+(customN>1?' '+customN:''),g:'custom'});
+    refreshFontSel();window.__kf=fam;spec.font=fam;syncAll();setTab('fx');schedule();toast('הגופן שלך נטען באפקטים');}
+  catch(e){console.error(e);toast('טעינת הגופן נכשלה');}
+  finally{btn.disabled=false;}
+}
+function refreshFontSel(){
+  const sel=$('fontSel');if(!sel)return;
+  let og=sel.querySelector('optgroup[data-custom]');
+  if(!og){og=h('optgroup',{label:'הגופנים שעיצבתם','data-custom':'1'});sel.prepend(og);}
+  og.replaceChildren(...FONTS.filter(f=>f.g==='custom').map(f=>h('option',{value:f.n},f.l)));
+  sel.value=spec.font;
+}
+function setTab(t){
+  $('fx').hidden=t!=='fx';sStud().hidden=t!=='studio';
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tab===t)));
+  if(t==='studio')schedStudio();
+  try{history.replaceState(null,'','#'+t);}catch(e){}
+}
+function buildStudio(){
+  const nameIn=h('input',{type:'text',id:'fName',maxlength:'40',autocomplete:'off'});
+  nameIn.addEventListener('input',()=>{SP.name=nameIn.value;});
+  STSYNC.push(()=>{nameIn.value=SP.name;});
+  const penSeg=h('div',{class:'seg',role:'group','aria-label':'צורת העט'},PENS.map(a=>{const b=h('button',{type:'button','data-pen':a[0]},a[1]);
+    b.addEventListener('click',()=>{SP.pen=a[0];syncStudioUI();schedStudio();});return b;}));
+  STSYNC.push(()=>penSeg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pen===SP.pen))));
+  const chips=h('div',{class:'chips'},PRESETS.map(p=>{const b=h('button',{class:'chip',type:'button'},p[0]);
+    b.addEventListener('click',()=>{Object.assign(SP,p[1]);syncStudioUI();schedStudio();});return b;}));
+  const rnd=h('button',{class:'btn',type:'button',id:'stRnd'},'עיצוב אקראי');
+  rnd.addEventListener('click',()=>{const R=(a,b)=>a+Math.random()*(b-a);
+    Object.assign(SP,{weight:Math.round(R(30,200)),contrast:+R(0,.8).toFixed(2),angle:Math.round(R(-30,40)),pen:PENS[Math.floor(Math.random()*4)][0],width:Math.round(R(75,125)),
+      xh:+R(9,11.5).toFixed(1),slant:Math.round(R(-6,16)),sb:Math.round(R(30,90)),rough:Math.random()<.4?+R(.2,1.1).toFixed(2):0,seed:Math.floor(Math.random()*9999)});
+    syncStudioUI();schedStudio();});
+  const jit=h('button',{class:'btn',type:'button'},'גרסת רעידות אחרת');
+  jit.addEventListener('click',()=>{SP.seed++;if(SP.rough<.3)SP.rough=.6;syncStudioUI();schedStudio();});
+  const panel=h('section',{class:'panel','aria-label':'עיצוב הגופן'},
+    h('div',{},h('label',{for:'fName'},'שם הגופן'),nameIn),
+    h('div',{},h('div',{class:'lbl'},'נקודות התחלה'),chips),
+    h('div',{class:'row'},rnd,jit),
+    h('div',{},h('div',{class:'lbl'},'צורת העט'),penSeg),
+    h('div',{class:'grid2'},CTLS.map(c=>stSlider(...c))),
+    h('p',{class:'hint'},'כל אות בגופן מצוירת בקו שלד, והעט שאתם מגדירים מושך אותו לקווי מתאר. שינוי אחד בעט משנה את כל האותיות יחד.'));
+  const pvBox=h('div',{class:'pv',id:'pvBox'});
+  const pvText=h('textarea',{id:'pvText',dir:'auto',rows:'2',maxlength:'160'});pvText.value='אבגדהוז חטיכלמנ\nHello World 2026';
+  pvText.addEventListener('input',schedStudio);
+  const dl=h('button',{class:'btn pri',type:'button',id:'dlTtf'},'הורד גופן TTF');dl.addEventListener('click',dlFont);
+  const use=h('button',{class:'btn',type:'button',id:'useFx'},'עצבו איתו באפקטים');use.addEventListener('click',useInFx);
+  const work=h('section',{class:'work'},
+    h('div',{},h('label',{for:'pvText'},'כתבו כדי לראות את הגופן'),pvText),pvBox,
+    h('div',{class:'exportbar'},dl,use,h('span',{class:'hint',id:'stInfo'})),
+    h('p',{class:'hint'},'הקובץ הוא TrueType רגיל שמותקן בוורד, פוטושופ ופיגמה. הקווים חופפים זה לזה, ולשימוש מקצועי כדאי להריץ בעורך גופנים את הפעולה Remove Overlap.'),
+    h('div',{id:'glyphGrid'}));
+  sStud().replaceChildren(panel,work);
+  buildGrid();syncStudioUI();
+}
+function boot(){
+  buildStudio();
+  document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+  const fs=$('fontSel');if(fs)fs.addEventListener('change',()=>{const f=FONTS.find(x=>x.n===fs.value);window.__kf=f&&f.g==='custom'?f.n:null;});
+  init();
+  setTab(location.hash==='#studio'?'studio':'fx');
+}
+boot();
+/*STUDIO-END*/
+</script>
+
+</body></html>
+<!-- Injection By NetFree -->
+<script src="//netfree.link/injection-script/go-payment.js" type="text/javascript" async ></script>
+<script src="//netfree.link/injection-script/popup-card-init.js" type="text/javascript" async ></script>
