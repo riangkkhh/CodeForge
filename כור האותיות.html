@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>כור האותיות</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Karantina:wght@700&family=Secular+One&display=swap">
@@ -56,7 +55,7 @@ details.grp[open]>summary::after{content:"−"}
 .ctl label{margin:0}
 .ctl output{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent)}
-.colors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+.colors{display:grid;grid-template-columns:repeat(auto-fit,minmax(68px,1fr));gap:8px;margin-top:10px}
 .colors label{font-size:11px;text-align:center;margin-bottom:4px}
 .colors input{width:100%;height:36px;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}
 .chk{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fg);margin:0}
@@ -89,6 +88,19 @@ details.grp[open]>summary::after{content:"−"}
 .gc{font:inherit;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:4px}
 .gc:hover{border-color:var(--accent)}
 .gc svg{display:block;width:100%;height:auto;fill:var(--fg)}
+.aip{display:grid;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.aitt{font-weight:700;color:var(--fg);font-size:15px;margin:0}
+.aikey{display:grid;gap:10px}
+.aikey .row>input{flex:1 1 140px}
+.aistat{display:grid;gap:4px;font-size:13px}
+.aist{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.aist .dot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+.aist[data-s="run"] .dot{background:var(--accent);animation:pulse 1s infinite}
+.aist[data-s="ok"]{color:var(--fg)}.aist[data-s="ok"] .dot{background:#2fb26a}
+.aist[data-s="warn"] .dot{background:#e0a21a}.aist[data-s="fail"] .dot{background:#e5484d}
+.aierr{color:#e5484d}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.aist[data-s="run"] .dot{animation:none}}
 .toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));margin:auto;width:fit-content;max-width:90vw;background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
@@ -97,7 +109,7 @@ details.grp[open]>summary::after{content:"−"}
   <header class="top">
     <div>
       <h1>כור האותיות</h1>
-      <p class="sub">מעצבים גופן משלכם מאפס ומורידים אותו כקובץ TTF, או כותבים טקסט, מתארים סגנון במילים ומורידים אותיות כ-SVG או PNG. הכול קורה כאן בדפדפן.</p>
+      <p class="sub">מעצבים גופן משלכם מאפס, בעזרת AI או בעצמכם, ומורידים אותו כקובץ TTF. או כותבים טקסט, מתארים סגנון ומורידים אותיות כ-SVG או PNG.</p>
     </div>
     <ul class="badges" id="badges"></ul>
   </header>
@@ -255,10 +267,10 @@ const STAR='M0,-1C.08,-.2 .2,-.08 1,0C.2,.08 .08,.2 0,1C-.08,.2 -.2,.08 -1,0C-.2
 function buildSVG(g,s,opt){
   opt=opt||{};
   const em=g.em,sc=em/260,bb=g.bbox,fx=n=>Math.round(n*100)/100;
-  const D=s.depth/100*.32*em,dx=Math.SQRT1_2,dy=Math.SQRT1_2;
+  const D=s.depth/100*.32*em,da=(s.depthAngle==null?45:s.depthAngle)*Math.PI/180,dx=Math.cos(da),dy=Math.sin(da),rf=!!s.reflect;
   const ow=s.outlineW*sc,fat=s.fat*sc,gr=s.glowR*sc,neon=!!s.neon,lj=g.pixel?'miter':'round';
-  const m=gr*1.7+ow+fat+16*sc+s.distort*1.4*sc+(neon?4*sc:0);
-  const x0=bb.x-m,y0=bb.y-m,x1=bb.x+bb.w+m+D*dx,y1=bb.y+bb.h+m+D*dy,VW=x1-x0,VH=y1-y0;
+  const m=gr*1.7+ow+fat+(s.edgeW||0)*sc+16*sc+s.distort*1.4*sc+(neon?4*sc:0);
+  const x0=bb.x-m-Math.max(0,-D*dx),y0=bb.y-m-Math.max(0,-D*dy),x1=bb.x+bb.w+m+Math.max(0,D*dx),y1=bb.y+bb.h+m+Math.max(0,D*dy)+(rf?bb.h*.6:0),VW=x1-x0,VH=y1-y0;
   const rnd=rng32(opt.seed||1);
   const cx=bb.x+bb.w/2,cy=bb.y+bb.h/2,ang=s.angle*Math.PI/180,ux=Math.sin(ang),uy=Math.cos(ang);
   const half=(Math.abs(ux)*bb.w+Math.abs(uy)*bb.h)/2;
@@ -269,10 +281,20 @@ function buildSVG(g,s,opt){
     +'<clipPath id="kh-c"><use xlink:href="#kh-g"/></clipPath>';
   let body='';
   const rect=(fill,extra)=>'<rect x="'+fx(x0)+'" y="'+fx(y0)+'" width="'+fx(VW)+'" height="'+fx(VH)+'" fill="'+fill+'" '+(extra||'')+'/>';
-  if(s.bg==='dark')body+=rect('#0b0912');
-  else if(s.bg==='light')body+=rect('#f5f2ec');
-  else if(s.bg==='grad'){const c=(neon||s.glowR>0)?s.glowC:midColor(s.stops);
-    defs+='<radialGradient id="kh-bg" cx="50%" cy="46%" r="75%"><stop offset="0" stop-color="'+mix(c,'#000000',.68)+'"/><stop offset="1" stop-color="#07060c"/></radialGradient>';body+=rect('url(#kh-bg)');}
+  let bgS='';
+  if(s.bg==='dark')bgS+=rect('#0b0912');
+  else if(s.bg==='light')bgS+=rect('#f5f2ec');
+  else if(s.bg==='solid')bgS+=rect(s.bgC||'#10101a');
+  else if(s.bg==='grad'||s.bg==='sunburst'||s.bg==='grid'||s.bg==='dots'||s.bg==='stripes'){
+    const c=(neon||s.glowR>0)?s.glowC:midColor(s.stops),G=26*sc;
+    defs+='<radialGradient id="kh-bg" cx="50%" cy="46%" r="75%"><stop offset="0" stop-color="'+mix(c,'#000000',.68)+'"/><stop offset="1" stop-color="#07060c"/></radialGradient>';bgS+=rect('url(#kh-bg)');
+    if(s.bg==='sunburst'){const n=18,R=Math.hypot(VW,VH);let rays='';
+      for(let i=0;i<n;i++){const a0=i*2*Math.PI/n,a1=a0+Math.PI/n;rays+='M'+fx(cx)+' '+fx(cy)+'L'+fx(cx+R*Math.cos(a0))+' '+fx(cy+R*Math.sin(a0))+'L'+fx(cx+R*Math.cos(a1))+' '+fx(cy+R*Math.sin(a1))+'Z';}
+      bgS+='<path d="'+rays+'" fill="'+mix(c,'#ffffff',.4)+'" opacity=".16"/>';}
+    else if(s.bg==='grid'){defs+='<pattern id="kh-bp" patternUnits="userSpaceOnUse" width="'+fx(G)+'" height="'+fx(G)+'"><path d="M'+fx(G)+' 0H0V'+fx(G)+'" fill="none" stroke="'+mix(c,'#ffffff',.45)+'" stroke-width="'+fx(1.2*sc)+'"/></pattern>';bgS+=rect('url(#kh-bp)','opacity=".3"');}
+    else if(s.bg==='dots'){defs+='<pattern id="kh-bp" patternUnits="userSpaceOnUse" width="'+fx(G*.8)+'" height="'+fx(G*.8)+'"><circle cx="'+fx(G*.4)+'" cy="'+fx(G*.4)+'" r="'+fx(G*.11)+'" fill="'+mix(c,'#ffffff',.45)+'"/></pattern>';bgS+=rect('url(#kh-bp)','opacity=".35"');}
+    else if(s.bg==='stripes'){defs+='<pattern id="kh-bp" patternUnits="userSpaceOnUse" width="'+fx(G)+'" height="'+fx(G)+'" patternTransform="rotate(-35)"><rect width="'+fx(G*.5)+'" height="'+fx(G)+'" fill="'+mix(c,'#ffffff',.4)+'"/></pattern>';bgS+=rect('url(#kh-bp)','opacity=".09"');}
+  }
   if(gr>0){defs+='<filter id="kh-b1" '+fr+'><feGaussianBlur stdDeviation="'+fx(gr)+'"/></filter><filter id="kh-b2" '+fr+'><feGaussianBlur stdDeviation="'+fx(gr*.4)+'"/></filter>';
     const sw=ow*2+fat*2+gr*.5,C=s.glowC,ox=fx(dx*D*.5),oy=fx(dy*D*.5);
     body+='<use xlink:href="#kh-g" x="'+ox+'" y="'+oy+'" fill="'+C+'" stroke="'+C+'" stroke-width="'+fx(sw)+'" stroke-linejoin="round" filter="url(#kh-b1)" opacity=".9"/>'
@@ -282,10 +304,13 @@ function buildSVG(g,s,opt){
   if(s.distort>0){const bf=.018*260/em;
     defs+='<filter id="kh-dw" '+fr+'><feTurbulence type="fractalNoise" baseFrequency="'+bf.toFixed(4)+' '+(bf*2).toFixed(4)+'" numOctaves="2" seed="'+(hash(String(opt.seed||1))%90+1)+'" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="'+fx(s.distort*2.4*sc)+'" xChannelSelector="R" yChannelSelector="G"/></filter>';}
   body+='<g'+(s.distort>0?' filter="url(#kh-dw)"':'')+'>';
+  if((s.edgeW||0)>0&&!neon){const ew=s.edgeW*sc,eN=D>.5?Math.min(60,Math.max(2,Math.ceil(D/3))):0;
+    for(let i=eN;i>=0;i--){const t=eN?i/eN:0;body+='<use xlink:href="#kh-g" x="'+fx(dx*D*t)+'" y="'+fx(dy*D*t)+'" fill="'+s.edgeC+'" stroke="'+s.edgeC+'" stroke-width="'+fx(ow*2+fat*2+ew*2+(eN?D/eN*1.7:0))+'" stroke-linejoin="'+lj+'"/>';}}
   if(D>.5){const N=Math.min(90,Math.max(2,Math.ceil(D/(g.pixel?g.k*.5:1.5))));
     for(let i=N;i>=1;i--){const t=i/N,col=mix(s.depthA,s.depthB,t),sw=Math.max(ow*2+fat*2,D/N*1.7);
       body+='<use xlink:href="#kh-g" x="'+fx(dx*D*t)+'" y="'+fx(dy*D*t)+'" fill="'+col+'" stroke="'+col+'" stroke-width="'+fx(sw)+'" stroke-linejoin="'+lj+'"/>';}}
-  if(s.glitch)body+='<use xlink:href="#kh-g" x="'+fx(-5*sc)+'" fill="#00f0ff" opacity=".85"/><use xlink:href="#kh-g" x="'+fx(5*sc)+'" fill="#ff0055" opacity=".85"/>';
+  const ab=(s.aber==null?5:s.aber)*sc;
+  if(s.glitch)body+='<use xlink:href="#kh-g" x="'+fx(-ab)+'" fill="#00f0ff" opacity=".85"/><use xlink:href="#kh-g" x="'+fx(ab)+'" fill="#ff0055" opacity=".85"/>';
   if(neon){const c=s.glowC,core=mix(c,'#ffffff',.82);
     body+='<use xlink:href="#kh-g" fill="'+c+'" fill-opacity=".10" stroke="'+c+'" stroke-width="'+fx(5*sc)+'" stroke-linejoin="'+lj+'"/>'
       +'<use xlink:href="#kh-g" fill="none" stroke="'+core+'" stroke-width="'+fx(1.8*sc)+'" stroke-linejoin="'+lj+'"/>';}
@@ -294,6 +319,15 @@ function buildSVG(g,s,opt){
     if(!s.hollow)body+='<use xlink:href="#kh-g" fill="url(#kh-f)" stroke="url(#kh-f)" stroke-width="'+fx(fat*2)+'" stroke-linejoin="'+lj+'"/>';
     else if(ow<=0)body+='<use xlink:href="#kh-g" fill="none" stroke="'+midColor(s.stops)+'" stroke-width="'+fx(6*sc)+'" stroke-linejoin="'+lj+'"/>';
     if(!s.hollow){
+      if(s.pattern){const PG=Math.max(4,s.patS||16)*sc,pc=s.patC||'#000000',po=(s.patO==null?35:s.patO)/100;let pd='';
+        if(s.pattern==='stripes')pd='<pattern id="kh-p" patternUnits="userSpaceOnUse" width="'+fx(PG)+'" height="'+fx(PG)+'" patternTransform="rotate(45)"><rect width="'+fx(PG*.5)+'" height="'+fx(PG)+'" fill="'+pc+'"/></pattern>';
+        else if(s.pattern==='dots')pd='<pattern id="kh-p" patternUnits="userSpaceOnUse" width="'+fx(PG)+'" height="'+fx(PG)+'"><circle cx="'+fx(PG/2)+'" cy="'+fx(PG/2)+'" r="'+fx(PG*.24)+'" fill="'+pc+'"/></pattern>';
+        else if(s.pattern==='checker')pd='<pattern id="kh-p" patternUnits="userSpaceOnUse" width="'+fx(PG*2)+'" height="'+fx(PG*2)+'"><rect width="'+fx(PG)+'" height="'+fx(PG)+'" fill="'+pc+'"/><rect x="'+fx(PG)+'" y="'+fx(PG)+'" width="'+fx(PG)+'" height="'+fx(PG)+'" fill="'+pc+'"/></pattern>';
+        else pd='<pattern id="kh-p" patternUnits="userSpaceOnUse" width="'+fx(PG)+'" height="'+fx(PG)+'"><path d="M0 0H'+fx(PG)+'M0 0V'+fx(PG)+'" fill="none" stroke="'+pc+'" stroke-width="'+fx(PG*.09)+'"/></pattern>';
+        defs+=pd;body+=rect('url(#kh-p)','clip-path="url(#kh-c)" opacity="'+po+'"');}
+      if(s.inner>0){defs+='<filter id="kh-in" '+fr+'><feGaussianBlur stdDeviation="'+fx(s.inner/100*10*sc)+'"/></filter>';
+        body+='<g clip-path="url(#kh-c)"><use xlink:href="#kh-g" fill="none" stroke="#000" stroke-width="'+fx(s.inner/100*30*sc)+'" filter="url(#kh-in)" opacity=".6"/></g>';}
+      if(s.dash)body+='<g clip-path="url(#kh-c)"><use xlink:href="#kh-g" fill="none" stroke="#ffffff" stroke-opacity=".85" stroke-width="'+fx(6*sc)+'" stroke-dasharray="'+fx(12*sc)+' '+fx(9*sc)+'" stroke-linejoin="round"/></g>';
       if(s.gloss){defs+='<linearGradient id="kh-gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>';
         let gl='';const L=Math.max(1,g.lines||1),lh=bb.h/L;
         for(let i=0;i<L;i++)gl+='<rect x="'+fx(bb.x)+'" y="'+fx(bb.y+i*lh)+'" width="'+fx(bb.w)+'" height="'+fx(lh*.5)+'" fill="url(#kh-gl)"/>';
@@ -313,8 +347,15 @@ function buildSVG(g,s,opt){
     let st='';for(let i=0;i<s.sparkle;i++){const p=g.pts[Math.floor(rnd()*g.pts.length)],r=(5+rnd()*rnd()*26)*sc;
       st+='<path d="'+STAR+'" transform="translate('+fx(p[0]+(rnd()-.5)*14*sc)+' '+fx(p[1]+(rnd()-.5)*14*sc)+') scale('+fx(r)+')"/>';}
     body+='<g fill="#fffbe8" stroke="'+s.glowC+'" stroke-width=".1" filter="url(#kh-sp)">'+st+'</g>';}
+  const inner='<g id="kh-all">'+body+'</g>';let refl='';
+  if(rf){const yR=bb.y+bb.h,rh=bb.h*.6;
+    defs+='<linearGradient id="kh-rg" gradientUnits="userSpaceOnUse" x1="0" y1="'+fx(yR)+'" x2="0" y2="'+fx(yR-rh)+'"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+      +'<mask id="kh-rm" maskUnits="userSpaceOnUse" x="'+fx(x0)+'" y="'+fx(yR-rh)+'" width="'+fx(VW)+'" height="'+fx(rh)+'"><rect x="'+fx(x0)+'" y="'+fx(yR-rh)+'" width="'+fx(VW)+'" height="'+fx(rh)+'" fill="url(#kh-rg)"/></mask>';
+    refl='<use xlink:href="#kh-all" transform="translate(0 '+fx(2*yR)+') scale(1 -1)" mask="url(#kh-rm)"/>';}
+  let all=bgS+inner+refl;
+  if(s.hue){defs+='<filter id="kh-hue" '+fr+' color-interpolation-filters="sRGB"><feColorMatrix type="hueRotate" values="'+s.hue+'"/></filter>';all='<g filter="url(#kh-hue)">'+all+'</g>';}
   let size='';if(opt.long){const k=opt.long/Math.max(VW,VH);size=' width="'+Math.round(VW*k)+'" height="'+Math.round(VH*k)+'"';}
-  const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="'+fx(x0)+' '+fx(y0)+' '+fx(VW)+' '+fx(VH)+'"'+size+(g.pixel?' shape-rendering="crispEdges"':'')+'>'+(opt.title?'<title>'+esc(opt.title)+'</title>':'')+'<defs>'+defs+'</defs>'+body+'</svg>';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="'+fx(x0)+' '+fx(y0)+' '+fx(VW)+' '+fx(VH)+'"'+size+(g.pixel?' shape-rendering="crispEdges"':'')+'>'+(opt.title?'<title>'+esc(opt.title)+'</title>':'')+'<defs>'+defs+'</defs>'+all+'</svg>';
   return{svg,vw:VW,vh:VH};
 }
 /*PURE-END*/
@@ -355,8 +396,19 @@ const FONTS=[
  {n:'Nosifer',w:400,l:'Nosifer',g:'en',q:'Nosifer'},{n:'Eater',w:400,l:'Eater',g:'en',q:'Eater'},{n:'Butcherman',w:400,l:'Butcherman',g:'en',q:'Butcherman'},
  {n:'Caesar Dressing',w:400,l:'Caesar Dressing',g:'en',q:'Caesar+Dressing'},{n:'Frijole',w:400,l:'Frijole',g:'en',q:'Frijole'}
 ];
+[['Noto Sans Hebrew',900,'he','נוטו סנס עברית'],['Noto Serif Hebrew',900,'he','נוטו סריף עברית'],['Noto Rashi Hebrew',700,'he','רש״י'],['Open Sans',800,'he','Open Sans'],['Arimo',700,'he','Arimo'],['Tinos',700,'he','Tinos'],
+ ['Playpen Sans Hebrew',800,'he','פלייפן כתב יד'],['Gveret Levin',400,'he','גברת לוין'],['Rubik Marker Hatch',400,'he','רוביק קווקו'],['Rubik Pixels',400,'he','רוביק פיקסלים'],
+ ['Rubik Iso',400,'he','רוביק איזומטרי'],['Rubik Lines',400,'he','רוביק קווים'],['Rubik Broken Fax',400,'he','רוביק פקס שבור'],['Rubik Doodle Triangles',400,'he','רוביק משולשים'],
+ ['Rubik Glitch Pop',400,'he','רוביק גליץ׳ פופ'],['Rubik Maps',400,'he','רוביק מפות'],
+ ['Bowlby One'],['Boogaloo'],['Concert One'],['Coiny'],['Chewy'],['Fugaz One'],['Knewave'],['Kaushan Script'],['Lemon'],['Londrina Solid',900],['Modak'],['Oleo Script',700],
+ ['Paytone One'],['Rammetto One'],['Rowdies',700],['Slackey'],['Spicy Rice'],['Staatliches'],['Squada One'],['Tilt Neon'],['Tilt Warp'],['Tilt Prism'],['Train One'],['Trade Winds'],
+ ['Ultra'],['Unica One'],['Vast Shadow'],['Warnes'],['Yatra One'],['Bubblegum Sans'],['Baloo 2',800],['Bagel Fat One'],['Climate Crisis'],['Cherry Bomb One'],['DotGothic16'],
+ ['Fredericka the Great'],['Gorditas',700],['Barriecito'],['Bungee Outline'],['Bungee Spice'],['Protest Guerrilla'],['Shojumaru'],['Sancreek'],['Gluten',900],['Lobster Two',700],
+ ['Chicle'],['Galindo'],['Mystery Quest'],['Akronim'],['Berkshire Swash'],['Ceviche One'],['Metamorphous'],['Uncial Antiqua'],['Smokum'],['Joti One'],['Gravitas One'],['Diplomata'],
+ ['Graduate'],['Racing Sans One'],['Fascinate'],['Flavors'],['Freckle Face'],['Henny Penny'],['Piedra'],['Ribeye Marrow'],['Risque'],['Sail'],['Seymour One'],['Sonsie One']
+].forEach(a=>FONTS.push({n:a[0],w:a[1]||400,l:a[3]||a[0],g:a[2]||'en',q:a[0].replace(/ /g,'+')+(a[1]&&a[1]!==400?':wght@'+a[1]:'')}));
 const BASE={font:'Secular One',stops:[[0,'#ffffff'],[1,'#d8d2ee']],angle:0,outlineW:0,outlineC:'#1a1230',depth:0,depthA:'#9a8fc0',depthB:'#2a2240',
- glowR:0,glowC:'#ffffff',shadow:0,slant:0,warpType:'none',warpAmt:50,track:0,fat:0,sparkle:0,distort:0,grain:0,gloss:false,scan:0,glitch:false,pixel:0,hollow:false,neon:false,bg:'grad'};
+ glowR:0,glowC:'#ffffff',shadow:0,slant:0,warpType:'none',warpAmt:50,track:0,fat:0,sparkle:0,distort:0,grain:0,gloss:false,scan:0,glitch:false,pixel:0,hollow:false,neon:false,bg:'grad',depthAngle:45,edgeW:0,edgeC:'#ffffff',pattern:'',patC:'#000000',patS:16,patO:35,inner:0,reflect:false,dash:false,hue:0,aber:5,bgC:'#10101a',lineH:1.3};
 const RULES=[
 {l:'ניאון',k:'mat',w:['ניאון','נאון','neon*'],p:{neon:true,glowR:22,glowC:'#ff2bd6',outlineW:0,depth:0,gloss:false,shadow:0,stops:[[0,'#ffffff'],[1,'#ffffff']]}},
 {l:'זהב',k:'mat',w:['זהב*','זהוב*','מוזהב*','gold*'],p:{stops:[[0,'#fff7c9'],[.38,'#ffd24d'],[.5,'#b77a12'],[.62,'#f2c14e'],[1,'#fff0a6']],outlineW:3,outlineC:'#4a2c00',depth:46,depthA:'#c58a1b',depthB:'#4a2c00',gloss:true}},
@@ -398,6 +450,15 @@ const RULES=[
 {l:'סטיקר',k:'mat',w:['סטיקר*','מדבקה','מדבקות','sticker*'],p:{font:'Lilita One',stops:[[0,'#ffe86a'],[1,'#ff9a3d']],outlineW:12,outlineC:'#ffffff',shadow:1,gloss:true,depth:0,bg:'dark'}},
 {l:'פסטל',k:'mat',w:['פסטל*','רך','רכה','pastel*','soft'],p:{font:'Fredoka',stops:[[0,'#ffd6e8'],[.5,'#cfe6ff'],[1,'#d8ffe6']],angle:90,outlineW:5,outlineC:'#ffffff',depth:14,depthA:'#e6b4d6',depthB:'#a58ac0',shadow:1,gloss:true}},
 {l:'מונוכרום',k:'mat',w:['מונוכרום*','אפור*','גריי','שחור*','mono*','grayscale','black','grey','gray'],p:{stops:[[0,'#ffffff'],[.5,'#bdbdbd'],[1,'#5a5a5a']],outlineW:3,outlineC:'#0a0a0a',depth:30,depthA:'#6a6a6a',depthB:'#0a0a0a',gloss:true}},
+{l:'ספורט',k:'mat',w:['ספורט*','ספורטיבי*','קבוצה','varsity','sport*','team','college'],p:{font:'Alfa Slab One',stops:[[0,'#ffffff'],[1,'#e6e9f5']],outlineW:4,outlineC:'#0b2a8a',edgeW:7,edgeC:'#ffc400',depth:20,depthA:'#0b2a8a',depthB:'#06154a',shadow:1}},
+{l:'שיש',k:'mat',w:['שיש','שישי*','marble*'],p:{stops:[[0,'#ffffff'],[.5,'#dcdce6'],[1,'#a3a3b8']],outlineW:2.5,outlineC:'#3a3a4a',depth:30,depthA:'#b9b9c8',depthB:'#4a4a5a',gloss:true,grain:22}},
+{l:'עננים',k:'mat',w:['ענן','עננים','cloud*','fluffy'],p:{font:'Fredoka',stops:[[0,'#ffffff'],[1,'#bfe3ff']],angle:90,outlineW:5,outlineC:'#ffffff',glowR:14,glowC:'#bfe3ff',depth:10,depthA:'#9ccaf0',depthB:'#6aa6dc',gloss:true}},
+{l:'מנטה',k:'mat',w:['מנטה','נענע','mint*'],p:{stops:[[0,'#ecfff6'],[.5,'#6ff0b8'],[1,'#12b57a']],outlineW:3,outlineC:'#04503a',depth:20,depthA:'#18a874',depthB:'#04503a',gloss:true}},
+{l:'רוזגולד',k:'mat',w:['רוזגולד','rosegold'],p:{stops:[[0,'#ffe6dc'],[.45,'#f0a99b'],[.55,'#b86b60'],[1,'#f7cbbd']],outlineW:2.5,outlineC:'#4a1f1a',depth:34,depthA:'#c27f73',depthB:'#4a1f1a',gloss:true}},
+{l:'ענבר',k:'mat',w:['ענבר','דבש','amber*','honey*'],p:{stops:[[0,'#fff0a8'],[.5,'#ffb21a'],[1,'#b35a00']],outlineW:2.5,outlineC:'#4a2000',glowR:12,glowC:'#ffb21a',depth:20,depthA:'#c46a08',depthB:'#4a2000',gloss:true,sparkle:6}},
+{l:'חלודה',k:'mat',w:['חלודה','חלוד*','תעשייתי*','rust*','industrial*'],p:{font:'Stalinist One',stops:[[0,'#e8a066'],[.5,'#b5532a'],[1,'#5a2410']],outlineW:2.5,outlineC:'#1a0a04',depth:24,depthA:'#7a3418',depthB:'#1a0a04',grain:60,distort:2}},
+{l:'ויקינגים',k:'mat',w:['ויקינג*','viking*','norse*'],p:{font:'UnifrakturCook',stops:[[0,'#f4efe6'],[.5,'#b9b2a3'],[1,'#5a5548']],outlineW:3,outlineC:'#14110c',depth:26,depthA:'#6a6354',depthB:'#14110c',grain:35}},
+{l:'פרחים',k:'mat',w:['פרח*','פרחים','אביב','floral*','flower*','spring'],p:{font:'Lobster Two',stops:[[0,'#ffe0f0'],[.5,'#ff9ac8'],[1,'#7bd88f']],angle:80,outlineW:4,outlineC:'#ffffff',depth:14,depthA:'#e0709f',depthB:'#7a2a50',shadow:1,gloss:true,sparkle:8}},
 {l:'תלת מימד',k:'mod',w:['תלת*','תלתי*','3d','עומק','עמוק*'],f:s=>{s.depth=Math.max(s.depth,52);}},
 {l:'שטוח',k:'mod',w:['שטוח*','flat'],f:s=>{s.depth=0;s.shadow=0;}},
 {l:'מתאר',k:'mod',w:['מתאר','קווי*','קונטור','חלול*','outline*','stroke*','hollow','wire*'],f:s=>{s.hollow=true;s.outlineW=Math.max(s.outlineW,3.5);s.outlineC=midColor(s.stops);}},
@@ -412,6 +473,17 @@ const RULES=[
 {l:'רועד',k:'mod',w:['רועד','רטט','נמס','נימס','זולג','wobbly','shaky','melt*','drip*'],f:s=>{s.distort=Math.max(s.distort,9);}},
 {l:'צפוף',k:'mod',w:['צפוף*','צמוד*','tight','condensed'],f:s=>{s.track=-10;}},
 {l:'מרווח',k:'mod',w:['מרווח*','רחב*','spaced','wide','airy'],f:s=>{s.track=34;}},
+{l:'פסים',k:'mod',w:['פסים','פסי','מפוספס*','stripe*','striped'],f:s=>{s.pattern='stripes';s.patC=mix(midColor(s.stops),'#000000',.55);s.patO=45;s.patS=18;}},
+{l:'נקודות',k:'mod',w:['נקודות','דוטס','halftone*','dots','polka'],f:s=>{s.pattern='dots';s.patC=mix(midColor(s.stops),'#000000',.5);s.patO=55;s.patS=13;}},
+{l:'משבצות',k:'mod',w:['משבצות','משובץ*','checker*','plaid'],f:s=>{s.pattern='checker';s.patC=mix(midColor(s.stops),'#000000',.5);s.patO=40;s.patS=12;}},
+{l:'רשת',k:'mod',w:['רשת','grid','blueprint','שרטוט'],f:s=>{s.pattern='grid';s.patC=mix(midColor(s.stops),'#ffffff',.6);s.patO=45;s.patS=14;}},
+{l:'קרניים',k:'mod',w:['קרניים','קרני','sunburst*','rays'],f:s=>{s.bg='sunburst';}},
+{l:'השתקפות',k:'mod',w:['השתקפות','מראה','reflect*','mirror'],f:s=>{s.reflect=true;}},
+{l:'מקווקו',k:'mod',w:['מקווקו*','תפר','dashed','dash','stitch*'],f:s=>{s.dash=true;if(s.outlineW<=0){s.outlineW=3;}}},
+{l:'חרוט',k:'mod',w:['חרוט*','פנימי*','חקוק*','engraved','inset','carved'],f:s=>{s.inner=70;}},
+{l:'מסגרת',k:'mod',w:['מסגרת','גבול','border*','framed'],f:s=>{s.edgeW=Math.max(s.edgeW,8);}},
+{l:'עומק שמאלה',k:'mod',w:['שמאלה','left'],f:s=>{s.depthAngle=135;if(s.depth<30)s.depth=40;}},
+{l:'עומק למעלה',k:'mod',w:['למעלה','up'],f:s=>{s.depthAngle=-45;if(s.depth<30)s.depth=40;}},
 {l:'צל',k:'mod',w:['צל','צללית','shadow*'],f:s=>{s.shadow=1;}},
 {l:'קווי סריקה',k:'mod',w:['סריקה','crt','scanline*','vhs'],f:s=>{s.scan='scan';}},
 {l:'גרגירי',k:'mod',w:['גרגירי*','רעש','grain*','noise*'],f:s=>{s.grain=45;}},
@@ -465,7 +537,7 @@ async function loadFont(f,text){
   try{await Promise.race([Promise.all(jobs),sleep(4500)]);}catch(e){}
 }
 async function getBase(text,sp){
-  const key=[text,sp.font,sp.track,sp.pixel].join('\u0001');
+  const key=[text,sp.font,sp.track,sp.pixel,sp.lineH].join('\u0001');
   if(cache.key===key)return cache.val;
   const f=FONTS.find(x=>x.n===sp.font)||FONTS[0];
   await loadFont(f,text);
@@ -477,7 +549,7 @@ async function getBase(text,sp){
   const widest=()=>Math.max(...lines.map(l=>{x.direction=rtl(l)?'rtl':'ltr';return x.measureText(l).width;}));
   setF(FS);let maxW=widest();
   if(!sp.pixel&&maxW>2400){FS=FS*2400/maxW;setF(FS);maxW=widest();}
-  const pad=Math.ceil(FS*.25)+3,lh=FS*1.3,W=Math.ceil(maxW+pad*2+FS*.2),H=Math.ceil(lines.length*lh+pad*2);
+  const pad=Math.ceil(FS*.25)+3,lh=FS*(sp.lineH||1.3),W=Math.ceil(maxW+pad*2+FS*.2),H=Math.ceil(lines.length*lh+pad*2);
   c.width=W;c.height=H;setF(FS);
   x.fillStyle='#000';x.textAlign='center';x.textBaseline='alphabetic';
   lines.forEach((l,i)=>{x.direction=rtl(l)?'rtl':'ltr';x.fillText(l,W/2,pad+FS*.98+i*lh);});
@@ -542,28 +614,58 @@ function buildUI(){
   SYNC.push(()=>{warpSel.value=spec.warpType;});
   const pxCtl=slider('pixel','פיקסלים לגובה אות',8,48,1);
   SYNC.push(()=>{pxCtl.hidden=!spec.pixel;});
+  const setStop=(i,v)=>{const st=spec.stops.map(a=>a.slice());st[i<0?st.length-1:i][1]=v;spec.stops=st;};
   const colors=h('div',{class:'colors'},
-    colorPick('cA','מילוי עליון',()=>spec.stops[0][1],v=>{spec.stops=[[0,v],[1,spec.stops[spec.stops.length-1][1]]];}),
-    colorPick('cB','מילוי תחתון',()=>spec.stops[spec.stops.length-1][1],v=>{spec.stops=[[0,spec.stops[0][1]],[1,v]];}),
+    colorPick('cA','מילוי עליון',()=>spec.stops[0][1],v=>setStop(0,v)),
+    colorPick('cM','מעבר אמצעי',()=>{const st=spec.stops;return midColor(st);},v=>{const st=spec.stops;spec.stops=[[0,st[0][1]],[.5,v],[1,st[st.length-1][1]]];}),
+    colorPick('cB','מילוי תחתון',()=>spec.stops[spec.stops.length-1][1],v=>setStop(-1,v)),
     colorPick('cO','מתאר',()=>spec.outlineC,v=>{spec.outlineC=v;if(spec.outlineW<=0)spec.outlineW=3;syncAll();}),
+    colorPick('cE','מתאר חיצוני',()=>spec.edgeC,v=>{spec.edgeC=v;if(!spec.edgeW)spec.edgeW=7;syncAll();}),
     colorPick('cG','זוהר',()=>spec.glowC,v=>{spec.glowC=v;if(spec.glowR<=0)spec.glowR=14;syncAll();}),
-    colorPick('cD','עומק',()=>spec.depthB,v=>{spec.depthB=v;spec.depthA=mix(v,'#ffffff',.38);if(spec.depth<=0)spec.depth=30;syncAll();}));
-  const bgSeg=h('div',{class:'seg',role:'group','aria-label':'רקע'},[['none','שקוף'],['dark','כהה'],['light','בהיר'],['grad','הילה']].map(a=>{
+    colorPick('cD','עומק',()=>spec.depthB,v=>{spec.depthB=v;spec.depthA=mix(v,'#ffffff',.38);if(spec.depth<=0)spec.depth=30;syncAll();}),
+    colorPick('cP','תבנית',()=>spec.patC,v=>{spec.patC=v;if(!spec.pattern)spec.pattern='stripes';syncAll();}),
+    colorPick('cBg','רקע מלא',()=>spec.bgC,v=>{spec.bgC=v;spec.bg='solid';syncAll();}));
+  const PAL=[['שקיעה',[[0,'#ffe27a'],[.5,'#ff6a59'],[1,'#7b2ff7']],'#c2417a','#2b0a4d','#2b0a4d','#ff6a59'],
+    ['אוקיינוס',[[0,'#e8fcff'],[.5,'#35c8ff'],[1,'#0a4fb0']],'#1b7fd1','#052a5c','#032a5c','#3ac6ff'],
+    ['יער',[[0,'#d9ffb0'],[.5,'#46b832'],[1,'#0e5a1c']],'#1c7a24','#052a0c','#052a0c','#7dff00'],
+    ['לילה',[[0,'#b9c8ff'],[.5,'#6a5cff'],[1,'#1a1060']],'#3b2a9a','#0b0630','#0b0630','#7a5cff'],
+    ['סוכריה',[[0,'#ffd6f2'],[.5,'#ff7ac8'],[1,'#ff3d9a']],'#e0287f','#8a1049','#ffffff','#ff7ac8'],
+    ['זהב',[[0,'#fff7c9'],[.38,'#ffd24d'],[.5,'#b77a12'],[.62,'#f2c14e'],[1,'#fff0a6']],'#c58a1b','#4a2c00','#4a2c00','#ffd24d'],
+    ['כסף',[[0,'#ffffff'],[.4,'#b9c3d1'],[.5,'#3b4252'],[.62,'#aab4c3'],[1,'#f5f8fc']],'#8793a6','#1d222c','#0b0d12','#cfe0ff'],
+    ['אש',[[0,'#c1150a'],[.4,'#ff5a00'],[.75,'#ffb100'],[1,'#fff2a8']],'#9a2000','#2a0400','#3a0500','#ff5a00'],
+    ['קרח',[[0,'#ffffff'],[.5,'#aee6ff'],[1,'#4aa8e8']],'#7cc8f0','#1f6aa8','#0d4f8a','#8fdcff'],
+    ['ניאון',[[0,'#00f0ff'],[1,'#ff2bd6']],'#7a1bb0','#14003a','#0a0030','#ff2bd6'],
+    ['מנטה',[[0,'#ecfff6'],[.5,'#6ff0b8'],[1,'#12b57a']],'#18a874','#04503a','#04503a','#6ff0b8'],
+    ['לבה',[[0,'#fff2a8'],[.4,'#ff8a00'],[1,'#7a0a00']],'#b01a00','#2a0400','#1a0200','#ff4a00'],
+    ['קפה',[[0,'#e8cfb4'],[.5,'#8a5a3a'],[1,'#3a1c0e']],'#5a3018','#1c0c05','#1c0c05','#c28a5a'],
+    ['ורדים',[[0,'#ffe0ea'],[.5,'#ff7aa8'],[1,'#b0124a']],'#d03a70','#5a0a2a','#5a0a2a','#ff7aa8'],
+    ['שמיים',[[0,'#ffffff'],[.5,'#8fd0ff'],[1,'#3a7bff']],'#5a9cf0','#10389a','#10389a','#8fd0ff'],
+    ['חושך וזהב',[[0,'#3a3a46'],[.5,'#14141c'],[1,'#000000']],'#e3b94f','#8a6414','#e3b94f','#e3b94f']];
+  const palRow=h('div',{class:'chips',style:'margin-top:10px'},PAL.map(p=>{const sw='linear-gradient(90deg,'+p[1].map(s=>s[1]).join(',')+')';
+    const b=h('button',{class:'chip',type:'button',style:'display:inline-flex;align-items:center;gap:6px'},h('span',{style:'width:14px;height:14px;border-radius:50%;background:'+sw+';border:1px solid var(--line)'}),p[0]);
+    b.addEventListener('click',()=>{spec.stops=p[1].map(a=>a.slice());spec.depthA=p[2];spec.depthB=p[3];spec.outlineC=p[4];spec.glowC=p[5];if(spec.outlineW<=0)spec.outlineW=2.5;if(spec.depth<=0)spec.depth=24;spec.neon=false;syncAll();schedule();});return b;}));
+  const patSel=h('select',{id:'patSel'},[['','ללא'],['stripes','פסים'],['dots','נקודות'],['checker','משבצות'],['grid','רשת']].map(a=>h('option',{value:a[0]},a[1])));
+  patSel.addEventListener('change',()=>{spec.pattern=patSel.value;if(spec.pattern&&spec.patC===spec.stops[0][1])spec.patC='#000000';schedule();});
+  SYNC.push(()=>{patSel.value=spec.pattern||'';});
+  const bgSeg=h('div',{class:'seg',role:'group','aria-label':'רקע'},[['none','שקוף'],['dark','כהה'],['light','בהיר'],['grad','הילה'],['solid','צבע מלא'],['sunburst','קרניים'],['grid','רשת'],['dots','נקודות'],['stripes','פסים']].map(a=>{
     const b=h('button',{type:'button','data-bg':a[0]},a[1]);b.addEventListener('click',()=>{spec.bg=a[0];syncAll();schedule();});return b;}));
   SYNC.push(()=>bgSeg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.bg===spec.bg))));
   $('groups').replaceChildren(
-    group('גופן וצבעים',true,h('div',{style:'margin-top:10px'},h('label',{for:'fontSel'},'גופן'),fontSel),colors,h('div',{class:'grid2'},slider('fat','עובי אות',0,16,1))),
-    group('עומק, מתאר וזוהר',true,h('div',{class:'grid2'},slider('depth','עומק תלת-ממד',0,100,1),slider('outlineW','עובי מתאר',0,14,.5),slider('glowR','עוצמת זוהר',0,60,1),
-      check('kSh','צל נופל',()=>spec.shadow,v=>{spec.shadow=v?1:0;}),check('kNe','ניאון',()=>spec.neon,v=>{spec.neon=v;if(v&&spec.glowR<10)spec.glowR=22;},syncAll),check('kHo','מתאר בלבד',()=>spec.hollow,v=>{spec.hollow=v;if(v&&spec.outlineW<2)spec.outlineW=3.5;},syncAll))),
-    group('צורה ועיוות',false,h('div',{style:'margin-top:10px'},h('label',{for:'warpSel'},'עיוות'),warpSel),h('div',{class:'grid2'},slider('warpAmt','עוצמת עיוות',-100,100,1),slider('slant','הטיה',-25,25,1,'°'),slider('track','מרווח אותיות',-20,60,1))),
-    group('אפקטים',false,h('div',{class:'grid2'},slider('sparkle','נצנוצים',0,40,1),slider('distort','תנודת להבה',0,12,.5),slider('grain','גרגירים',0,100,1),
+    group('גופן וצבעים',true,h('div',{style:'margin-top:10px'},h('label',{for:'fontSel'},'גופן'),fontSel),colors,h('div',{class:'lbl',style:'margin-top:12px'},'פלטות צבע'),palRow,
+      h('div',{class:'grid2'},slider('fat','עובי אות',0,16,1),slider('angle','זווית מעבר צבע',-180,180,1,'°'),slider('hue','הסטת גוון',0,360,1,'°'))),
+    group('עומק, מתאר וזוהר',true,h('div',{class:'grid2'},slider('depth','עומק תלת-ממד',0,100,1),slider('depthAngle','כיוון העומק',-180,180,1,'°'),slider('outlineW','עובי מתאר',0,14,.5),slider('edgeW','מתאר חיצוני',0,24,.5),slider('glowR','עוצמת זוהר',0,60,1),slider('inner','צל פנימי',0,100,1),
+      check('kSh','צל נופל',()=>spec.shadow,v=>{spec.shadow=v?1:0;}),check('kNe','ניאון',()=>spec.neon,v=>{spec.neon=v;if(v&&spec.glowR<10)spec.glowR=22;},syncAll),check('kHo','מתאר בלבד',()=>spec.hollow,v=>{spec.hollow=v;if(v&&spec.outlineW<2)spec.outlineW=3.5;},syncAll),
+      check('kRf','השתקפות',()=>spec.reflect,v=>{spec.reflect=v;}),check('kDs','תפר מקווקו',()=>spec.dash,v=>{spec.dash=v;}))),
+    group('צורה ועיוות',false,h('div',{style:'margin-top:10px'},h('label',{for:'warpSel'},'עיוות'),warpSel),h('div',{class:'grid2'},slider('warpAmt','עוצמת עיוות',-100,100,1),slider('slant','הטיה',-25,25,1,'°'),slider('track','מרווח אותיות',-20,60,1),slider('lineH','מרווח שורות',.9,1.8,.02))),
+    group('תבניות ואפקטים',false,h('div',{style:'margin-top:10px'},h('label',{for:'patSel'},'תבנית מילוי'),patSel),
+      h('div',{class:'grid2'},slider('patS','גודל תבנית',6,60,1),slider('patO','עוצמת תבנית',5,100,1,'%'),slider('sparkle','נצנוצים',0,40,1),slider('distort','תנודת להבה',0,12,.5),slider('grain','גרגירים',0,100,1),slider('aber','פיצול צבעים בגליץ׳',0,14,.5),
       check('kGl','ברק וקווי מתאר פנימיים',()=>spec.gloss,v=>{spec.gloss=v;}),check('kSc','קווי סריקה',()=>spec.scan,v=>{spec.scan=v?'scan':0;}),check('kGt',"גליץ'",()=>spec.glitch,v=>{spec.glitch=v;}),
       check('kPx','מצב פיקסלים',()=>spec.pixel,v=>{spec.pixel=v?16:0;},syncAll),pxCtl)),
     group('רקע',false,bgSeg));
-  const chips=['זהב תלת מימד נצנוצים','ניאון ורוד','אש דרקון','קרח כפור','פיקסלים ארקייד',"סייבר גליץ'",'פנטזיה קסומה','קומיקס','גרפיטי','רעל רדיואקטיבי','ממתק מתוק','גלקסיה','קשת בענן','ים גלים',"וינטג'",'כרום מתכת תלת מימד','סינתווייב','פיראטים זהב','קריסטל יהלום','שוקולד','נינג׳ה','פיצוץ בום','סטיקר','טרמינל האקר','חשמל ברק','מדבר חול','ג׳ונגל','פסטל'];
+  const chips=['זהב תלת מימד נצנוצים','ניאון ורוד','אש דרקון','קרח כפור','פיקסלים ארקייד',"סייבר גליץ'",'פנטזיה קסומה','קומיקס','גרפיטי','רעל רדיואקטיבי','ממתק מתוק','גלקסיה','קשת בענן','ים גלים',"וינטג'",'כרום מתכת תלת מימד','סינתווייב','פיראטים זהב','קריסטל יהלום','שוקולד','נינג׳ה','פיצוץ בום','סטיקר','טרמינל האקר','חשמל ברק','מדבר חול','ג׳ונגל','פסטל','ספורט','שיש יוקרתי','עננים','חלודה תעשייתי','ענבר דבש','מנטה','רוזגולד','ויקינגים','אביב פרחים','זהב קרניים','כרום השתקפות','ניאון משבצות','אש פסים','קרח חרוט','פופ נקודות כתום'];
   $('chips').replaceChildren(...chips.map(c=>{const b=h('button',{class:'chip',type:'button'},c);b.addEventListener('click',()=>{prmEl.value=c;regen();});return b;}));
   const nm=RULES.filter(r=>r.k==='mat').length,ne=RULES.length-nm;
-  $('badges').replaceChildren(...['בלי שרת','בלי AI',FONTS.length+' גופנים',nm+' חומרים ו-'+ne+' אפקטים','עיצוב גופן וקובץ TTF','ייצוא SVG ו-PNG'].map(t=>h('li',{},t)));
+  $('badges').replaceChildren(...['בלי שרת','בלי AI',FONTS.length+' גופנים',nm+' חומרים ו-'+ne+' אפקטים','סטודיו גופן עם AI וקובץ TTF','ייצוא SVG ו-PNG'].map(t=>h('li',{},t)));
 }
 
 /* ייצוא */
@@ -608,7 +710,7 @@ async function doExport(kind){
 }
 
 /* חיבור */
-const SURP=[['זהב','כרום','אש','קרח','רעל','דרקון','פיקסלים','סייבר','פנטזיה','ממתק','גלקסיה','קשת בענן','ים','שקיעה','גרפיטי','קומיקס','וינטג׳','אבן'],['תלת מימד','נצנוצים','גל','נטוי','זוהר','צל','קשת','ניפוח'],['','','ורוד','כחול','סגול','כתום','ירוק']];
+const SURP=[['זהב','כרום','אש','קרח','רעל','דרקון','פיקסלים','סייבר','פנטזיה','ממתק','גלקסיה','קשת בענן','ים','שקיעה','גרפיטי','קומיקס','וינטג׳','אבן','ספורט','שיש','עננים','ענבר','רוזגולד','חלודה','מנטה'],['תלת מימד','נצנוצים','גל','נטוי','זוהר','צל','קשת','ניפוח','פסים','נקודות','השתקפות','קרניים','מסגרת','חרוט','מקווקו'],['','','ורוד','כחול','סגול','כתום','ירוק']];
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function init(){
   buildUI();
@@ -737,23 +839,34 @@ const TABLE=[
 [String.fromCharCode(0x5BE),'D','M0,5 L6,5']
 ];
 const GROUPS=[['עברית','אבגדהוזחטיכךלמםנןסעפףצץקרשת'+String.fromCharCode(0x5BE)],['אותיות גדולות','ABCDEFGHIJKLMNOPQRSTUVWXYZ'],['אותיות קטנות','abcdefghijklmnopqrstuvwxyz'],['ספרות וסימנים','0123456789.,!?-:;'+String.fromCharCode(39,34)+'()/+=_']];
-const SKEL={};
+const CL=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
 function parseSkel(s){
-  const strokes=[];
+  const strokes=[],polys=[];
+  s=String(s).toUpperCase();
   for(const part of s.split('|')){
-    let cur=null;const re=/([MLA])\s*([-\d.,\s]+)/g;let m;
+    let cur=null,ops=0;const re=/([MLAQBPEZ])\s*([-+\d.,\s]*)/g;let m;
     while((m=re.exec(part))){
-      const op=m[1],a=m[2].split(/[\s,]+/).filter(Boolean).map(Number);
-      if(op==='M'){cur=[[a[0],a[1]]];strokes.push(cur);}
-      else if(op==='L'){if(!cur){cur=[[a[0],a[1]]];strokes.push(cur);}else cur.push([a[0],a[1]]);}
-      else{const cx=a[0],cy=a[1],rx=a[2],ry=a[3],a0=a[4],a1=a[5],n=Math.max(8,Math.ceil(Math.abs(a1-a0)/11));
+      if(++ops>140)break;
+      const op=m[1],a=(m[2].match(/-?\d*\.?\d+/g)||[]).map(Number).filter(Number.isFinite).map(v=>CL(v,-40,60));
+      if(op==='M'&&a.length>=2){cur=[[a[0],a[1]]];strokes.push(cur);}
+      else if(op==='L'&&a.length>=2){if(!cur){cur=[[a[0],a[1]]];strokes.push(cur);}else cur.push([a[0],a[1]]);}
+      else if(op==='A'&&a.length>=6){const cx=a[0],cy=a[1],rx=CL(a[2],.05,30),ry=CL(a[3],.05,30),a0=a[4],a1=CL(a[5],a[4]-720,a[4]+720),n=Math.max(8,Math.ceil(Math.abs(a1-a0)/11));
         if(!cur){cur=[];strokes.push(cur);}
         for(let i=0;i<=n;i++){const t=(a0+(a1-a0)*i/n)*Math.PI/180;cur.push([cx+rx*Math.cos(t),cy+ry*Math.sin(t)]);}}
+      else if(op==='Q'&&a.length>=4&&cur&&cur.length){const p0=cur[cur.length-1];
+        for(let i=1;i<=12;i++){const t=i/12,u=1-t;cur.push([u*u*p0[0]+2*u*t*a[0]+t*t*a[2],u*u*p0[1]+2*u*t*a[1]+t*t*a[3]]);}}
+      else if(op==='B'&&a.length>=6&&cur&&cur.length){const p0=cur[cur.length-1];
+        for(let i=1;i<=16;i++){const t=i/16,u=1-t;cur.push([u*u*u*p0[0]+3*u*u*t*a[0]+3*u*t*t*a[2]+t*t*t*a[4],u*u*u*p0[1]+3*u*u*t*a[1]+3*u*t*t*a[3]+t*t*t*a[5]]);}}
+      else if(op==='Z'){if(cur&&cur.length>1)cur.push([cur[0][0],cur[0][1]]);}
+      else if(op==='P'&&a.length>=6){const pts=[];for(let i=0;i+1<a.length&&pts.length<80;i+=2)pts.push([a[i],a[i+1]]);polys.push(pts);}
+      else if(op==='E'&&a.length>=4){const pts=[],rx=CL(a[2],.05,30),ry=CL(a[3],.05,30);for(let i=0;i<28;i++){const t=i/28*Math.PI*2;pts.push([a[0]+rx*Math.cos(t),a[1]+ry*Math.sin(t)]);}polys.push(pts);}
     }
   }
-  return strokes.filter(s=>s.length);
+  return{st:strokes.filter(s=>s.length),pl:polys.filter(p=>p.length>=3)};
 }
-for(const e of TABLE)SKEL[e[0]]={k:e[1],st:parseSkel(e[2])};
+const SKEL={},AIG={};
+for(const e of TABLE){const d=parseSkel(e[2]);SKEL[e[0]]={k:e[1],st:d.st,pl:d.pl};}
+const skelOf=ch=>AIG[ch]||SKEL[ch];
 
 /* עט: מצולע קמור. צורה, עובי, ניגודיות וזווית */
 function penPoly(P){
@@ -780,16 +893,13 @@ function resampleLine(st,maxLen){
 }
 const GU=50;
 function makeGlyph(ch,P,pen){
-  const d=SKEL[ch],tn=Math.tan(P.slant*Math.PI/180),ws=P.width/100,xh=P.xh,r=rng32(hash(ch)+P.seed*7919);
-  const raw=[];
-  for(const st0 of d.st){
-    const st=P.rough>0?resampleLine(st0,1.5):st0;
-    raw.push(st.map(p=>{
-      let X=p[0]*ws,Y=p[1];
-      if(d.k==='L')Y=Y<=0?Y:(Y<=10?Y*xh/10:xh+(Y-10)*(14-xh)/4);
-      if(P.rough>0){X+=(r()-.5)*P.rough;Y+=(r()-.5)*P.rough;}
-      X+=Y*tn;return[X*GU,Y*GU];}));
-  }
+  const d=skelOf(ch),kind=SKEL[ch].k,tn=Math.tan(P.slant*Math.PI/180),ws=P.width/100,xh=P.xh,r=rng32(hash(ch)+P.seed*7919);
+  const xf=p=>{let X=p[0]*ws,Y=p[1];
+    if(kind==='L')Y=Y<=0?Y:(Y<=10?Y*xh/10:xh+(Y-10)*(14-xh)/4);
+    if(P.rough>0){X+=(r()-.5)*P.rough;Y+=(r()-.5)*P.rough;}
+    X+=Y*tn;return[X*GU,Y*GU];};
+  const raw=d.st.map(st0=>(P.rough>0?resampleLine(st0,1.5):st0).map(xf));
+  const rawP=d.pl.map(pl=>pl.map(xf));
   let cont=[];
   for(const pts of raw){
     const seg=pts.length===1?[[pts[0],pts[0]]]:pts.slice(1).map((b,i)=>[pts[i],b]);
@@ -798,8 +908,11 @@ function makeGlyph(ch,P,pen){
       cont.push(hullCW(q));
     }
   }
+  for(const pl of rawP){let ar=0;for(let i=0;i<pl.length;i++){const a=pl[i],b=pl[(i+1)%pl.length];ar+=a[0]*b[1]-b[0]*a[1];}
+    cont.push(ar>0?pl.slice().reverse():pl.slice());}
   let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
   for(const c of cont)for(const p of c){if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];}
+  if(!cont.length){x0=0;x1=300;y0=y1=0;}
   const sh=P.sb-x0;
   cont=cont.map(c=>{const o=[];for(const p of c){const q=[Math.round(p[0]+sh),Math.round(p[1])];const l=o[o.length-1];if(!l||l[0]!==q[0]||l[1]!==q[1])o.push(q);}
     if(o.length>1&&o[0][0]===o[o.length-1][0]&&o[0][1]===o[o.length-1][1])o.pop();return o;}).filter(c=>c.length>=3);
@@ -896,6 +1009,219 @@ function buildTTF(glyphs,opt){
   return out;
 }
 /*TTF-END*/
+/*AI-START*/
+const LSX={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,v);}catch(e){}},del(k){try{localStorage.removeItem(k);}catch(e){}}};
+const AI={busy:false,ctl:null,info:null,count:0};
+const GEM='https://generativelanguage.googleapis.com/v1beta/';
+
+function pickJSON(t){
+  t=String(t).trim().replace(/^```(?:json)?/i,'').replace(/```\s*$/,'');
+  const a=t.indexOf('{'),b=t.lastIndexOf('}');
+  if(a<0||b<a)throw new Error('לא התקבל JSON');
+  try{return JSON.parse(t.slice(a,b+1));}
+  catch(e){
+    const o={},re=/"((?:\\.|[^"\\]))"\s*:\s*"((?:\\.|[^"\\])*)"/g;let m,n=0;
+    while((m=re.exec(t))){try{o[JSON.parse('"'+m[1]+'"')]=JSON.parse('"'+m[2]+'"');n++;}catch(x){}}
+    if(n)return o;throw new Error('ה-JSON שהתקבל פגום');}
+}
+async function askGemini(prompt,o){
+  const body=max=>JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:1,maxOutputTokens:max}});
+  const url=GEM+'models/'+encodeURIComponent(o.model)+':generateContent?key='+encodeURIComponent(o.key);
+  let max=24000;
+  for(let k=0;k<2;k++){
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},signal:o.signal,body:body(max)});
+    const j=await r.json().catch(()=>null);
+    if(!r.ok){const msg=(j&&j.error&&j.error.message)||('HTTP '+r.status);
+      if(r.status===400&&/max.*output.*token|output.*token.*limit/i.test(msg)&&k===0){max=8000;continue;}
+      const e=new Error(msg);e.status=r.status;throw e;}
+    const parts=j&&j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts;
+    const t=parts&&parts.map(p=>p.text||'').join('');
+    if(!t)throw new Error('התקבלה תשובה ריקה'+(j&&j.promptFeedback&&j.promptFeedback.blockReason?' (נחסם בסינון: '+j.promptFeedback.blockReason+')':''));
+    return t;
+  }
+}
+async function askClaude(prompt,o){
+  const use=window.claude&&window.claude.use;if(!use)throw new Error('האפשרות הזו עובדת רק כשהדף פתוח בתוך Claude');
+  const sample=await window.claude.use('sample');if(!sample)throw new Error('Claude לא אישר גישה לדף הזה');
+  const r=await sample(prompt,{modelTier:'complex',cache:false,signal:o.signal});
+  return r.text;
+}
+async function listGeminiModels(key){
+  const r=await fetch(GEM+'models?pageSize=200&key='+encodeURIComponent(key));
+  const j=await r.json().catch(()=>null);
+  if(!r.ok)throw new Error((j&&j.error&&j.error.message)||('HTTP '+r.status));
+  return(j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace(/^models\//,''))
+    .filter(n=>/^gemini/.test(n)&&!/(embed|image|tts|live|audio|robotics|computer|vision)/.test(n));
+}
+const isAbort=e=>!!e&&(e.name==='AbortError'||e.code==='cancelled');
+function friendly(e){
+  const m=String(e&&e.message||e);
+  if(isAbort(e))return'העיצוב הופסק';
+  const cm={not_granted:'לא אישרתם ל-Claude לעבוד בדף הזה. אשרו בחלון שנפתח ונסו שוב.',sampling_disabled:'Claude לא זמין בחשבון הזה.',rate_limited:'הגעתם למגבלת השימוש ב-Claude. נסו שוב בעוד כמה דקות.',
+    session_expired:'צריך להתחבר מחדש ל-Claude.',refused:'Claude סירב לבקשה הזו. נסחו את הרעיון אחרת.',empty_completion:'Claude לא החזיר תשובה. נסו שוב.',upstream_error:'תקלה זמנית בחיבור ל-Claude. נסו שוב.',
+    invalid_json:'התשובה לא הייתה תקינה. נסו שוב.',prompt_too_large:'הבקשה גדולה מדי.',not_declared:'הדף לא מוגדר לעבוד עם Claude.',capability_disabled:'Claude לא זמין בתצוגה הזו.',capability_removed:'גרסת האפליקציה לא תומכת בזה.'};
+  if(e&&cm[e.code])return cm[e.code];
+  if(/failed to fetch|networkerror|load failed|fetch/i.test(m)&&(e instanceof TypeError||!e.status))return'הדפדפן חסם את הפנייה ל-Google. בתוך Claude דפי Artifact לא יכולים לפנות לשרתים חיצוניים. בחרו באפשרות Claude המובנה, או פתחו את הקובץ מקומית במחשב.';
+  if(e&&e.status===400&&/api key/i.test(m))return'המפתח לא תקין. העתיקו אותו מחדש מ-Google AI Studio.';
+  if(e&&(e.status===401||e.status===403))return'אין הרשאה: בדקו שהמפתח פעיל ושה-API מופעל עבורו.';
+  if(e&&e.status===404)return'המודל לא נמצא. לחצו "טען מודלים" ובחרו מודל מהרשימה.';
+  if(e&&e.status===429)return'חרגתם ממכסת הבקשות. חכו דקה או בחרו מודל אחר.';
+  return m;
+}
+
+/* פרומפטים */
+const SPEC_TXT=`GRID: y axis points up. Baseline y=0. Lowercase x-height y=10. Capitals y=14. Hebrew letters sit on y=0 and rise to about y=13 (lamed may rise to y=17). Descenders (and Hebrew final letters ך ן ף ץ ק) drop to y=-4. Glyph width is usually x=0..10 (M and W up to 12, I and i very narrow). Coordinates are plain numbers, one decimal at most.
+Every stroke is a CENTER-LINE: a pen (nib) of the font's weight is automatically dragged along it. Use fill shapes for anything that is not a line.
+COMMANDS (uppercase, separated by spaces; independent strokes are separated by " | "):
+ M x,y            start a stroke
+ L x,y            straight line to
+ A cx,cy,rx,ry,a0,a1   elliptical arc, angles in degrees counter-clockwise from +x (y up). It continues from the previous point to the arc end.
+ Q cx,cy,x,y      quadratic curve from the current point
+ B x1,y1,x2,y2,x,y   cubic bezier from the current point
+ Z                close the current stroke
+ P x,y x,y x,y ...   FILLED polygon (no pen, 3-40 points): wedges, spikes, blobs, serifs, drips, claws, stencil blocks
+ E cx,cy,rx,ry    FILLED ellipse: dots, beads, eyes, bubbles
+Neutral baseline for reference only. Do NOT copy it; reinterpret every glyph through the concept:
+ "A": "M0,0 L5,14 L10,0 | M2,5 L8,5"
+ "O": "A5.5,7,5,7,0,360"
+ "a": "A4.5,5,4,5,0,360 | M8.5,10 L8.5,0"
+ "ב": "M1,13 L8,13 L8,0 L0,0"
+ "ש": "M0.5,13 L0.5,3 A5,3,4.5,3,180,360 L9.5,13 | M5,13 L5,2.6"`;
+function briefPrompt(idea){
+  return`You are a world-class type designer inventing a brand-new display typeface from a client's idea. Be bold, specific and unexpected, never a generic sans.
+CLIENT IDEA: "${idea}"
+Return ONLY a JSON object with exactly these keys:
+{"name":"font name, 1-3 words, in the client's language",
+ "concept":"one or two sentences describing the typeface",
+ "rules":"max 90 words of concrete drawing rules that every glyph must follow: shape language (spiky / melted / geometric / brush / stencil / ornate / blobby ...), terminals, proportions, recurring details, and how Hebrew and Latin share the same DNA",
+ "pen":"round | square | diamond | flat",
+ "weight":number 20-220 (stroke thickness in 1/1000 em),
+ "contrast":number 0-0.85 (how much thinner the horizontal strokes are),
+ "angle":number -60..60 (nib rotation in degrees),
+ "width":number 60-150 (percent),
+ "xh":number 8-12 (x-height; 10 is normal),
+ "slant":number -20..25,
+ "sb":number 10-140 (space between letters),
+ "rough":number 0-1.6 (hand-drawn wobble)}
+The pen settings are applied to every stroke of the font, so choose them to serve the idea.`;
+}
+function glyphPrompt(idea,brief,label,chars){
+  const pen='pen='+brief.pen+', weight='+brief.weight+', contrast='+brief.contrast+', nib angle='+brief.angle+', width='+brief.width+'%, x-height='+brief.xh+', slant='+brief.slant;
+  return`You are drawing the glyph skeletons of a font called "${brief.name}". Client idea: "${idea}".
+Concept: ${brief.concept}
+DESIGN RULES (apply to every glyph): ${brief.rules}
+PEN: ${pen}.
+${SPEC_TXT}
+TASK: draw these glyphs (${label}). GLYPHS: ${JSON.stringify(chars)}
+REQUIREMENTS: each letter must remain clearly legible and be the correct letter (Hebrew letters must be real Hebrew letterforms). The whole set must look like ONE designed family that obeys the rules above and visibly differs from the neutral baseline. Keep every point within x -1..16 and y -6..18. Prefer 3-16 commands per glyph.
+Return ONLY a JSON object that maps each character to its command string, for example {"${chars[0]}":"M0,0 L5,14"}. Include every requested character.`;
+}
+const AI_GROUPS=[['עברית','אבגדהוזחטיכךלמםנןסעפףצץקרשת'],['אותיות גדולות','ABCDEFGHIJKLMNOPQRSTUVWXYZ'],['אותיות קטנות','abcdefghijklmnopqrstuvwxyz'],
+  ['ספרות וסימנים','0123456789.,!?-:;'+String.fromCharCode(39,34)+'()/+=_']];
+
+function applyBrief(b){
+  const n=(v,lo,hi,d)=>{v=+v;return Number.isFinite(v)?Math.max(lo,Math.min(hi,v)):d;};
+  const pens=['round','square','diamond','flat'];
+  SP.pen=pens.includes(b.pen)?b.pen:'round';SP.weight=n(b.weight,20,220,84);SP.contrast=n(b.contrast,0,.85,.2);SP.angle=n(b.angle,-60,60,0);
+  SP.width=n(b.width,60,150,100);SP.xh=n(b.xh,8,12,10);SP.slant=n(b.slant,-20,25,0);SP.sb=n(b.sb,10,140,46);SP.rough=n(b.rough,0,1.6,0);
+  SP.seed=Math.floor(Math.random()*9999);
+  if(b.name)SP.name=String(b.name).slice(0,40);
+}
+function validGlyph(ch,s){
+  if(typeof s!=='string'||!s.trim()||s.length>1600)return null;
+  const d=parseSkel(s);if(!d.st.length&&!d.pl.length)return null;
+  let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  const eat=p=>{if(p[0]<x0)x0=p[0];if(p[0]>x1)x1=p[0];if(p[1]<y0)y0=p[1];if(p[1]>y1)y1=p[1];};
+  d.st.forEach(st=>st.forEach(eat));d.pl.forEach(pl=>pl.forEach(eat));
+  if(x1-x0>26||y1-y0>30||(x1-x0<.3&&y1-y0<.3&&ch!=='.'&&ch!==':'))return null;
+  return{k:SKEL[ch].k,st:d.st,pl:d.pl};
+}
+async function runAI(ui){
+  if(AI.busy)return;
+  const idea=ui.prompt.value.trim();if(!idea){ui.err.textContent='כתבו קודם רעיון לגופן.';return;}
+  const prov=ui.prov.value,key=ui.key.value.trim(),model=ui.model.value.trim()||'gemini-2.5-flash';
+  if(prov==='gemini'&&!key){ui.err.textContent='הדביקו מפתח API של Google AI Studio.';return;}
+  if(prov==='gemini'){if(ui.remember.checked){LSX.set('kor_gkey',key);}else LSX.del('kor_gkey');LSX.set('kor_gmodel',model);}
+  AI.busy=true;AI.ctl=new AbortController();ui.err.textContent='';ui.go.disabled=true;ui.stop.hidden=false;
+  const ask=(p)=>(prov==='gemini'?askGemini(p,{key,model,signal:AI.ctl.signal}):askClaude(p,{signal:AI.ctl.signal}));
+  const rows={};ui.stat.replaceChildren();
+  const row=(k,t)=>{const r=h('div',{class:'aist'},h('span',{class:'dot'}),t);rows[k]=r;ui.stat.append(r);return r;};
+  const mark=(k,s,extra)=>{const r=rows[k];r.dataset.s=s;if(extra!=null)r.lastChild.textContent=extra;};
+  try{
+    row('brief','מתכננים את הרעיון');mark('brief','run');
+    let brief;
+    for(let t=0;t<2;t++){try{brief=pickJSON(await ask(briefPrompt(idea)));break;}catch(e){if(t||isAbort(e)||e.status||e.code)throw e;}}
+    brief.pen=String(brief.pen||'round').toLowerCase();
+    mark('brief','ok','תכנון: '+(brief.name||'גופן חדש'));
+    AI_GROUPS.forEach(g=>{row(g[0],g[0]);mark(g[0],'run');});
+    const out={},bad=[];
+    await Promise.all(AI_GROUPS.map(async g=>{
+      const chars=[...g[1]];let got={},err=null;
+      for(let t=0;t<2;t++){
+        try{const need=chars.filter(c=>!got[c]),res=pickJSON(await ask(glyphPrompt(idea,brief,g[0],need)));
+          for(const c of need){const v=validGlyph(c,res[c]);if(v)got[c]=v;}
+          if(chars.every(c=>got[c]))break;}
+        catch(e){err=e;if(isAbort(e)||e.status||e.code)throw e;}
+      }
+      let ok=0;for(const c of chars){if(got[c]){out[c]=got[c];ok++;}else bad.push(c);}
+      mark(g[0],ok===chars.length?'ok':(ok?'warn':'fail'),g[0]+': '+ok+' מתוך '+chars.length);
+      if(!ok&&err)throw err;
+    }));
+    for(const c in AIG)delete AIG[c];
+    Object.assign(AIG,out);
+    applyBrief(brief);AI.info=brief;AI.count=Object.keys(out).length;
+    ui.note.textContent=brief.concept?String(brief.concept).slice(0,300):'';
+    if(bad.length)ui.err.textContent='לא התקבלו '+bad.length+' אותיות ('+bad.join(' ')+'). הן נשארו בעיצוב הבסיס.';
+    syncStudioUI();schedStudio();
+    if(!$('pvText').value.trim())$('pvText').value='אבגדהוז Hello 123';
+    toast('הגופן "'+(brief.name||'חדש')+'" מוכן');
+  }catch(e){console.error(e);if(AI.ctl&&!isAbort(e))AI.ctl.abort();ui.err.textContent=friendly(e);
+    Object.keys(rows).forEach(k=>{if(rows[k].dataset.s==='run')mark(k,'fail');});}
+  finally{AI.busy=false;ui.go.disabled=false;ui.stop.hidden=true;AI.ctl=null;}
+}
+function aiPanel(){
+  const ui={};
+  ui.prov=h('select',{id:'aiProv'},h('option',{value:'gemini'},'Gemini (מפתח Google AI Studio)'),h('option',{value:'claude'},'Claude (מובנה, בלי מפתח)'));
+  ui.key=h('input',{type:'password',id:'aiKey',autocomplete:'off',spellcheck:'false',placeholder:'AIza…',dir:'ltr'});
+  const show=h('button',{class:'btn',type:'button','aria-pressed':'false'},'הצג');
+  show.addEventListener('click',()=>{const on=ui.key.type==='password';ui.key.type=on?'text':'password';show.textContent=on?'הסתר':'הצג';});
+  ui.remember=h('input',{type:'checkbox',id:'aiRem'});
+  ui.model=h('input',{type:'text',id:'aiModel',list:'aiModels',dir:'ltr',autocomplete:'off',value:'gemini-2.5-flash'});
+  const dl=h('datalist',{id:'aiModels'},['gemini-2.5-flash','gemini-2.5-pro','gemini-2.0-flash'].map(m=>h('option',{value:m})));
+  const load=h('button',{class:'btn',type:'button'},'טען מודלים');
+  ui.prompt=h('textarea',{id:'aiPrompt',rows:'3',maxlength:'500',dir:'auto',placeholder:'למשל: גופן של דרקון עם קוצים ולהבות, לוחמני אבל קריא'});
+  ui.go=h('button',{class:'btn pri',type:'button',id:'aiGo'},'עצבו לי גופן');
+  ui.stop=h('button',{class:'btn',type:'button',hidden:true},'עצור');
+  const reset=h('button',{class:'btn',type:'button'},'חזרה לגופן הבסיס');
+  ui.stat=h('div',{class:'aistat','aria-live':'polite'});
+  ui.err=h('p',{class:'hint aierr',role:'alert'});ui.note=h('p',{class:'hint'});
+  const keyRows=h('div',{class:'aikey'},
+    h('div',{},h('label',{for:'aiKey'},'מפתח API'),h('div',{class:'row'},ui.key,show)),
+    h('label',{class:'chk',for:'aiRem'},ui.remember,'זכור במחשב הזה'),
+    h('div',{},h('label',{for:'aiModel'},'מודל'),h('div',{class:'row'},ui.model,dl,load)));
+  const sync=()=>{keyRows.hidden=ui.prov.value!=='gemini';};
+  ui.prov.addEventListener('change',()=>{sync();LSX.set('kor_prov',ui.prov.value);});
+  const k=LSX.get('kor_gkey');if(k){ui.key.value=k;ui.remember.checked=true;}
+  const md=LSX.get('kor_gmodel');if(md)ui.model.value=md;
+  const pv=LSX.get('kor_prov');if(pv==='claude'||pv==='gemini')ui.prov.value=pv;sync();
+  load.addEventListener('click',async()=>{
+    if(!ui.key.value.trim()){ui.err.textContent='הדביקו קודם מפתח.';return;}
+    load.disabled=true;ui.err.textContent='';
+    try{const ms=await listGeminiModels(ui.key.value.trim());dl.replaceChildren(...ms.map(m=>h('option',{value:m})));toast('נטענו '+ms.length+' מודלים, הקלידו או בחרו ברשימה');}
+    catch(e){ui.err.textContent=friendly(e);}finally{load.disabled=false;}});
+  ui.go.addEventListener('click',()=>runAI(ui));
+  ui.stop.addEventListener('click',()=>{if(AI.ctl)AI.ctl.abort();});
+  reset.addEventListener('click',()=>{for(const c in AIG)delete AIG[c];AI.info=null;ui.note.textContent='';ui.stat.replaceChildren();ui.err.textContent='';schedStudio();toast('חזרנו לגופן הבסיס');});
+  const ideas=['גופן דרקון עם קוצים ולהבות','גופן קוסמי עם כוכבים וטבעות','גבינה נמסה שזולגת','גופן של מכונות עתידניות','גופן ג׳ונגל עם עלים וענפים','גופן סכינים וחרבות מבריק'];
+  const idr=h('div',{class:'chips'},ideas.map(t=>{const b=h('button',{class:'chip',type:'button'},t);b.addEventListener('click',()=>{ui.prompt.value=t;});return b;}));
+  return h('div',{class:'aip'},
+    h('div',{class:'lbl aitt'},'עיצוב גופן בעזרת AI'),
+    h('div',{},h('label',{for:'aiProv'},'מנוע'),ui.prov),keyRows,
+    h('div',{},h('label',{for:'aiPrompt'},'תארו את הגופן'),ui.prompt),idr,
+    h('div',{class:'row'},ui.go,ui.stop,reset),ui.stat,ui.err,ui.note,
+    h('p',{class:'hint'},'המפתח נשמר רק בדפדפן שלכם ונשלח אך ורק ל-Google. אחרי שה-AI מעצב, אפשר לשנות עובי, עט והטיה בעצמכם, ולשלוח את הגופן לאפקטים.'));
+}
+/*AI-END*/
 /*STUDIO-START*/
 const DEFP={name:'הגופן שלי',weight:84,contrast:.2,angle:0,pen:'round',width:100,xh:10,slant:0,sb:46,rough:0,seed:1};
 let SP=Object.assign({},DEFP),GL=[],GMAP={},gridCells={},stPend=0,customN=0;
@@ -1013,6 +1339,7 @@ function buildStudio(){
   const jit=h('button',{class:'btn',type:'button'},'גרסת רעידות אחרת');
   jit.addEventListener('click',()=>{SP.seed++;if(SP.rough<.3)SP.rough=.6;syncStudioUI();schedStudio();});
   const panel=h('section',{class:'panel','aria-label':'עיצוב הגופן'},
+    aiPanel(),
     h('div',{},h('label',{for:'fName'},'שם הגופן'),nameIn),
     h('div',{},h('div',{class:'lbl'},'נקודות התחלה'),chips),
     h('div',{class:'row'},rnd,jit),
@@ -1042,8 +1369,3 @@ function boot(){
 boot();
 /*STUDIO-END*/
 </script>
-
-</body></html>
-<!-- Injection By NetFree -->
-<script src="//netfree.link/injection-script/go-payment.js" type="text/javascript" async ></script>
-<script src="//netfree.link/injection-script/popup-card-init.js" type="text/javascript" async ></script>
